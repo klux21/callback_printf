@@ -25,27 +25,51 @@
 int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 {
     int bRet = 0;
-    size_t zRet;
-    char buf[2048] = "";
-
-#if DEBUG
-    char buf2[2048] = ""; 
-#endif
-
+    size_t sRet;
+    size_t snRet;
     va_list VarArgs;
+    char buf[2048];
+    char buf2[2048]; 
+
+    memset(buf, 0xfefefefe,  sizeof(buf));
+    memset(buf2, 0xfefefefe, sizeof(buf));
+
     va_start(VarArgs, pfmt);
-    zRet = svsprintf(buf, pfmt, VarArgs);
+    sRet = svsprintf(buf, pfmt, VarArgs);
     va_end(VarArgs);
+
+    va_start(VarArgs, pfmt);
+    snRet = svsnprintf(buf2, 17, pfmt, VarArgs);
+    va_end(VarArgs);
+
+    if(sRet != snRet)
+    {
+       printf("test_cbkprintf: svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", sRet, buf, call, snRet);
+       goto Exit;
+    }
+
+    if(buf2[17] != '\xfe')
+    {
+       buf2[24] = '\0'; 
+       printf("test_cbkprintf: svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", snRet, buf2, call);
+       goto Exit;
+    }
+
+    if(strncmp(buf, buf2, 17))
+    {
+       printf("test_cbkprintf: written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", sRet, buf, snRet, buf2, call);
+       goto Exit;
+    }
 
 #if DEBUG
     va_start(VarArgs, pfmt);
-    vsprintf(buf2, pfmt, VarArgs); /* for comparison in debugger */
+    vsprintf(buf2, pfmt, VarArgs); /* for comparison of data with vsprintf in a debugger */
     va_end(VarArgs);
 #endif
 
-    if(zRet != strlen(buf))
+    if(sRet != strlen(buf))
     {
-       printf("test_cbkprintf: output length %zd (%s) for '%s' does not match retval %zd !\n", strlen(buf), buf, call, zRet);
+       printf("test_cbkprintf: output length %zd (%s) for '%s' does not match retval %zd !\n", strlen(buf), buf, call, sRet);
        goto Exit;
     }
 

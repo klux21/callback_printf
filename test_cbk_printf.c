@@ -247,20 +247,6 @@ int test_ssprintf()
     TEST_CBKPRINTF( "%hx", "2345", INT_ARG, 0x12345 );
     TEST_CBKPRINTF( "%hhx", "23", INT_ARG, 0x123 );
     TEST_CBKPRINTF( "%hhx", "45", INT_ARG, 0x12345 );
-#if 0
-    TEST_CBKPRINTF( "%lf", "-1.#IND00", DOUBLE_ARG, IND );
-    TEST_CBKPRINTF( "%lf", "1.#QNAN0", DOUBLE_ARG, NAN );
-    TEST_CBKPRINTF( "%lf", "1.#INF00", DOUBLE_ARG, INFINITY );
-    TEST_CBKPRINTF( "%le", "-1.#IND00e+000", DOUBLE_ARG, IND );
-    TEST_CBKPRINTF( "%le", "1.#QNAN0e+000", DOUBLE_ARG, NAN );
-    TEST_CBKPRINTF( "%le", "1.#INF00e+000", DOUBLE_ARG, INFINITY );
-    TEST_CBKPRINTF( "%lg", "-1.#IND", DOUBLE_ARG, IND );
-    TEST_CBKPRINTF( "%lg", "1.#QNAN", DOUBLE_ARG, NAN );
-    TEST_CBKPRINTF( "%lg", "1.#INF", DOUBLE_ARG, INFINITY );
-    TEST_CBKPRINTF( "%010.2lf", "-000001.#J", DOUBLE_ARG, IND );
-    TEST_CBKPRINTF( "%010.2lf", "0000001.#R", DOUBLE_ARG, NAN );
-    TEST_CBKPRINTF( "%010.2lf", "0000001.#J", DOUBLE_ARG, INFINITY );
-#endif
     TEST_CBKPRINTF( "%c", "a",             INT_ARG, 'a' );
     TEST_CBKPRINTF( "%c", "\x82",          INT_ARG, 0xa082 );
     TEST_CBKPRINTF( "%C", "a",             INT_ARG, 'a' );

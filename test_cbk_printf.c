@@ -1,14 +1,18 @@
 /*****************************************************************************\
 *                                                                             *
-*  FILENAME         :  test_cbk_printf.c                                      *
+*  FILENAME    :  test_cbk_printf.c                                           *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  DESCRIPTION      :  Tests of cbk_printf relatet functions                  *
+*  DESCRIPTION : Tests of cbk_printf related functions                        *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:  (c) 2023  Dipl.-Ing. Klaus Lux                                 *
+*  COPYRIGHT   : (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)              *
+*                                                                             *
+* --------------------------------------------------------------------------- *
+*                                                                             *
+*  REPOSITORY  :  https://github/klux21/cbk_printf                            *
 *                                                                             *
 \*****************************************************************************/
 
@@ -20,7 +24,7 @@
 #include <inttypes.h>
 #include <cbk_printf.h>
 
-//int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4);
+/* int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); */
 
 int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 {
@@ -29,7 +33,7 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
     size_t snRet;
     va_list VarArgs;
     char buf[2048];
-    char buf2[2048]; 
+    char buf2[2048];
 
     memset(buf, 0xfefefefe,  sizeof(buf));
     memset(buf2, 0xfefefefe, sizeof(buf));
@@ -52,6 +56,13 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
     {
        buf2[24] = '\0'; 
        printf("test_cbkprintf: svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", snRet, buf2, call);
+       goto Exit;
+    }
+
+    if(buf[sRet+1] != '\xfe')
+    {
+       buf2[24] = '\0';
+       printf("test_cbkprintf: svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", sRet, buf, call);
        goto Exit;
     }
 

@@ -77,9 +77,9 @@
 *              fully featured and fast sprintf compatible string generator    *
 *              function by using cbk_printf whithout worrying about           *
 *              portability. This software is more than a toy.                 *
-* Patents:     Google did patent their floating point conversion algorithm.   *
+* Patents:     Google did patent their floating point base conversion.        *
 *              I decided not doing the same with the unusual algorithm that   *
-*              is used for the decimal conversions in the rebase function.    *
+*              is used for the base conversions in the rebase function.       *
 * Limits:      The function rebase uses some multiplications for calculating  *
 *              the decimal mantissa and is able to convert values for more    *
 *              base systems than just the decimal system. The conversion is   *

@@ -1,3 +1,9 @@
+#if 0
+cc -Wall -o test_cbk_printf -I .  test_cbk_printf.c cbk_printf.c
+./test_cbk_printf
+exit $?
+#endif
+
 /*****************************************************************************\
 *                                                                             *
 *  FILENAME    :  test_cbk_printf.c                                           *
@@ -271,6 +277,61 @@ int test_ssprintf()
     TEST_CBKPRINTF( "%.0f", "-1",          DOUBLE_ARG, -0.5 );
     TEST_CBKPRINTF( "%.0f", "1",           DOUBLE_ARG, 0.5 );
     TEST_CBKPRINTF( "%.0f", "2",           DOUBLE_ARG, 1.5 );
+
+    TEST_CBKPRINTF( "%.3e", "0.000e+00",   DOUBLE_ARG, 0.0 );
+    TEST_CBKPRINTF( "%.3e", "5.000e+00",   DOUBLE_ARG, 5e-0 );
+    TEST_CBKPRINTF( "%.3e", "5.000e+00",   DOUBLE_ARG, 5e+0 );
+    TEST_CBKPRINTF( "%.3e", "5.000e-01",   DOUBLE_ARG, 5e-1 );
+    TEST_CBKPRINTF( "%.3e", "5.000e+01",   DOUBLE_ARG, 5e+1 );
+    TEST_CBKPRINTF( "%.3e", "5.000e-02",   DOUBLE_ARG, 5e-2 );
+    TEST_CBKPRINTF( "%.3e", "5.000e+02",   DOUBLE_ARG, 5e+2 );
+    TEST_CBKPRINTF( "%.3e", "5.000e-03",   DOUBLE_ARG, 5e-3 );
+    TEST_CBKPRINTF( "%.3e", "5.000e+03",   DOUBLE_ARG, 5e+3 );
+    TEST_CBKPRINTF( "%.3e", "9.995e+00",   DOUBLE_ARG, 9.995e-0 );
+    TEST_CBKPRINTF( "%.3e", "9.995e+00",   DOUBLE_ARG, 9.995e+0 );
+    TEST_CBKPRINTF( "%.3e", "9.995e-01",   DOUBLE_ARG, 9.995e-1 );
+    TEST_CBKPRINTF( "%.3e", "9.995e+01",   DOUBLE_ARG, 9.995e+1 );
+    TEST_CBKPRINTF( "%.3e", "9.995e-02",   DOUBLE_ARG, 9.995e-2 );
+    TEST_CBKPRINTF( "%.3e", "9.995e+02",   DOUBLE_ARG, 9.995e+2 );
+    TEST_CBKPRINTF( "%.3e", "1.000e+00",   DOUBLE_ARG,  1.0 );
+    TEST_CBKPRINTF( "%.3e", "-1.000e+00",  DOUBLE_ARG, -1.0 );
+    TEST_CBKPRINTF( "%.3e", "1.000e+01",   DOUBLE_ARG,  1e+1 );
+    TEST_CBKPRINTF( "%.3e", "-1.000e-01",  DOUBLE_ARG, -1e-1 );
+    TEST_CBKPRINTF( "%.3e", "-1.000e+01",  DOUBLE_ARG, -1e+1 );
+    TEST_CBKPRINTF( "%.3e", "1.000e-01",   DOUBLE_ARG,  1e-1 );
+    TEST_CBKPRINTF( "%.3e", "-1.000e-01",  DOUBLE_ARG, -1e-1 );
+    TEST_CBKPRINTF( "%.3e", "1.000e+02",   DOUBLE_ARG,  1e+2 );
+    TEST_CBKPRINTF( "%.3e", "1.000e-02",   DOUBLE_ARG,  1e-2 );
+    TEST_CBKPRINTF( "%.3e", "1.000e+03",   DOUBLE_ARG,  1e+3 );
+    TEST_CBKPRINTF( "%.3e", "1.000e-03",   DOUBLE_ARG,  1e-3 );
+
+    TEST_CBKPRINTF( "%.3Le", "0.000e+00",   LONG_DOUBLE_ARG, 0.0 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e+00",   LONG_DOUBLE_ARG, 5e-0 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e+00",   LONG_DOUBLE_ARG, 5e+0 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e-01",   LONG_DOUBLE_ARG, 5e-1 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e+01",   LONG_DOUBLE_ARG, 5e+1 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e-02",   LONG_DOUBLE_ARG, 5e-2 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e+02",   LONG_DOUBLE_ARG, 5e+2 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e-03",   LONG_DOUBLE_ARG, 5e-3 );
+    TEST_CBKPRINTF( "%.3Le", "5.000e+03",   LONG_DOUBLE_ARG, 5e+3 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e+00",   LONG_DOUBLE_ARG, 9.995e-0 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e+00",   LONG_DOUBLE_ARG, 9.995e+0 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e-01",   LONG_DOUBLE_ARG, 9.995e-1 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e+01",   LONG_DOUBLE_ARG, 9.995e+1 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e-02",   LONG_DOUBLE_ARG, 9.995e-2 );
+    TEST_CBKPRINTF( "%.3Le", "9.995e+02",   LONG_DOUBLE_ARG, 9.995e+2 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e+00",   LONG_DOUBLE_ARG,  1.0 );
+    TEST_CBKPRINTF( "%.3Le", "-1.000e+00",  LONG_DOUBLE_ARG, -1.0 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e+01",   LONG_DOUBLE_ARG,  1e+1 );
+    TEST_CBKPRINTF( "%.3Le", "-1.000e-01",  LONG_DOUBLE_ARG, -1e-1 );
+    TEST_CBKPRINTF( "%.3Le", "-1.000e+01",  LONG_DOUBLE_ARG, -1e+1 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e-01",   LONG_DOUBLE_ARG,  1e-1 );
+    TEST_CBKPRINTF( "%.3Le", "-1.000e-01",  LONG_DOUBLE_ARG, -1e-1 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e+02",   LONG_DOUBLE_ARG,  1e+2 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e-02",   LONG_DOUBLE_ARG,  1e-2 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e+03",   LONG_DOUBLE_ARG,  1e+3 );
+    TEST_CBKPRINTF( "%.3Le", "1.000e-03",   LONG_DOUBLE_ARG,  1e-3 );
+
 
     TEST_CBKPRINTF( "%5.2e%.0f",  "  inf3", DOUBLE_ARG, *(float*) &inf ARG(3.0));
     TEST_CBKPRINTF( "%5.2e%.0f",  " -inf3", DOUBLE_ARG, *(float*) &ninf ARG(3.0));

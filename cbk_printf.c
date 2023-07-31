@@ -97,12 +97,7 @@
 
 #undef   _CRT_ERRNO_DEFINED
 #include <errno.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include <limits.h>
-#include <string.h>
-/* #include <math.h> */ /* not longer required now */
 #include <float.h> /* LDBL_MAX */
 
 #include <cbk_printf.h>
@@ -932,7 +927,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
 \* ------------------------------------------------------------------------- */
 
 
-#ifndef _WIN32
+#if !defined(_WIN32) || (LDBL_MANT_DIG != DBL_MANT_DIG)
 /* MSVC does not support 80 or 128 bit floating points :o( */
 
 /* ------------------------------------------------------------------------- *\
@@ -1093,7 +1088,7 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, lo
 {
    if(base == 10)
    { /* try to be a little bit more exact by using base10l or base10 which are using a table of precalculated decimal exponent values */
-#ifndef _WIN32
+#if !defined(_WIN32) || (LDBL_MANT_DIG != DBL_MANT_DIG)
       base10l(value, mantissa, exponent);
 #else
       base10(value, mantissa, exponent);
@@ -1528,7 +1523,33 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
    return (pb - pBuf);
 } /* size_t print_long_double_f (...) */
-   
+
+
+
+/* ------------------------------------------------------------------------- *\
+   smemcpy a small local memcpy wrapper
+\* ------------------------------------------------------------------------- */
+
+static void smemcpy(void * pdst, const void * psrc, size_t count)
+{
+   uint8_t * pd = pdst;
+   const uint8_t * ps = psrc;
+
+   while(count--)
+      *pd++ = *ps++;
+} /* static void smemcpy(void * pdst, void *psrc, size_t count) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   sstrcpy a small local strcpy wrapper
+\* ------------------------------------------------------------------------- */
+
+static void sstrcpy(char * pdst, const char * psrc)
+{
+   while((*pdst++ = *psrc++))
+   {};
+} /* static sstrcpy(char * pdst, const char * psrc) */
 
 /* ------------------------------------------------------------------------- *\
    cbk_print_long_double prints a double using a cbk_printf callback function
@@ -1560,14 +1581,14 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       char * pb = buf;
       float   f = (float) value;
       int32_t i;
-      memcpy(&i, &f, 4);
+      smemcpy(&i, &f, 4);
 
       if(i < 0)
          *pb++ = '-';
       else if(sign_char)
          *pb++ = sign_char;
 
-      strcpy (pb, uppercase ? "NAN" : "nan");
+      sstrcpy (pb, uppercase ? "NAN" : "nan");
       length = (pb - buf) + 3;
       sign_char = '\0';
       padding = pblanks;
@@ -1575,7 +1596,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
    else if (value < -LDBL_MAX)
    {  /* -INF */
       char * pb = buf;
-      strcpy (pb, uppercase ? "-INF" : "-inf");
+      sstrcpy (pb, uppercase ? "-INF" : "-inf");
       length = 4;
       sign_char = '\0';
       padding = pblanks;
@@ -1585,7 +1606,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       char * pb = buf;
       if(sign_char)
          *pb++ = sign_char;
-      strcpy(pb,  uppercase ? "INF" : "inf");
+      sstrcpy(pb,  uppercase ? "INF" : "inf");
       length = (pb - buf) + 3;
       sign_char = '\0';
       padding = pblanks;
@@ -1884,14 +1905,14 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       char * pb = buf;
       float   f = (float) value;
       int32_t i;
-      memcpy(&i, &f, 4);
+      smemcpy(&i, &f, 4);
 
       if(i < 0)
          *pb++ = '-';
       else if(sign_char)
          *pb++ = sign_char;
 
-      strcpy (pb, uppercase ? "NAN" : "nan");
+      sstrcpy (pb, uppercase ? "NAN" : "nan");
       length = (pb - buf) + 3;
       sign_char = '\0';
       padding = pblanks;
@@ -1899,7 +1920,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
    else if (value < -DBL_MAX)
    {  /* -INF */
       char * pb = buf;
-      strcpy (pb, uppercase ? "-INF" : "-inf");
+      sstrcpy (pb, uppercase ? "-INF" : "-inf");
       length = 4;
       sign_char = '\0';
       padding = pblanks;
@@ -1909,7 +1930,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       char * pb = buf;
       if(sign_char)
          *pb++ = sign_char;
-      strcpy(pb,  uppercase ? "INF" : "inf");
+      sstrcpy(pb,  uppercase ? "INF" : "inf");
       length = (pb - buf) + 3;
       sign_char = '\0';
       padding = pblanks;

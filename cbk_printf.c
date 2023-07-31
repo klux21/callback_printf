@@ -944,14 +944,11 @@ static void base10l(long double value, long double * mantissa, long double * exp
    int32_t expo = 0;
    int     sign = value < 0;
    long double  mant = sign ? -value : value;
-   long double  p = 10.0l; /* holds powers of the base */
 
-   if (mant >= p)
+   if (mant >= 10.0l)
    {
-      while (p <= mant)
+      while ((pb->p <= mant) && (++pb != (basepow + 14)))
       {
-         p = pb->p * pb->p;
-         ++pb;
       }
 
       while(pb-- != basepow)
@@ -965,17 +962,13 @@ static void base10l(long double value, long double * mantissa, long double * exp
    }
    else if (mant < 1.0l)
    {
-      while (10.0l > (p * mant))
+      while (10.0l > (pb->p * mant) && (++pb != (basepow + 14)))
       {
-         p = pb->p * pb->p;
-         ++pb;
       }
-
-      p = 10.0l;
 
       while(pb-- != basepow)
       {
-         if(p > (pb->p * mant))
+         if(10.0l > (pb->p * mant))
          {
             mant *= pb->p;
             expo -= pb->e;
@@ -1002,14 +995,11 @@ static void base10(double value, double * mantissa, double * exponent)
    int32_t expo = 0;
    int     sign = value < 0;
    double  mant = sign ? -value : value;
-   double  p = 10.0; /* holds powers of the base */
 
-   if (mant >= p)
+   if (mant >= 10.0)
    {
-      while (p <= mant)
+      while ((pb->p <= mant) && (++pb != (basepow + 9)))
       {
-         p = pb->p * pb->p;
-         ++pb;
       }
 
       while(pb-- != basepow)
@@ -1023,17 +1013,13 @@ static void base10(double value, double * mantissa, double * exponent)
    }
    else if (mant < 1.0)
    {
-      while (10.0 > (p * mant))
+      while (10.0 > (pb->p * mant) && (++pb != (basepow + 9)))
       {
-         p = pb->p * pb->p;
-         ++pb;
       }
-
-      p = 10.0;
 
       while(pb-- != basepow)
       {
-         if(p > (pb->p * mant))
+         if(10.0 > (pb->p * mant))
          {
             mant *= pb->p;
             expo -= pb->e;

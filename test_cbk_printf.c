@@ -106,7 +106,7 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 double sqrt(double val);
 int test_ssprintf()
 {
-   int bRet = 0;
+   int bRet = 1;
 
    static uint32_t inf  = 0x7f800000;
    static uint32_t ninf = 0xff800000;
@@ -368,7 +368,7 @@ int test_ssprintf()
 int main(int argc, char * argv[])
 {
     int iRet = 1;
-    if(test_ssprintf())
+    if(!test_ssprintf())
          goto Exit;
 
     iRet = 0;

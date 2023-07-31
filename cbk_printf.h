@@ -185,10 +185,11 @@ size_t ssprintf(char * pDst, const char * pFmt, ...) __PRINTF_LIKE_ARGS (2, 3); 
 typedef void (PRINTF_CALLBACK) (void * pUserData, const char * pSrc, size_t Length);
 
 /* ------------------------------------------------------------------------- *\
-   cbk_printf generates vsnprintf like argument data by calling a user
+   cbk_printf generates vsnprintf like character output by calling a user
    defined write callback for the parts of the generated character data.
    The function returns the length of the overall written data but does not
-   terminate the written string.
+   terminate the written output data string.
+   See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
 size_t cbk_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val);
 

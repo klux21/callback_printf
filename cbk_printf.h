@@ -1,14 +1,14 @@
 /*****************************************************************************\
 *                                                                             *
-*  FILE NAME   :  cbk_printf.h                                                *
+*  FILE NAME:     cbk_printf.h                                                *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  DESCRIPTION :  system independent *sprintf wrapper functions               *
+*  DESCRIPTION:   system independent (v)s(n)printf wrapper functions          *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT   : (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)              *
+*  COPYRIGHT:     (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -16,8 +16,8 @@
 *  code according to the following conditions:                                *
 *                                                                             *
 *  This program is free software: you can redistribute it and/or modify       *
-*  it under the terms of the GNU General Public License as published by       *
-*  the Free Software Foundation, either version 3 of the License.             *
+*  it under the terms of the GNU General Public License version 3 as          *
+*  published by the Free Software Foundation.                                 *
 *                                                                             *
 *  This program is distributed in the hope that it will be useful,            *
 *  but WITHOUT ANY WARRANTY; without even the implied warranty of             *
@@ -32,8 +32,8 @@
 *  erlaubt diesen Sourcecode folgenden Bedingungen zu verwenden:              *
 *                                                                             *
 *  Dieses Programm ist Freie Software: Sie können es unter den Bedingungen    *
-*  der GNU General Public License, wie von der Free Software Foundation,      *
-*  Version 3 der Lizenz weiter verteilen und/oder modifizieren.               *
+*  der GNU General Public License Version 3 der Free Software Foundation      *
+*  weiter verteilen und/oder modifizieren.                                    *
 *                                                                             *
 *  Dieses Programm wird in der Hoffnung bereitgestellt, dass es nützlich      *
 *  sein wird, jedoch OHNE JEDE GEWÄHR,; sogar ohne die implizite              *
@@ -46,7 +46,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  REPOSITORY  :  https://github/klux21/cbk_printf                            *
+*  REPOSITORY:    https://github/klux21/cbk_printf                            *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *

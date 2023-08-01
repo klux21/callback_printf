@@ -2459,7 +2459,7 @@ size_t cbk_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va
                }
                else if((*pe | 0x20) == 'a')
                {
-                  long double ldbl = va_arg(val, double);
+                  long double ldbl = va_arg(val, long double);
                   zRet += cbk_print_long_double(pUserData, pCB, ldbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? 15 : precision, minimum_width);
                }
                else

@@ -936,7 +936,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
    Just read the comments of rebasel for details about the algorithm.
 \* ------------------------------------------------------------------------- */
 
-static void base10l(long double value, long double * mantissa, long double * exponent)
+static void base10l(long double value, long double * mantissa, int32_t * exponent)
 {
    static struct _basepows {  long double p; long double rp; int32_t e; } basepow [16] = {{1e+1l, 1e-1l, 1}, {1e+2l, 1e-2l, 2}, {1e+4l, 1e-4l, 4}, {1e+8l, 1e-8l, 8}, {1e+16l, 1e-16l, 16}, {1e+32l, 1e-32l, 32}, {1e+64l, 1e-64l, 64}, {1e+128l, 1e-128l, 128},
                                                                                           {1e+256l, 1e-256l, 256}, {1e+512l, 1e-512l, 512}, {1e+1024l, 1e-1024l, 1024}, {1e+1024l, 1e-1024l, 1024}, {1e+2048l, 1e-2048l, 2048}, {1e+4096l, 1e-4096l, 4096}};
@@ -978,7 +978,7 @@ static void base10l(long double value, long double * mantissa, long double * exp
 
    * mantissa = sign ? -mant : mant;
    * exponent = expo;
-} /* void base10l(double value, double * mantissa, double * exponent) */
+} /* void base10l(double value, double * mantissa, int32_t * exponent) */
 #endif /* _WIN32 */
 
 
@@ -988,7 +988,7 @@ static void base10l(long double value, long double * mantissa, long double * exp
    Just read the comments of rebase for details about the algorithm.
 \* ------------------------------------------------------------------------- */
 
-static void base10(double value, double * mantissa, double * exponent)
+static void base10(double value, double * mantissa, int32_t * exponent)
 {
    static struct _basepows {  double p; double rp; int32_t e; } basepow [16] = {{1e+1, 1e-1, 1}, {1e+2, 1e-2, 2}, {1e+4, 1e-4, 4}, {1e+8, 1e-8, 8}, {1e+16, 1e-16, 16}, {1e+32, 1e-32, 32}, {1e+64, 1e-64, 64}, {1e+128, 1e-128, 128}, {1e+256, 1e-256, 256}};
    struct _basepows * pb = basepow;
@@ -1029,7 +1029,7 @@ static void base10(double value, double * mantissa, double * exponent)
 
    * mantissa = sign ? -mant : mant;
    * exponent = expo;
-} /* void base10(double value, double * mantissa, double * exponent) */
+} /* void base10(double value, double * mantissa, int32_t * exponent) */
 
 
 
@@ -1070,7 +1070,7 @@ static void base10(double value, double * mantissa, double * exponent)
       multiply the value by that
 \* ------------------------------------------------------------------------- */
 
-static void rebasel(long double value, uint32_t base, long double * mantissa, long double * exponent)
+static void rebasel(long double value, uint32_t base, long double * mantissa, int32_t * exponent)
 {
    if(base == 10)
    { /* try to be a little bit more exact by using base10l or base10 which are using a table of precalculated decimal exponent values */
@@ -1146,7 +1146,7 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, lo
       * mantissa = sign ? -mant : mant;
       * exponent = expo;
    }
-} /* void rebasel(long double value, uint32_t base, long double * mantissa, long double * exponent) */
+} /* void rebasel(long double value, uint32_t base, long double * mantissa, int32_t * exponent) */
 
 
 
@@ -1187,7 +1187,7 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, lo
       multiply the value by that
 \* ------------------------------------------------------------------------- */
 
-static void rebase(double value, uint32_t base, double * mantissa, double * exponent)
+static void rebase(double value, uint32_t base, double * mantissa, int32_t * exponent)
 {
    if(base == 10)
    { /* try to be a little bit more exact by using base10 which is using a table of precalculated decimal exponent values */
@@ -1259,7 +1259,7 @@ static void rebase(double value, uint32_t base, double * mantissa, double * expo
       * mantissa = sign ? -mant : mant;
       * exponent = expo;
    }
-} /* void rebase(double value, uint32_t base, double * mantissa, double * exponent) */
+} /* void rebase(double value, uint32_t base, double * mantissa, int32_t * exponent) */
 
 
 
@@ -1599,7 +1599,6 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
    }
    else
    {
-      long double  expo;
       long double  mant;
       int32_t iexpo;
 
@@ -1611,8 +1610,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       else
       {
          /* calculate mantisse and exponent for base 10 */
-         rebasel(value, base, &mant, &expo);
-         iexpo = (int32_t) expo;
+         rebasel(value, base, &mant, &iexpo);
 
          if(mant < 0.0)
          {
@@ -1923,7 +1921,6 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
    }
    else
    {
-      double  expo;
       double  mant;
       int32_t iexpo;
 
@@ -1935,8 +1932,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       else
       {
          /* calculate mantisse and exponent for base 10 */
-         rebase(value, base, &mant, &expo);
-         iexpo = (int32_t) expo;
+         rebase(value, base, &mant, &iexpo);
 
          if(mant < 0.0)
          {

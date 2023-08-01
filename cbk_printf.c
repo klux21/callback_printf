@@ -1518,8 +1518,8 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
 static void smemcpy(void * pdst, const void * psrc, size_t count)
 {
-   uint8_t * pd = pdst;
-   const uint8_t * ps = psrc;
+   uint8_t * pd = (uint8_t *) pdst;
+   const uint8_t * ps = (const uint8_t *) psrc;
 
    while(count--)
       *pd++ = *ps++;

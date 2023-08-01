@@ -1,6 +1,6 @@
 #if 0
-cc -Wall -o test_cbk_printf -I .  test_cbk_printf.c cbk_printf.c
-./test_cbk_printf
+cc -Wall -ggdb -o _test_cbk_printf -I . test_cbk_printf.c cbk_printf.c
+./_test_cbk_printf
 exit $?
 #endif
 

@@ -1,6 +1,6 @@
 /*****************************************************************************\
 *                                                                             *
-*  FILE NAME:     cbk_printf.h                                                *
+*  FILE NAME:     callback_printf.h                                           *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -46,7 +46,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  REPOSITORY:    https://github/klux21/cbk_printf                            *
+*  REPOSITORY:    https://github/klux21/callback_printf                       *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -66,16 +66,16 @@
 *              to any of the common floation point format specifiers e, f, g, *
 *              E, F, G, Le, Lf, Lg, LE, LF and LG                             *
 *              (I did miss something like that since a long time. ;o) )       *
-*              cbk_printf supports the Windows I64 and I32 integer length     *
-*              modifiers as well as the additional modifiers l1, l2, l4 and   *
-*              l8 for 8, 16, 32 and 64 bit wide integer arguments.            *
+*              callback_printf supports the Windows I64 and I32 integer       *
+*              length modifiers as well as the additional modifiers l1, l2,   *
+*              l4 and l8 for 8, 16, 32 and 64 bit wide integer arguments.     *
 *              Wide characters and wide character string are always converted *
 *              to UTF-8 output. You can use l1, l2 and l4 length modiefiers   *
 *              for converting string of 8, 16 or 32 bit wide character size   *
 *              on every platform.                                             *
 *              And last but not least is it pretty ease to create your own    *
 *              fully featured and fast sprintf compatible string generator    *
-*              function by using cbk_printf whithout worrying about           *
+*              function by using callback_printf whithout worrying about      *
 *              portability. This software is more than a toy.                 *
 * Patents:     Google did patent their floating point base conversion.        *
 *              I decided not doing the same with the unusual algorithm that   *
@@ -90,13 +90,14 @@
 *              The output of very big values with %f happens in %e format.    *
 *              The output length of the mantissa of floating points is        *
 *              limited in size.                                               *
-*              cbk_printf does not care about any differences of the locale.  *
+*              callback_printf does not care about any differences of the     *
+*              users locale.                                                  *
 *                                                                             *
 \*****************************************************************************/
 
 
-#ifndef __CBK_PRINTF_H__
-#define __CBK_PRINTF_H__
+#ifndef __CALLBACK_PRINTF_H__
+#define __CALLBACK_PRINTF_H__
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -169,7 +170,7 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
 /* ------------------------------------------------------------------------- *\
    svsnprintf, svsprintf, svsnprintf and ssprintf are system independent
    wrappers for vsnprintf, vsprintf, snprintf and sprintf which are using
-   cbk_printf internally.
+   callback_printf internally.
    They are using (v)sprintf like arguments and format strings.
 \* ------------------------------------------------------------------------- */
 size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list ap);
@@ -178,27 +179,27 @@ size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) __PRINTF_LIKE_AR
 size_t ssprintf(char * pDst, const char * pFmt, ...) __PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
 
 /* ------------------------------------------------------------------------- *\
-  User defined callback function for cbk_printf for writing the output data.
-  If length is zero then there is an error in format string and pSrc points
-  to the problematic position in format string if it is not NULL. 
+  User defined callback function for callback_printf for writing the output
+  data. If length is zero then there is an error in format string and pSrc
+  points to the problematic position in format string if it is not NULL. 
 \* ------------------------------------------------------------------------- */
 typedef void (PRINTF_CALLBACK) (void * pUserData, const char * pSrc, size_t Length);
 
 /* ------------------------------------------------------------------------- *\
-   cbk_printf generates vsnprintf like character output by calling a user
-   defined write callback for the parts of the generated character data.
+   callback_printf generates vsnprintf like character output by calling a
+   user defined write callback for the parts of the generated character data.
    The function returns the length of the overall written data but does not
    terminate the written output data string.
    See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
-size_t cbk_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val);
+size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val);
 
 
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
 
-#endif /* __CBK_PRINTF_H__ */
+#endif /* __CALLBACK_PRINTF_H__ */
 
 /* ========================================================================= *\
    END OF FILE

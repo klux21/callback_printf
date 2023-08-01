@@ -1,24 +1,24 @@
 #if 0
-cc -Wall -ggdb -o _test_cbk_printf -I . test_cbk_printf.c cbk_printf.c
-./_test_cbk_printf
+cc -Wall -ggdb -o _test_callback_printf -I . test_callback_printf.c callback_printf.c
+./_test_callback_printf
 exit $?
 #endif
 
 /*****************************************************************************\
 *                                                                             *
-*  FILENAME    :  test_cbk_printf.c                                           *
+*  FILENAME:      test_callback_printf.c                                      *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  DESCRIPTION : Tests of cbk_printf related functions                        *
+*  DESCRIPTION:   tests of callback_printf related functions                  *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT   : (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)              *
+*  COPYRIGHT:     (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  REPOSITORY  :  https://github/klux21/cbk_printf                            *
+*  REPOSITORY:     https://github/klux21/callback_printf                      *
 *                                                                             *
 \*****************************************************************************/
 
@@ -28,7 +28,7 @@ exit $?
 #include <float.h>
 #include <string.h>
 #include <inttypes.h>
-#include <cbk_printf.h>
+#include <callback_printf.h>
 
 /* int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); */
 
@@ -54,27 +54,27 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 
     if(sRet != snRet)
     {
-       printf("test_cbkprintf: svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", sRet, buf, call, snRet);
+       printf("test_callback_printf: svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", sRet, buf, call, snRet);
        goto Exit;
     }
 
     if(buf2[17] != '\xfe')
     {
        buf2[24] = '\0'; 
-       printf("test_cbkprintf: svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", snRet, buf2, call);
+       printf("test_callback_printf: svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", snRet, buf2, call);
        goto Exit;
     }
 
     if(buf[sRet+1] != '\xfe')
     {
        buf2[24] = '\0';
-       printf("test_cbkprintf: svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", sRet, buf, call);
+       printf("test_callback_printf: svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", sRet, buf, call);
        goto Exit;
     }
 
     if(strncmp(buf, buf2, 17))
     {
-       printf("test_cbkprintf: written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", sRet, buf, snRet, buf2, call);
+       printf("test_callback_printf: written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", sRet, buf, snRet, buf2, call);
        goto Exit;
     }
 
@@ -86,13 +86,13 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 
     if(sRet != strlen(buf))
     {
-       printf("test_cbkprintf: output length %zd (%s) for '%s' does not match retval %zd !\n", strlen(buf), buf, call, sRet);
+       printf("test_callback_printf: output length %zd (%s) for '%s' does not match retval %zd !\n", strlen(buf), buf, call, sRet);
        goto Exit;
     }
 
     if(strcmp(buf, pout))
     {
-       printf("test_cbkprintf: output '%s' to '%s' doesn't match expected '%s' !\n", buf, call, pout);
+       printf("test_callback_printf: output '%s' to '%s' doesn't match expected '%s' !\n", buf, call, pout);
        goto Exit;
     }
     

@@ -1,6 +1,6 @@
 /*****************************************************************************\
 *                                                                             *
-*  FILE NAME:    cbk_printf.c                                                 *
+*  FILE NAME:    callback_printf.c                                            *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:    (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)              *
+*  COPYRIGHT:     (c) 2023 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -46,7 +46,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  REPOSITORY  :  https://github/klux21/cbk_printf                            *
+*  REPOSITORY:    https://github/klux21/callback_printf                       *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -66,16 +66,16 @@
 *              to any of the common floation point format specifiers e, f, g, *
 *              E, F, G, Le, Lf, Lg, LE, LF and LG                             *
 *              (I did miss something like that since a long time. ;o) )       *
-*              cbk_printf supports the Windows I64 and I32 integer length     *
-*              modifiers as well as the additional modifiers l1, l2, l4 and   *
-*              l8 for 8, 16, 32 and 64 bit wide integer arguments.            *
+*              callback_printf supports the Windows I64 and I32 integer       *
+*              length modifiers as well as the additional modifiers l1, l2,   *
+*              l4 and l8 for 8, 16, 32 and 64 bit wide integer arguments.     *
 *              Wide characters and wide character string are always converted *
 *              to UTF-8 output. You can use l1, l2 and l4 length modiefiers   *
 *              for converting string of 8, 16 or 32 bit wide character size   *
 *              on every platform.                                             *
 *              And last but not least is it pretty ease to create your own    *
 *              fully featured and fast sprintf compatible string generator    *
-*              function by using cbk_printf whithout worrying about           *
+*              function by using callback_printf whithout worrying about      *
 *              portability. This software is more than a toy.                 *
 * Patents:     Google did patent their floating point base conversion.        *
 *              I decided not doing the same with the unusual algorithm that   *
@@ -90,7 +90,8 @@
 *              The output of very big values with %f happens in %e format.    *
 *              The output length of the mantissa of floating points is        *
 *              limited in size.                                               *
-*              cbk_printf does not care about any differences of the locale.  *
+*              callback_printf does not care about any differences of the     *
+*              users locale.                                                  *
 *                                                                             *
 \*****************************************************************************/
 
@@ -100,7 +101,7 @@
 #include <limits.h>
 #include <float.h> /* LDBL_MAX */
 
-#include <cbk_printf.h>
+#include <callback_printf.h>
 
 #ifdef _WIN32
 #pragma warning(disable : 4100 4127 4706 4710)
@@ -162,7 +163,7 @@ const uint8_t CharType[256] = { 0x10,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,   0x01
    returned.
    If pDst is NULL then no output happens and pDstSize will be set to the
    required size of the destination buffer to hold the whole converted input
-   and the source size and pointer are unchanged.
+   and the source size and source pointer are unchanged.
 \* ------------------------------------------------------------------------- */
 
 int iUtf8Decode (void **  pDst,         /* destination buffer */
@@ -384,7 +385,7 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
    (e.g. if a source value exceeds 32 bit). In success case 0 gets returned.
    If pDst is NULL then no output happens and pDstSize will be set to the
    required size of the destination buffer to hold the whole converted input
-   and the source size and pointer are unchanged.
+   and the source size and source pointer are unchanged.
 \* ------------------------------------------------------------------------- */
 
 int iUtf8Encode (void **  pDst,         /* destination buffer */
@@ -599,7 +600,7 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
 
 
 /* ========================================================================= *\
-   cbk_printf related stuff ...
+   callback_printf related stuff ...
 \* ========================================================================= */
 
 static const char * pzeros  = "00000000000000000000000000000000"; /* blanks to copy */
@@ -1538,8 +1539,8 @@ static void sstrcpy(char * pdst, const char * psrc)
 } /* static sstrcpy(char * pdst, const char * psrc) */
 
 /* ------------------------------------------------------------------------- *\
-   cbk_print_long_double prints a double using a cbk_printf callback function
-   and returns the written string data length.
+   cbk_print_long_double prints a double using a callback_printf callback
+   function and returns the written string data length.
 \* ------------------------------------------------------------------------- */
 
 static size_t cbk_print_long_double(void *            pUserData,      /* user specific context for the callback */
@@ -1860,8 +1861,8 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 
 
 /* ------------------------------------------------------------------------- *\
-   cbk_print_double prints a double using a cbk_printf callback function
-   and returns the written string data length.
+   cbk_print_double prints a double using a callback_printf callback
+   function and returns the written string data length.
 \* ------------------------------------------------------------------------- */
 
 static size_t cbk_print_double(void *            pUserData,      /* user specific context for the callback */
@@ -2137,13 +2138,14 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
 
 
 /* ------------------------------------------------------------------------- *\
-   cbk_printf generates vsnprintf like character data by calling a user
-   defined write callback for the parts of the generated character data.
+   callback_printf generates vsnprintf like character output by calling a
+   user defined write callback for the parts of the generated character data.
    The function returns the length of the overall written data but does not
    terminate the written output data string.
+   See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
 
-size_t cbk_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val)
+size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val)
 {
    size_t       zRet = 0;
    const char * pf   = pFmt;
@@ -2796,11 +2798,11 @@ struct _STRING_WRITE_DATA
 
 
 /* ------------------------------------------------------------------------- *\
-   vStrWriteCbk is our callback for cbk_printf that is used by the
+   vStrWriteCallback is our callback for callback_printf that is used by the
    s*sprintf functions
 \* ------------------------------------------------------------------------- */
 
-static void vStrWriteCbk(void * pUserData, const char * pSrc, size_t Length)
+static void vStrWriteCallback(void * pUserData, const char * pSrc, size_t Length)
 {
    STRING_WRITE_DATA * pwd = (STRING_WRITE_DATA *) pUserData;
 
@@ -2830,12 +2832,12 @@ static void vStrWriteCbk(void * pUserData, const char * pSrc, size_t Length)
       if(!pwd->Err)
          pwd->Err = EINVAL; /* invalid argument detected */
    }
-} /* void vStrWriteCbk(void * pUserData, const char * pSrc, size_t Length) */
+} /* void vStrWriteCallback(void * pUserData, const char * pSrc, size_t Length) */
 
 
 
 /* ------------------------------------------------------------------------- *\
-   svsprintf is a wrapper for vsprintf that bases on cbk_printf.J
+   svsprintf is a wrapper for vsprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
 
 size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
@@ -2850,7 +2852,7 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
       0
    };
 
-   size_t zRet = cbk_printf(&swd, &vStrWriteCbk, pFmt, val);
+   size_t zRet = callback_printf(&swd, &vStrWriteCallback, pFmt, val);
 
    if(pDst && swd.DstSize)
       pDst[zRet] = '\0'; /* add the string terminating character */
@@ -2864,7 +2866,7 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
 
 
 /* ------------------------------------------------------------------------- *\
-   svsprintf is a wrapper for vsprintf that bases on cbk_printf.
+   svsprintf is a wrapper for vsprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
 
 size_t svsprintf(char * pDst, const char * pFmt, va_list val)
@@ -2875,7 +2877,7 @@ size_t svsprintf(char * pDst, const char * pFmt, va_list val)
 
 
 /* ------------------------------------------------------------------------- *\
-   ssnprintf is a wrapper for snprintf that bases on cbk_printf.
+   ssnprintf is a wrapper for snprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
 
 size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
@@ -2891,7 +2893,7 @@ size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
 
 
 /* ------------------------------------------------------------------------- *\
-   ssprintf is a wrapper for sprintf that bases on cbk_printf.
+   ssprintf is a wrapper for sprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
 
 size_t ssprintf(char * pDst, const char * pFmt, ...)

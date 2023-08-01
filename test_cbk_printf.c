@@ -30,7 +30,7 @@ exit $?
 #include <inttypes.h>
 #include <cbk_printf.h>
 
-int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); 
+/* int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); */
 
 int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 {

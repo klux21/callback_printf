@@ -332,6 +332,10 @@ int test_ssprintf()
     TEST_CBKPRINTF( "%.3Le", "1.000e+03",   LONG_DOUBLE_ARG,  1e+3 );
     TEST_CBKPRINTF( "%.3Le", "1.000e-03",   LONG_DOUBLE_ARG,  1e-3 );
 
+    TEST_CBKPRINTF( "%.3a", "-0x6.8dcp-3",  DOUBLE_ARG,  -1.6e-3 );
+    TEST_CBKPRINTF( "%.3A", "-0X6.8DCP-3",  DOUBLE_ARG,  -1.6e-3 );
+    TEST_CBKPRINTF( "%.3La", "-0x6.8dcp-3", LONG_DOUBLE_ARG,  -1.6e-3 );
+    TEST_CBKPRINTF( "%.3LA", "-0X6.8DCP-3", LONG_DOUBLE_ARG,  -1.6e-3 );
 
     TEST_CBKPRINTF( "%5.2e%.0f",  "  inf3", DOUBLE_ARG, *(float*) &inf ARG(3.0));
     TEST_CBKPRINTF( "%5.2e%.0f",  " -inf3", DOUBLE_ARG, *(float*) &ninf ARG(3.0));

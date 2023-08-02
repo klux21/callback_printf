@@ -963,7 +963,7 @@ static void base10l(long double value, long double * mantissa, int32_t * exponen
    }
    else if (mant < 1.0l)
    {
-      while (10.0l > (pb->p * mant) && (++pb != (basepow + 14)))
+      while (10.0l > (pb->p * mant) && (++pb)->e)
       {
       }
 
@@ -1014,7 +1014,7 @@ static void base10(double value, double * mantissa, int32_t * exponent)
    }
    else if (mant < 1.0)
    {
-      while (10.0 > (pb->p * mant) && (++pb != (basepow + 9)))
+      while (10.0 > (pb->p * mant) && (++pb)->e)
       {
       }
 

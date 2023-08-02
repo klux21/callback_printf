@@ -100,7 +100,6 @@
 #define __CALLBACK_PRINTF_H__
 
 #include <stddef.h>
-#include <stdlib.h>
 #include <stdarg.h>
 #include <inttypes.h> /* a wrapper for Microsoft Windows can be found in the Win32 subdirectory */
 

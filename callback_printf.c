@@ -1366,19 +1366,20 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
 {
    char * pb = pBuf;
    long double dbase = base;
-   char * pe;
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
    mant += 0.5 * powil(dbase, -(int32_t) minwidth); 
-   if(mant >= dbase)
-   {
+
+   while(mant >= dbase)
+   {/* should never be reqired but ensure that */
       mant /= dbase;
       ++iexpo;
    }
 
-   *pb++ = digit[(uint32_t) mant];
-   mant = (mant - (uint32_t) mant) * dbase;
+   count = (uint32_t) mant;
+   mant = (mant - count) * dbase;
+   *pb++ = digit[count];
 
    if(minwidth)
    {
@@ -1399,7 +1400,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
 
    /* write the exponent */
    if (base == 16)
-       *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
+      *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
    else
       *pb++ = digit[0xe];
 
@@ -1414,25 +1415,33 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
       count = (uint32_t) iexpo;
    }
 
-   if((count < base) && (base != 16))
-      *pb++ = '0'; /* the C standard requires an exponent of at least 2 digits */
+   if(count < base)
+   { /* the exponent has only 1 digit */
+      if(base != 16)
+         *pb++ = '0'; /* the C standard expects at least 2 digits exept for base 16 */
 
-   pe = pb;
-   while(count >= base)
-   {
-      uint32_t tmp = count;
-      count /= base;
-      *pb++ = digit[tmp - (count * base)];
+      *pb++ = digit[count];
+      count = (uint32_t) (pb - pBuf);
    }
-   *pb++ = digit[count];
+   else
+   {
+      char * ps = pb;
+      while(count >= base)
+      {
+         uint32_t tmp = count;
+         count /= base;
+         *pb++ = digit[tmp - (count * base)];
+      }
+      *pb++ = digit[count];
 
-   count = (uint32_t) (pb - pBuf);
+      count = (uint32_t) (pb - pBuf);
 
-   while (--pb > pe)
-   {  /* inverted sequence of the digits */
-      char c = *pe;
-      *(pe++) = *pb;
-      *pb = c;
+      while (--pb > ps)
+      {  /* invert the sequence of the digits */
+         char c = *ps;
+         *(ps++) = *pb;
+         *pb = c;
+      }
    }
 
    return (count);
@@ -1458,8 +1467,9 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    uint32_t count;
 
    mant += 0.5 * powil(dbase, -iexpo - (int32_t) minwidth);
-   if(mant >= dbase)
-   {
+
+   while(mant >= dbase)
+   {/* should never be reqired but ensure that */
       ++iexpo;
       mant /= dbase;
    }
@@ -1713,19 +1723,20 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
 {
    char * pb    = pBuf;
    double dbase = base;
-   char * pe;
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
    mant += 0.5 * powi(dbase, -(int32_t) minwidth); 
-   if(mant >= dbase)
-   {
+
+   while(mant >= dbase)
+   { /* should neve be reqired but ensure that */
       mant /= dbase;
       ++iexpo;
    }
 
-   *pb++ = digit[(uint32_t) mant];
-   mant = (mant - (uint32_t) mant) * dbase;
+   count = (uint32_t) mant;
+   mant = (mant - count) * dbase;
+   *pb++ = digit[count];
 
    if(minwidth)
    {
@@ -1761,25 +1772,33 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
       count = (uint32_t) iexpo;
    }
 
-   if((count < base) && (base != 16))
-      *pb++ = '0'; /* the C standard requires an exponent of at least 2 digits */
+   if(count < base)
+   { /* the exponent has only 1 digit */
+      if(base != 16)
+         *pb++ = '0'; /* the C standard expects at least 2 digits exept for base 16 */
 
-   pe = pb;
-   while(count >= base)
-   {
-      uint32_t tmp = count;
-      count /= base;
-      *pb++ = digit[tmp - (count * base)];
+      *pb++ = digit[count];
+      count = (uint32_t) (pb - pBuf);
    }
-   *pb++ = digit[count];
+   else
+   {
+      char * ps = pb;
+      while(count >= base)
+      {
+         uint32_t tmp = count;
+         count /= base;
+         *pb++ = digit[tmp - (count * base)];
+      }
+      *pb++ = digit[count];
 
-   count = (uint32_t) (pb - pBuf);
+      count = (uint32_t) (pb - pBuf);
 
-   while (--pb > pe)
-   {  /* inverted sequence of the digits */
-      char c = *pe;
-      *(pe++) = *pb;
-      *pb = c;
+      while (--pb > ps)
+      {  /* invert the sequence of the digits */
+         char c = *ps;
+         *(ps++) = *pb;
+         *pb = c;
+      }
    }
 
    return (count);
@@ -1805,8 +1824,9 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    uint32_t count;
 
    mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth); 
-   if(mant >= dbase)
-   {
+
+   while(mant >= dbase)
+   {/* should never be reqired but ensure that */
       ++iexpo;
       mant /= dbase;
    }

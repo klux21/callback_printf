@@ -1,16 +1,18 @@
 callback_printf? But why even another sprintf clone? 
 Because it is one of the most important C functions but the lack
 of the portability of the format specifiers especially between
-Windows and Posix systems can be can be very annoying and the
-workaround and required adjustments may cost a lot of time. 
-Right there are a plenty of other implementations already that
-you can use as well. But most don't really care the performance,
-the portability, lack floating point and especially long double
-support, don't convert of Unicode strings to UTF-8 and don't care
-much about the conformance to the C standard and even less about
-the great printf parameter validation features of the gcc which
-is a great help for the prevention unexpected crashes within
-a printf like function. 
+Windows and Posix systems can be can be very annoying and alle
+the required workaround and adjustments may cost a lot of time.
+Who wants to mess around with different prefixes or format
+strings on every new platform? 
+OK - there are a plenty of other implementations already that
+you can use as well. But most those don't really care the
+performance and the portability, lack often floating point and
+especially long double support, don't convert your Unicode
+strings to UTF-8 and don't care much about the conformance
+to the C standard and even less about the great printf parameter
+validation features of the gcc which is a great help for
+preventing unexpected crashes within printf like function. 
 You don't want any internal locks, unnecessary allocations or
 strange implementations which may slow down your even if every
 microsecond counts. callback_printf uses only the stack of the

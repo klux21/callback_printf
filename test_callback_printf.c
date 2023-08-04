@@ -261,6 +261,8 @@ int test_ssprintf()
     TEST_CBKPRINTF( "%H",            "",               INT_ARG, -1 );
     TEST_CBKPRINTF( "x%cx",          "xXx",            INT_ARG, 0x100+'X' );
     TEST_CBKPRINTF( "%%0",           "%0",             NO_ARG, 0 );
+    TEST_CBKPRINTF( "%%%%%%%%",      "%%%%",           NO_ARG, 0 );
+    TEST_CBKPRINTF( "%%%%%d%%%%",    "%%42%%",         INT_ARG, 42 );
     TEST_CBKPRINTF( "%hx",           "2345",           INT_ARG, 0x12345 );
     TEST_CBKPRINTF( "%hhx",          "23",             INT_ARG, 0x123 );
     TEST_CBKPRINTF( "%hhx",          "45",             INT_ARG, 0x12345 );

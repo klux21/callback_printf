@@ -11,13 +11,14 @@ great printf parameter validation features of the gcc which are a
 great help to prevent unexpected crashes. 
 You don't want any internal locks, unnecessary allocations or
 strange implementation slow down your output if every microsecond
-count. callback_printf uses only the stack of the thread which
+counts. callback_printf uses only the stack of the thread 
 which calls it. And you want to be able to debug your code and
-to find the reason in case of errors.
+to find the reasons in case of any errors.
 I guess that every programmer who really likes C hates the
-trouble with printf and even more the problems and the difficulties
-to use the argument format for his very own functions. 
-And if it comes to me it was allways a wish of me to finally get
+trouble with printf like functions and even more the problems
+and the difficulties to use the powerful argument format for very
+own special functions. 
+I it comes to me it was allways a wish of me to finally get
 rid of all of the problems and portability issues with it that
 most programmers are struggling with. And I did want some options
 for using arguments of type int8_t, int16_t,

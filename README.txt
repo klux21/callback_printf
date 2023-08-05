@@ -1,38 +1,39 @@
 callback_printf? But why even another sprintf clone? 
 Because it is one of the most important C functions but the lack
 of the portability of the format specifiers especially between
-Windows and Posix systems can be can be very annoying and alle
-the required workaround and adjustments may cost a lot of time.
+Windows and Posix systems can be can be very annoying. 
+The required workarounds and adjustments cost a lot of time.
 Who wants to mess around with different prefixes or format
 strings on every new platform? 
 OK - there are a plenty of other implementations already that
 you can use as well. But most those don't really care the
-performance and the portability, lack often floating point and
-especially long double support, don't convert your Unicode
+performance and the portability, lack often floating point 
+and especially long double support, don't convert Unicode
 strings to UTF-8 and don't care much about the conformance
-to the C standard and even less about the great printf parameter
-validation features of the gcc which is a great help for
+to the C standard and even less about the printf parameter
+validation features of the gcc which are a great thing for
 preventing unexpected crashes within printf like function. 
 You don't want any internal locks, unnecessary allocations or
-strange implementations which may slow down your even if every
-microsecond counts. callback_printf uses only the stack of the
-thread  which calls it and uses neither locks nor allocations.
-And you are able to debug it like any other part of your own
-code if it doesn't work as expected.
+strange implementations which may slow down your code even if
+every microsecond counts. callback_printf uses only the stack
+of the calling thread and uses neither locks nor allocations.
+And you are able to debug and fix problems very easy if the
+function doesn't really work as expected.
 I guess that every programmer who really likes C hates the
 trouble with printf like functions and even more the problems
-and the difficulties to use their powerful argument format for
-very own output generation. 
-If it comes to me it was allways a wish of me to finally get
-rid of all those problems and the bunch of portability issues
-that most programmers are struggling with. And I did want some
+and the difficulties if he want to use the argument format
+for own output functions or wants to add  extensions to that
+format. 
+If it comes to me it was always a wish of me to get rid of
+all this trouble and the portability issues that most
+programmers are struggling with. And I did want to add some
 extra length specifiers for using arguments of type int8_t,
-int16_t, int32_t and int64_t which  are available in the 
-inttypes.h and the since C11 in stdint.h now.
+int16_t, int32_t and int64_t which can be found since
+Posix 98 in inttypes.h and as well in stdint.h since C11 now.
 In the C 23 standard there will be be some different length
-specifiers instead of the l1, l2, l3 or l8 prefixes that
+specifiers for that then the l1, l2, l3 or l8 prefixes that
 callback_printf uses. But it's not a big thing to update the
-code for supporting those additionally once the new C standard
+code for supporting the new prefixes once the new C standard
 is available.
 
 Why GPLv3? Well it took a lot of time to implement that 

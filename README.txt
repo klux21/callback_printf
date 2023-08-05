@@ -38,16 +38,18 @@ is available.
 
 Why GPLv3? Well it took a lot of time to implement that 
 but of course I have to pay my rent as well. 
-Feel free to ask for a close source license for you very 
-private projects your company.
+Feel free to ask for a close source license for your 
+private projects or your company.
 
 I think 100,- Euros for companies who have up to 10 people,
 500,- Euros for companies who has up to 1000 people and 2000,-
 for all the really big once are a really fair price for
 an unlimited usage of this in all of their closed sourced
 source projects and for getting rid of the common problems with
-printf. And it's open source you are able to check whether the
-code and whether it sweets your requirements.
+sprintf. It's open source - feel free to check whether you like
+the implementation and whether the bunch of features is
+matching your requirements.
+
 
 Kind regards,
 

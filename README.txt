@@ -48,15 +48,9 @@ Feel free to ask for a close source license for your
 private projects or your company. Please be aware that
 callback_printf is easily to track down in binaries.
 It's really very simple and better to use it legally only.
-
-I think 100,- Euros for companies who have up to 10 people,
-500,- Euros for companies who has up to 1000 people and
-2000,- for all the really big once are a really fair price for
-an unlimited usage of this in all of their closed sourced
-source projects and for getting rid of the common problems
-with sprintf. It's open source - feel free to check whether
-you like the implementation and whether the bunch of features
-is matching your requirements.
+It's open source - feel free to check whether you like the
+implementation and whether the bunch of features is matching
+your requirements.
 
 
 Kind regards,

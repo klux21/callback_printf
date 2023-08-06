@@ -1,7 +1,7 @@
-callback_printf? But why even another sprintf clone? 
+callback_printf? Why even another sprintf clone? 
 Because it is one of the most important C functions but the
 lack of the portability of the format specifiers especially
-between Windows and Posix systems can be can be very annoying.
+between Windows and Posix systems can be be very annoying.
 The required workarounds and adjustments cost a lot of time.
 Who wants to mess around with different prefixes or format
 strings on every new platform?

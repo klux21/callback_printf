@@ -1642,7 +1642,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          if(!minwidth)
              minwidth = 1;
 
-         if(10.0 <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
+         if(10.0 <= (mant + 0.5 * powil(base, -(int32_t) (minwidth - 1))))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
          if(((int32_t) minwidth > E) && (E >= -4))

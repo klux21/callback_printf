@@ -19,7 +19,7 @@ every microsecond counts.
 callback_printf uses only the stack of the calling thread and
 neither locks nor allocations.
 It allows you to debug and fix problems very easy if something
-function doesn't really work as expected.
+doesn't work as expected.
 I guess that every programmer who really likes C hates the
 trouble with printf like functions and even more the problems
 and the difficulties if he want to use the argument format
@@ -39,15 +39,16 @@ is available.
 An interesting feature is the unintentional and fast generic
 mantisse and exponent calculation for different numeric base
 systems. That why it is able to print doubles and long double
-values as floating point values converted to the
+values as floating point values converted to the numeric
 bases 2, 3, 4, 5, 6, 7, 8, 9, 10 and 16.
 
 Why GPLv3? Well it took a lot of time to implement that 
 but of course I have to pay my rent as well.
 Feel free to ask for a close source license for your
-private projects or your company. Please be aware that
-callback_printf is easily to track down in binaries.
-It's really very simple and better to use it legally only.
+private projects or your company. You should be aware
+that callback_printf is easily to track down in binaries.
+That's really very easy to do and better to use it legally
+only.
 It's open source - feel free to check whether you like the
 implementation and whether the bunch of features is matching
 your requirements.

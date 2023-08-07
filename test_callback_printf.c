@@ -357,6 +357,8 @@ int test_ssprintf()
     TEST_CBKPRINTF( "%5.2LE%.0Lf", "  NAN-3", LONG_DOUBLE_ARG, *(float*) &nan ARG((long double) -3.0));
     TEST_CBKPRINTF( "%5.2LE%.0Lf", " -NAN-3", LONG_DOUBLE_ARG, *(float*) &nnan ARG((long double) -3.0));
 
+    TEST_CBKPRINTF( "%# 01.1g",  " 1.e+01", DOUBLE_ARG, 9.8);
+    TEST_CBKPRINTF( "%# 01.1Lg", " 1.e+01", LONG_DOUBLE_ARG, 9.8l);
 
     TEST_CBKPRINTF("%+5.10r2E %+10.10r2e %+10.10r7e %+10.10r4e %+10.0e %+10.0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
                     DOUBLE_ARG, 3.9 ARG(7.89456123e-307) ARG(7.89456123e+307) ARG(789456123.0) ARG(0.789456123) ARG(DBL_MIN));

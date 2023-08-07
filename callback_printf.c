@@ -1637,12 +1637,17 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
 
       if(format == 'g')
       {
-         if(!minwidth)
-            minwidth = 1;
+         int32_t E = iexpo;
 
-         if(((int32_t) minwidth > iexpo) && (iexpo >= -4))
+         if(!minwidth)
+             minwidth = 1;
+
+         if(10.0 <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
+            ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
+
+         if(((int32_t) minwidth > E) && (E >= -4))
          {
-            length = print_long_double_f(buf, mant, iexpo, base, minwidth - 1 - iexpo, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
+            length = print_long_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
             if(!prefixing)
             { /* remove trailing zeros */
@@ -1968,12 +1973,17 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       format |= 0x20; /* compare lower case letters only */
       if(format == 'g')
       {
+         int32_t E = iexpo;
+
          if(!minwidth)
              minwidth = 1;
 
-         if(((int32_t) minwidth > iexpo) && (iexpo >= -4))
+         if(10.0 <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
+            ++E; /* The exponent increases because of rounding. So we need to agjust the value that we compare width for being conform to the C standard */
+
+         if(((int32_t) minwidth > E) && (E >= -4))
          {
-            length = print_double_f(buf, mant, iexpo, base, minwidth - 1 - iexpo, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
+            length = print_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
             if(!prefixing)
             { /* remove trailing zeros */

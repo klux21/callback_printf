@@ -1640,7 +1640,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          int32_t E = iexpo;
 
          if(!minwidth)
-             minwidth = 1;
+            minwidth = 1;
 
          if(10.0 <= (mant + 0.5 * powil(base, -(int32_t) (minwidth - 1))))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
@@ -2199,9 +2199,9 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
       pFmt = pf;  /* end of format string or first format specification */
    }
 
-   while(*pf++)
+   while(*pf)
    {
-      if(*pf == '%')
+      if(*(++pf) == '%')
       {  /* find begin of next format string and write out all the characters at once */
          const char * pe = pf + 1;
          while(*pe && (*pe != '%'))

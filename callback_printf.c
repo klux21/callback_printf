@@ -1372,7 +1372,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
    mant += 0.5 * powil(dbase, -(int32_t) minwidth); 
 
    while(mant >= dbase)
-   {/* should never be reqired but ensure that */
+   {/* ensure that */
       mant /= dbase;
       ++iexpo;
    }
@@ -1469,7 +1469,7 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    mant += 0.5 * powil(dbase, -iexpo - (int32_t) minwidth);
 
    while(mant >= dbase)
-   {/* should never be reqired but ensure that */
+   {/* ensure that */
       ++iexpo;
       mant /= dbase;
    }
@@ -1734,7 +1734,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
    mant += 0.5 * powi(dbase, -(int32_t) minwidth); 
 
    while(mant >= dbase)
-   { /* should neve be reqired but ensure that */
+   { /* ensure that */
       mant /= dbase;
       ++iexpo;
    }
@@ -1831,7 +1831,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth); 
 
    while(mant >= dbase)
-   {/* should never be reqired but ensure that */
+   {/* ensure that */
       ++iexpo;
       mant /= dbase;
    }

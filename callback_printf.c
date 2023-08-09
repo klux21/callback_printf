@@ -1365,7 +1365,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
                                   const char * digit)      /* array of digits to use */
 {
    char * pb = pBuf;
-   long double dbase = base;
+   long double dbase = base ? base : 16;
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
@@ -1399,8 +1399,10 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
    }
 
    /* write the exponent */
-   if (base == 16)
+   if (!base)
       *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
+   else if (base > 0xe)
+      *pb++ = '~';
    else
       *pb++ = digit[0xe];
 
@@ -1417,15 +1419,17 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
 
    if(count < base)
    { /* the exponent has only 1 digit */
-      if(base != 16)
-         *pb++ = '0'; /* the C standard expects at least 2 digits exept for base 16 */
-
+      *pb++ = '0';
       *pb++ = digit[count];
       count = (uint32_t) (pb - pBuf);
    }
    else
    {
       char * ps = pb;
+
+      if(!base)
+         base = 10;
+
       while(count >= base)
       {
          uint32_t tmp = count;
@@ -1688,8 +1692,8 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       }
       else if(format == 'a')
       {
-         length = print_long_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
-         prefixing = base;
+         length = print_long_double_e(buf, mant, iexpo, 0, minwidth, prefixing, digit);  /* print floating point number with an exponent */
+         prefixing = 16;
       }
       else if((format == 'e') || (iexpo > 80))
       {
@@ -1727,7 +1731,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
                              const char * digit)      /* array of digits to use */
 {
    char * pb    = pBuf;
-   double dbase = base;
+   double dbase = base ? base : 16;
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
@@ -1761,8 +1765,10 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
    }
 
    /* write the exponent */
-   if (base == 16)
+   if (!base)
       *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
+   else if (base > 0xe)
+      *pb++ = '~';
    else
       *pb++ = digit[0xe];
 
@@ -1779,15 +1785,17 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
 
    if(count < base)
    { /* the exponent has only 1 digit */
-      if(base != 16)
-         *pb++ = '0'; /* the C standard expects at least 2 digits exept for base 16 */
-
+      *pb++ = '0';
       *pb++ = digit[count];
       count = (uint32_t) (pb - pBuf);
    }
    else
    {
       char * ps = pb;
+
+      if(!base)
+          base = 10;
+
       while(count >= base)
       {
          uint32_t tmp = count;
@@ -2025,8 +2033,8 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       }
       else if(format == 'a')
       {
-         length = print_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
-         prefixing = base;
+         length = print_double_e(buf, mant, iexpo, 0, minwidth, prefixing, digit);  /* print floating point number with an exponent */
+         prefixing = 16;
       }
       else if((format == 'e') || (iexpo > 48))
       {
@@ -2378,7 +2386,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             else if((*pe | 0x20) == 'a')
             {
                double dbl = va_arg(val, double);
-               zRet += cbk_print_double(pUserData, pCB, dbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? (size_t)((DBL_MANT_DIG + 3) / 4) : precision, minimum_width);
+               zRet += cbk_print_double(pUserData, pCB, dbl, 2, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? (size_t) ((DBL_MANT_DIG + 3) / 4) : precision, minimum_width);
             }
             else if(*pe == 'S')
             {
@@ -2488,7 +2496,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else if((*pe | 0x20) == 'a')
                {
                   long double ldbl = va_arg(val, long double);
-                  zRet += cbk_print_long_double(pUserData, pCB, ldbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? (size_t)((LDBL_MANT_DIG + 3) / 4) : precision, minimum_width);
+                  zRet += cbk_print_long_double(pUserData, pCB, ldbl, 2, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? (size_t) ((LDBL_MANT_DIG + 3) / 4) : precision, minimum_width);
                }
                else
                { /* unknown format */

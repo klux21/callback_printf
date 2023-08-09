@@ -416,10 +416,10 @@ int run_tests()
     TEST_VSPRINTF( "%.3Le", "1.000e+03",   (long double)  1e+3 );
     TEST_VSPRINTF( "%.3Le", "1.000e-03",   (long double)  1e-3 );
 
-    TEST_VSPRINTF( "%.3a",  "-0x6.8dcp-3", (double)       -1.6e-3 );
-    TEST_VSPRINTF( "%.3A",  "-0X6.8DCP-3", (double)       -1.6e-3 );
-    TEST_VSPRINTF( "%.3La", "-0x6.8dcp-3", (long double)  -1.6e-3);
-    TEST_VSPRINTF( "%.3LA", "-0X6.8DCP-3", (long double)  -1.6e-3 );
+    TEST_VSPRINTF( "%.3a",  "-0x1.a37p-10", (double)      -1.6e-3 );
+    TEST_VSPRINTF( "%.3A",  "-0X1.A37P-10", (double)      -1.6e-3 );
+    TEST_VSPRINTF( "%.3La", "-0x1.a37p-10", (long double) -1.6e-3 );
+    TEST_VSPRINTF( "%.3LA", "-0X1.A37P-10", (long double) -1.6e-3 );
 
     TEST_VSPRINTF( "%5.2e%.0f",  "  inf3",   (double) *(float*) &inf ARG(3.0));
     TEST_VSPRINTF( "%5.2e%.0f",  " -inf3",   (double) *(float*) &ninf ARG(3.0));

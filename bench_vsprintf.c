@@ -244,8 +244,8 @@ int run_tests()
     TEST_VSPRINTF( "%#1.1g",        "8.e+08",                    (double) 789456123.0 );
     TEST_VSPRINTF( "%+#23.15Le",    " +1.000000000000000e-01",   (long double) 1.0e-1l );
     TEST_VSPRINTF( "%+#23.15Le",    " +3.900000000000000e+00",   (long double) 3.9l );
-    TEST_VSPRINTF( "%+#26.17Le",    " +7.89456123000000000e-307",(long double) 7.89456123e-307l );
-    TEST_VSPRINTF( "%+#26.17Le",    " +7.89456123000000000e+307",(long double) 7.89456123e+307l );
+    TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e-4307",(long double) 7.89456123e-4307l );
+    TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e+4307",(long double) 7.89456123e+4307l );
     TEST_VSPRINTF( "%+#23.15Le",    " +7.894561230000000e+08",   (long double) 789456123.0l );
     TEST_VSPRINTF( "%-#23.15Le",    "7.894561230000000e+08  ",   (long double) 789456123.0l );
     TEST_VSPRINTF( "%#23.15Le",     "  7.894561230000000e+08",   (long double) 789456123.0l );

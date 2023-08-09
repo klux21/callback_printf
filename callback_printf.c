@@ -2378,7 +2378,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             else if((*pe | 0x20) == 'a')
             {
                double dbl = va_arg(val, double);
-               zRet += cbk_print_double(pUserData, pCB, dbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? 13 : precision, minimum_width);
+               zRet += cbk_print_double(pUserData, pCB, dbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? DBL_DIG : precision, minimum_width);
             }
             else if(*pe == 'S')
             {
@@ -2488,7 +2488,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else if((*pe | 0x20) == 'a')
                {
                   long double ldbl = va_arg(val, long double);
-                  zRet += cbk_print_long_double(pUserData, pCB, ldbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? 15 : precision, minimum_width);
+                  zRet += cbk_print_long_double(pUserData, pCB, ldbl, 16, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? LDBL_DIG : precision, minimum_width);
                }
                else
                { /* unknown format */

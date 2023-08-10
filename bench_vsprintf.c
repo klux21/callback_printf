@@ -205,7 +205,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     {
        int64_t tm   = pr->te - pr->ts;
        int     failed = (outlen != pr->ret) || strcmp(pout, pr->pb);
-       printf("%10s:  %3ld.%.5ldus %s \"%s\"\n", pr->name, (long) (tm / 10000), (long) (tm % 10000), failed ? "!NOK!" : "  OK ", pr->pb);
+       printf("%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / 10000), (long) (tm % 10000), failed ? "!NOK!" : "  OK ", pr->pb);
        if(failed)
        bRet = 0;
        ++pr;

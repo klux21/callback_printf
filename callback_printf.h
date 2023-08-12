@@ -12,6 +12,10 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
+*  ORIGIN:        https://github/klux21/callback_printf                       *
+*                                                                             *
+* --------------------------------------------------------------------------- *
+*                                                                             *
 *  As long as there is no other contract you are allowed to use this source   *
 *  code according to the following conditions:                                *
 *                                                                             *
@@ -46,15 +50,11 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  REPOSITORY:    https://github/klux21/callback_printf                       *
-*                                                                             *
-* --------------------------------------------------------------------------- *
-*                                                                             *
 * What are the advantages of using this implementation instead of using the   *
 * build-in functions of your compiler?                                        *
 *                                                                             *
 * Security:    You do not share your possibly private internal string data    *
-               with 3rd party compiler libraries which are easy to modify.    *
+*              with 3rd party compiler libraries which are easy to modify.    *
 * Portability: The implementation behaves the same on every plattform as      *
 *              long as the data types have the same sizes. You do not have    *
 *              to worry about different format strings on every platform.     *

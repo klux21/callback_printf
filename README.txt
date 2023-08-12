@@ -36,22 +36,42 @@ specifiers for that then the l1, l2, l3 or l8 prefixes that
 callback_printf uses. But it's not a big thing to update the
 code for supporting the new prefixes once the new C standard
 is available.
-An interesting feature is the unintentional and fast generic
-mantisse and exponent calculation for different numeric base
-systems. That why it is able to print doubles and long double
-values as floating point values converted to the numeric
-bases 2, 3, 4, 5, 6, 7, 8, 9, 10 and 16.
+The supported formats specifier are b,B,d,i,o,u,x,X,
+a,A,e,E,f,F,g,G,s,S,c,C,p,n and %% for a percent character.
+The supported size prefixes for the integer formats
+b, B, d, i, o, u, x and X are hh, h, l, ll, t, z and j
+according to the C standard, the Microsoft specific I16,
+I32 and I64 and additionally l1, l2, l4 and l8 which specify
+the byte width of the integer arguments.
+The supported lenght modifiers for the formats s and c are
+l for wchar_t arguments, l1 for 1 byte ISO Latin 8 strings,
+l2 for 2 byte wide Unicode characters and l4 for 4 bytes
+wide unicode characters.
+The floating point formats a, A, e, E, f, F, g and G is the
+prefix L for long double arguments is supported.
+Additional an prefix for the numeric floating point base
+can be added. Currently are r0 for base 10, r1 for base 16
+and r2 ... r9 for the bases 2 til 9 supported. Instead of a
+digit an asterisk * can be specified. In that case the base
+needs to be specified by an additional argument of type int
+just before the floating point value. The highest supported
+numeric base specified by this int is 36. Exponents for
+bases higher than 14 are prefixed by a tilde (~) istead of
+the letter 'e' which is used as a regular digit then.
+An interesting feature is the unintentional but very fast
+generic mantisse and exponent calculation for the different
+numeric base systems that ables the support of that many
+numeric bases.
 
-Why GPLv3? Well it took a lot of time to implement that 
-but of course I have to pay my rent as well.
-Feel free to ask for a close source license for your
-private projects or your company. You should be aware
-that callback_printf is easily to track down in binaries.
-That's really very easy to do and better to use it legally
-only.
-It's open source - feel free to check whether you like the
-implementation and whether the bunch of features is matching
-your requirements.
+Why GPLv3? Well it took a lot of time to implement that but
+of course I have to pay my rent as well.
+Feel free to ask for a close source license for your private
+usage or your company. You should be aware that
+callback_printf is easily to track down in binaries.
+It's much better and a lot nicer to use it legally only.
+But it's open source so feel free to check whether you like
+the implementation and whether the bunch of features is
+matching your requirements.
 
 
 Kind regards,

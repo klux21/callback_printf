@@ -364,6 +364,12 @@ int test_ssprintf()
     TEST_SVSPRINTF("%+5.10r2LE %+10.10r2Le %+10.10r7Le %+10.10r4Le %+10.0Le %+10.0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
                     (long double) 3.9 ARG((long double) 7.89456123e-307) ARG((long double) 7.89456123e+307) ARG((long double) 789456123.0) ARG((long double) 0.789456123) ARG((long double) DBL_MIN));
 
+    TEST_SVSPRINTF("%+5.10r*E %+10.10r*e %+10.10r*e %+10.10r*e %+10.0e %+10.0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
+                    (int) 2 ARG(3.9) ARG((int) 2) ARG(7.89456123e-307) ARG((int) 7) ARG(7.89456123e+307) ARG((int) 4) ARG(789456123.0) ARG(0.789456123) ARG(DBL_MIN));
+
+    TEST_SVSPRINTF("%+5.10r*LE %+10.10r*Le %+10.10r*Le %+10.10r*Le %+10.0Le %+10.0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
+                    (int) 2 ARG((long double) 3.9) ARG((int) 2) ARG((long double) 7.89456123e-307) ARG((int) 7) ARG((long double) 7.89456123e+307) ARG((int) 4) ARG((long double) 789456123.0) ARG((long double) 0.789456123) ARG((long double) DBL_MIN));
+
     return (bRet);
 } /* test_ssprintf() */
 

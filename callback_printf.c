@@ -2590,10 +2590,32 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if (IS_PRINTF_FMT_FLT(*pe))
             {
-               if ((*ps == 'r') && IS_DIGIT(*(ps+1)))
+               if (*ps == 'r')
                {
-                  double dbl = va_arg(val, double);
-                  uint8_t base = (uint8_t) (*(ps+1) - '0');
+                  double  dbl;
+                  uint8_t base;
+
+                  if(*(ps+1) == '*')
+                  {
+                     base = (uint8_t) va_arg(val, int);
+                     dbl  = va_arg(val, double);
+
+                     if(base > 36)
+                     { /* unsupported base */
+                        pCB(pUserData, ps, 0);
+                        goto Exit;
+                     }
+                  }
+                  else if(IS_DIGIT(*(ps+1)))
+                  {
+                     dbl  = va_arg(val, double);
+                     base = (uint8_t) (*(ps+1) - '0');
+                  }
+                  else
+                  { /* unsupported base */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
 
                   if (!base)
                      base = 10;
@@ -2601,6 +2623,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      base = 16;
 
                   zRet += cbk_print_double(pUserData, pCB, dbl, base, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? 6 : precision, minimum_width);
+               }
+               else
+               { /* unknown format */
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
                }
             }
             else if(*pe == 's')
@@ -2777,10 +2804,32 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if(IS_PRINTF_FMT_FLT(*pe))
             {
-               if ((*ps == 'r') && IS_DIGIT(ps[1]) && (ps[2] == 'L'))
+               if ((*ps == 'r') && (*(ps+2) == 'L'))
                {
-                  long double ldbl = va_arg(val, long double);
-                  uint8_t base = (uint8_t) (*(ps+1) - '0');
+                  double  long ldbl;
+                  uint8_t base;
+
+                  if(*(ps+1) == '*')
+                  {
+                     base = (uint8_t) va_arg(val, int);
+                     ldbl = va_arg(val, long double);
+
+                     if(base > 36)
+                     { /* unsupported base */
+                        pCB(pUserData, ps, 0);
+                        goto Exit;
+                     }
+                  }
+                  else if(IS_DIGIT(*(ps+1)))
+                  {
+                     ldbl = va_arg(val, long double);
+                     base = (uint8_t) (*(ps+1) - '0');
+                  }
+                  else
+                  { /* unsupported base */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
 
                   if (!base)
                      base = 10;
@@ -2788,6 +2837,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      base = 16;
 
                   zRet += cbk_print_long_double(pUserData, pCB, ldbl, base, sign_char, *pe, prefixing, left_justified, blank_padding, (precision == ~(size_t) 0) ? 6 : precision, minimum_width);
+               }
+               else
+               { /* unknown format */
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
                }
             }
             else

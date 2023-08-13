@@ -231,9 +231,12 @@ int run_tests()
 #define TEST_VSPRINTF(pfmt, pout, val) bRet &= test_vsprintf(pout, #pfmt ", " #val " : " #pout , pfmt, val);
 
     TEST_VSPRINTF( "Hallo Welt!",   "Hallo Welt!",               0);
-    TEST_VSPRINTF( "%.10s!",        "Hallo Welt!",               (char *) "Hallo Welt");
+    TEST_VSPRINTF( "%.10s!",        "Hallo Welt!",               "Hallo Welt");
     TEST_VSPRINTF( "%.*s!",         "Hallo Welt!",               (int) 10 ARG("Hallo Welt"));
-    TEST_VSPRINTF( "%.5s%5.4s!",    "Hallo Welt!",               (char *) "Hallo" ARG("Welt"));
+    TEST_VSPRINTF( "%.5s %.5s",     "Hallo Welt!",               "Hallo" ARG("Welt!"));
+    TEST_VSPRINTF( "%-6.5s%4.5s!",  "Hallo Welt!",               "Hallo" ARG("Welt"));
+    TEST_VSPRINTF( "%c%c%c%c%c %c%c%c%c!", "Hallo Welt!", 'H' ARG('a') ARG('l') ARG('l') ARG('o') ARG('W') ARG('e') ARG('l') ARG('t'));
+    TEST_VSPRINTF( "%02d/%02d/%04d %02d:%02d:%02d", "01/01/1970 23:59:59", 1 ARG(1) ARG(1970) ARG(23) ARG(59) ARG(59));
     TEST_VSPRINTF( "%+#23.15e",     " +1.000000000000000e-01",   (double) 1.0e-1 );
     TEST_VSPRINTF( "%+#23.15e",     " +3.900000000000000e+00",   (double) 3.9 );
     TEST_VSPRINTF( "%+#23.14e",     " +7.89456123000000e-307",   (double) 7.89456123e-307 );

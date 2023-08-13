@@ -289,7 +289,9 @@ int run_tests()
     TEST_VSPRINTF( "% .80lld",      " 00000000000000000000000000000000000000000000000000000000000000000000000000000001", (unsigned long long) 1 );
     TEST_VSPRINTF( "% .80d",        " 00000000000000000000000000000000000000000000000000000000000000000000000000000001", (int) 1 );
     TEST_VSPRINTF( "%zx",           "1",              (size_t) 1 );
+    TEST_VSPRINTF( "%zx",           sizeof(size_t) > 4 ? "ffffffffffffffff" : "ffffffff", (size_t) -1 );
     TEST_VSPRINTF( "%tx",           "1",              (ptrdiff_t) 1 );
+    TEST_VSPRINTF( "%tx",           sizeof(size_t) > 4 ? "8000000000000000" : "80000000", (ptrdiff_t) 1 << (sizeof(ptrdiff_t) * 8 - 1));
     TEST_VSPRINTF( "% d",           " 1",             (int) 1 );
     TEST_VSPRINTF( "%+ d",          "+1",             (int) 1 );
     TEST_VSPRINTF( "%S",            "wide",           (wchar_t *) L"wide" );

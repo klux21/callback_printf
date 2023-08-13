@@ -182,8 +182,10 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%I0d",          "" , (int) 1 );
     TEST_SVSPRINTF( "%I64D",         "" , (unsigned long long) -1 );
     TEST_SVSPRINTF( "%zx",           "1",   (size_t) 1 );
+    TEST_SVSPRINTF( "%zx",           sizeof(size_t) > 4 ? "ffffffffffffffff" : "ffffffff", (size_t) -1 );
     TEST_SVSPRINTF( "%z",            "" ,   (size_t) 1 );
     TEST_SVSPRINTF( "%tx",           "1",   (ptrdiff_t) 1 );
+    TEST_SVSPRINTF( "%tx",           sizeof(size_t) > 4 ? "8000000000000000" : "80000000", (ptrdiff_t) 1 << (sizeof(ptrdiff_t) * 8 - 1));
     TEST_SVSPRINTF( "%t",            "" ,   (ptrdiff_t) 1 );
     TEST_SVSPRINTF( "% d",           " 1",  (int) 1 );
     TEST_SVSPRINTF( "%+ d",          "+1",  (int) 1 );

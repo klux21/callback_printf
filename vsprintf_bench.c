@@ -1,7 +1,7 @@
 #if 0
-rm -f ./_bench_vsprintf
-cc -Wall -O3 -o _bench_vsprintf -I . bench_vsprintf.c callback_printf.c printf/printf.c
-./_bench_vsprintf
+rm -f ./_vsprintf_bench
+cc -Wall -O3 -o _vsprintf_bench -I . vsprintf_bench.c callback_printf.c
+./_vsprintf_bench
 exit $?
 #endif
 
@@ -67,11 +67,6 @@ exit $?
 
 #include <callback_printf.h>
 
-/* See https://github.com/eyalroz/printf/ for the printf sources */
-#include "printf/printf.h"
-void putchar_(char c) {}; /* printf.c requires that */
-
-
 int64_t UnixTime()
 {/* WARNING: This implementation is not year 2038 safe on most common 32 bit platforms! */
     struct timeval tv;
@@ -130,36 +125,6 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     {
        va_start(VarArgs, pfmt);
        pr->ret = vsnprintf(pb, 1024, pfmt, VarArgs);
-       va_end(VarArgs);
-    }
-    pr->te   = UnixTime();
-    pb += 1024;
-    pr++;
-
-    /* --------------------------------------------------------------------------- */
-    count = 10000;
-    pr->name = "vsprintf_";
-    pr->pb   = pb;
-    pr->ts   = UnixTime();
-    while(count--)
-    {
-       va_start(VarArgs, pfmt);
-       pr->ret = vsprintf_(pb, pfmt, VarArgs);
-       va_end(VarArgs);
-    }
-    pr->te   = UnixTime();
-    pb += 1024;
-    pr++;
-
-    /* --------------------------------------------------------------------------- */
-    count = 10000;
-    pr->name = "vsnprintf_";
-    pr->pb   = pb;
-    pr->ts   = UnixTime();
-    while(count--)
-    {
-       va_start(VarArgs, pfmt);
-       pr->ret = vsnprintf_(pb, 1024, pfmt, VarArgs);
        va_end(VarArgs);
     }
     pr->te   = UnixTime();

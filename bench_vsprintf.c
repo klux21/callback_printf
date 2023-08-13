@@ -357,7 +357,8 @@ int run_tests()
 //    TEST_VSPRINTF( "%l4c",          "\xe3\x81\x82" /*""*/, (int) 0x3042 );
 //    TEST_VSPRINTF( "%l2c",          "\xe3\x81\x82" /*""*/, (int) 0x3042 );
     TEST_VSPRINTF( "a%Cb",          "a\xe3\x81\x82" "b",   (int) 0x3042 );
-    TEST_VSPRINTF( "%lld",          "-8589934591",   (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
+    TEST_VSPRINTF( "%lld",          "-8589934591",          (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
+    TEST_VSPRINTF( "%llu",          "18446744065119617025", (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
     TEST_VSPRINTF( "%d",            "1",             (int) 1 );
     TEST_VSPRINTF( "%.0f",          "-2",            (double) -1.5 );
     TEST_VSPRINTF( "%.0f",          "-1",            (double) -0.5 );

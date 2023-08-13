@@ -289,6 +289,14 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%.3e", "9.995e+01",    (double) 9.995e+1 );
     TEST_SVSPRINTF( "%.3e", "9.995e-02",    (double) 9.995e-2 );
     TEST_SVSPRINTF( "%.3e", "9.995e+02",    (double) 9.995e+2 );
+    TEST_SVSPRINTF( "%.2e", "1.00e+03",     (double) 9.9951e+2 );
+    TEST_SVSPRINTF( "%.2e", "-1.00e+03",    (double) -9.9951e+2 );
+    TEST_SVSPRINTF( "%.2e", "1.00e-01",     (double) 9.9951e-2 );
+    TEST_SVSPRINTF( "%.2e", "-1.00e-01",    (double) -9.9951e-2 );
+    TEST_SVSPRINTF( "%#.0e", "1.e+03",      (double) 9.51e+2 );
+    TEST_SVSPRINTF( "%#.0e", "-1.e+03",     (double) -9.51e+2 );
+    TEST_SVSPRINTF( "%#.0e", "1.e-01",      (double) 9.51e-2 );
+    TEST_SVSPRINTF( "%#.0e", "-1.e-01",     (double) -9.51e-2 );
     TEST_SVSPRINTF( "%.3e", "1.000e+00",    (double)  1.0 );
     TEST_SVSPRINTF( "%.3e", "-1.000e+00",   (double) -1.0 );
     TEST_SVSPRINTF( "%.3e", "1.000e+01",    (double)  1e+1 );
@@ -316,6 +324,10 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%.3Le", "9.995e+01",   (long double) 9.995e+1 );
     TEST_SVSPRINTF( "%.3Le", "9.995e-02",   (long double) 9.995e-2 );
     TEST_SVSPRINTF( "%.3Le", "9.995e+02",   (long double) 9.995e+2 );
+    TEST_SVSPRINTF( "%#.0Le", "1.e+03",     (long double) 9.51e+2 );
+    TEST_SVSPRINTF( "%#.0Le", "-1.e+03",    (long double) -9.51e+2 );
+    TEST_SVSPRINTF( "%#.0Le", "1.e-01",     (long double) 9.51e-2 );
+    TEST_SVSPRINTF( "%#.0Le", "-1.e-01",    (long double) -9.51e-2 );
     TEST_SVSPRINTF( "%.3Le", "1.000e+00",   (long double)  1.0 );
     TEST_SVSPRINTF( "%.3Le", "-1.000e+00",  (long double) -1.0 );
     TEST_SVSPRINTF( "%.3Le", "1.000e+01",   (long double)  1e+1 );

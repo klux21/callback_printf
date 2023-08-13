@@ -102,8 +102,6 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 } /* int test_svsprintf(...) */
 
 
-
-double sqrt(double val);
 int test_ssprintf()
 {
    int bRet = 1;

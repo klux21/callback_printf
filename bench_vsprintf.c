@@ -216,7 +216,6 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
 } /* int test_vsprintf(...) */
 
 
-double sqrt(double val);
 int run_tests()
 {
    int bRet = 1;

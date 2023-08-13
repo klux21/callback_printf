@@ -237,6 +237,7 @@ int run_tests()
     TEST_VSPRINTF( "%-6.5s%4.5s!",  "Hallo Welt!",               "Hallo" ARG("Welt"));
     TEST_VSPRINTF( "%c%c%c%c%c %c%c%c%c!", "Hallo Welt!", 'H' ARG('a') ARG('l') ARG('l') ARG('o') ARG('W') ARG('e') ARG('l') ARG('t'));
     TEST_VSPRINTF( "%02d/%02d/%04d %02d:%02d:%02d", "01/01/1970 23:59:59", 1 ARG(1) ARG(1970) ARG(23) ARG(59) ARG(59));
+    TEST_VSPRINTF( "%.2d/%.2d/%.4d %.2d:%.2d:%.2d", "01/01/1970 23:59:59", 1 ARG(1) ARG(1970) ARG(23) ARG(59) ARG(59));
     TEST_VSPRINTF( "%+#23.15e",     " +1.000000000000000e-01",   (double) 1.0e-1 );
     TEST_VSPRINTF( "%+#23.15e",     " +3.900000000000000e+00",   (double) 3.9 );
     TEST_VSPRINTF( "%+#23.14e",     " +7.89456123000000e-307",   (double) 7.89456123e-307 );

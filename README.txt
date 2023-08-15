@@ -55,6 +55,14 @@ the support of all of those numeric systems.
 Where else do you find a genereric solution for printing foating points in
 many different base systems?
 
+The little benchmark vsprintf_bench.c is an easy way for checking the
+performance. Just execute that file in a shell of a Posix system and have a
+look on the outpout.
+
+The callback_printf based wrappers are prefixed with an s for 'speed' and for
+'security' because they don't share your string data with compiler libraries
+which can be a problem in some use cases.
+
 Why GPLv3? Well it took a lot of time to implement that but of course I have
 to pay my rent as well. Feel free to ask for a close source license for your
 private usage or for your company. Be aware that callback_printf is easily to

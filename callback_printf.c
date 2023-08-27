@@ -123,18 +123,18 @@ const char * UpperDigit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /* array for e
    0x40 : printf integer format characters bBdiouxX */
 
 const uint8_t CharType[256] = { 0x10,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,   0x01,0x01,0x08,0x01, 0x01,0x08,0x01,0x01,
-                                0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01, 
+                                0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,
 
                              /*       !    "    #     $    %    &    '       (    )    *    +     ,    -    .    /   */
                                 0x21,0x08,0x08,0x28, 0x08,0x18,0x08,0x08,   0x08,0x08,0x08,0x28, 0x08,0x28,0x08,0x08,
                              /*  0    1    2    3     4    5    6    7       8    9    :    ;     <    =    >    ?   */
                                 0x22,0x02,0x02,0x02, 0x02,0x02,0x02,0x02,   0x02,0x02,0x08,0x08, 0x08,0x08,0x08,0x08,
                              /*  @    A    B    C     D    E    F    G       H    I    J    K     L    M    N    O   */
-                                0x08,0x14,0x54,0x14, 0x04,0x94,0x94,0x94,   0x04,0x04,0x04,0x04, 0x04,0x04,0x04,0x04, 
+                                0x08,0x14,0x54,0x14, 0x04,0x94,0x94,0x94,   0x04,0x04,0x04,0x04, 0x04,0x04,0x04,0x04,
                              /*  P    Q    R    S     T    U    V    W       X    Y    Z    [     \    ]    ^    _   */
                                 0x04,0x04,0x04,0x14, 0x04,0x04,0x04,0x04,   0x54,0x04,0x04,0x08, 0x08,0x08,0x08,0x04,
                              /*  `    a    b    c     d    e    f    g       h    i    j    k     l    m    n    o   */
-                                0x08,0x14,0x54,0x14, 0x54,0x94,0x94,0x94,   0x04,0x54,0x04,0x04, 0x04,0x04,0x14,0x54, 
+                                0x08,0x14,0x54,0x14, 0x54,0x94,0x94,0x94,   0x04,0x54,0x04,0x04, 0x04,0x04,0x14,0x54,
                              /*  p    q    r    s     t    u    v    w       x    y    z    {     |    }    ~        */
                                 0x14,0x04,0x04,0x14, 0x04,0x54,0x04,0x04,   0x54,0x04,0x04,0x08, 0x08,0x08,0x08,0x01,
 
@@ -349,7 +349,7 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
                }
             }
             else
-            { 
+            {
                l = DstCharWidth;
                while(l)
                {
@@ -503,9 +503,9 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
             *pd++ = (unsigned char) val;
          }
          else if(val <= 0x7ff)
-         { 
+         {
             if (dz < 2)
-               break; 
+               break;
             dz -= 2;
 
             pd[0] = (unsigned char) (((val >> 6) & 0x1f) + 0xc0);
@@ -1369,7 +1369,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
-   mant += 0.5 * powil(dbase, -(int32_t) minwidth); 
+   mant += 0.5 * powil(dbase, -(int32_t) minwidth);
 
    while(mant >= dbase)
    {/* ensure that */
@@ -1665,7 +1665,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          else
          {
             length = print_long_double_e(buf, mant, iexpo, base, minwidth - 1, prefixing, digit); /* print floating point number with adjusted precision */
-            
+
             if(!prefixing)
             {
                char * ps = buf + 1; /* points to decimal point now */
@@ -1683,7 +1683,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
                if (ps != pe)
                { /* copy exponent to the position that ps points to and remove the unused zeros */
                   while((size_t) (pe - buf) < length)
-                     *ps++ = *pe++; 
+                     *ps++ = *pe++;
                   length = ps - buf;
                }
             }
@@ -1735,7 +1735,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
    uint32_t count;
 
    /* ensure right rounding according to the required length of the mantissa */
-   mant += 0.5 * powi(dbase, -(int32_t) minwidth); 
+   mant += 0.5 * powi(dbase, -(int32_t) minwidth);
 
    while(mant >= dbase)
    { /* ensure that */
@@ -1836,7 +1836,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    double dbase = base;
    uint32_t count;
 
-   mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth); 
+   mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth);
 
    while(mant >= dbase)
    {/* ensure that */
@@ -2005,7 +2005,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          else
          {
             length = print_double_e(buf, mant, iexpo, base, minwidth - 1, prefixing, digit); /* print floating point number with adjusted precision */
-            
+
             if(!prefixing)
             {
                char * ps = buf + 1; /* points to decimal point now */
@@ -2023,7 +2023,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
                if (ps != pe)
                { /* copy exponent to the position that ps points to and remove the unused zeros */
                   while((size_t) (pe - buf) < length)
-                     *ps++ = *pe++; 
+                     *ps++ = *pe++;
 
                   length = ps - buf;
                }
@@ -2318,7 +2318,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
          /* ps should point to the type or it's prefix now. Let's find the end of the type string... */
          pe = ps;
-         while(!IS_PRINTF_FMT_END(*pe)) 
+         while(!IS_PRINTF_FMT_END(*pe))
             ++pe;
 
          if(pe == ps)
@@ -2541,7 +2541,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
          }
          else if(pe == (ps + 2))
-         { 
+         {
             if (IS_PRINTF_FMT_INT(*pe))
             {
                if(*ps == 'l')
@@ -2853,7 +2853,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          else
          { /* unknown format specification -> skip all remaining string data */
             pCB(pUserData, pe, 0);
-            goto Exit; 
+            goto Exit;
          }
 
          /* find begin of next format string */

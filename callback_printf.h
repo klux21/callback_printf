@@ -180,7 +180,7 @@ size_t ssprintf(char * pDst, const char * pFmt, ...) __PRINTF_LIKE_ARGS (2, 3); 
 /* ------------------------------------------------------------------------- *\
   User defined callback function for callback_printf for writing the output
   data. If length is zero then there is an error in format string and pSrc
-  points to the problematic position in format string if it is not NULL. 
+  points to the problematic position in format string if it is not NULL.
 \* ------------------------------------------------------------------------- */
 typedef void (PRINTF_CALLBACK) (void * pUserData, const char * pSrc, size_t Length);
 

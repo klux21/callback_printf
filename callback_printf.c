@@ -2433,7 +2433,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   else
                      zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, *pe, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
-               else if((*ps == 'z') || (*ps == 't'))
+               else if((*ps == 'z') || (*ps == 't') || (*ps == 'I'))
                {
                   CHECK_SIGN (ptrdiff_t, size_t, ptrdiff_t, size_t);
 
@@ -2465,7 +2465,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   long * pl = va_arg(val, long *);
                   *pl = (long) zRet;
                }
-               else if((*ps == 'z') || (*ps == 't'))
+               else if((*ps == 'z') || (*ps == 't') || (*ps == 'I'))
                {
                   ptrdiff_t * pl = va_arg(val, ptrdiff_t *);
                   *pl = (ptrdiff_t) zRet;

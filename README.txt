@@ -19,7 +19,7 @@ It allows you to debug and fix problems very easy if something doesn't work
 as expected.
 I guess that every programmer who really likes C hates the trouble with printf
 like functions and even more the problems and the difficulties if he want to
-use the argument format for own output functions or wants to add  extensions
+use the argument format for own output functions or wants to add extensions
 to that format. 
 If it comes to me it was always a wish of me to get rid of all this trouble
 and the portability issues that most programmers are struggling with.
@@ -35,8 +35,8 @@ g, G, s, c, p, n and % for a percent character and the Microsoft specific
 specifiers C and S.
 The supported size prefixes for the integer formats b, B, d, i, o, u, x and X
 are hh, h, l, ll, t, z and j according to the C standard as well as the
-Microsoft specific I16, I32 and I64 and additionally l1, l2, l4 and l8 which
-specify the byte width of the integer arguments.
+Microsoft specific I, I16, I32 and I64 and additionally l1, l2, l4 and l8
+which specify the byte width of the integer arguments.
 The supported lenght modifiers for the formats s and c are l for wchar_t
 arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.

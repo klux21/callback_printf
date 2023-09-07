@@ -748,6 +748,17 @@ static const uint8_t PrintfIntBase[256] = { 0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 
                                             0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,
                                             0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0 };
 
+/* d00 contains the decimal numbers from 00 to 99 with reverted digit order */
+static const char * d00 = "00102030405060708090"
+                          "01112131415161718191"
+                          "02122232425262728292"
+                          "03132333435363738393"
+                          "04142434445464748494"
+                          "05152535455565758595"
+                          "06162636465666768696"
+                          "07172737475767778797"
+                          "08182838485868788898"
+                          "09192939495969798999";
 
 /* ------------------------------------------------------------------------- *\
    cbk_print_u64 prints an uint64_t using a printf callback function
@@ -779,7 +790,26 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     if(base < 2)
        goto Exit;
 
-    if (base == 16)
+    if (base == 10)
+    {
+       const char * pd;
+
+       while (x >= 100)
+       {
+          uint64_t tmp = x;
+          x = tmp / 100;
+          pd = d00 + ((tmp - x * 100) * 2);
+          *--ps = pd[0];
+          *--ps = pd[1];
+       }
+
+       pd = d00 + (x * 2);
+       *--ps = pd[0];
+
+       if(x >= 10)
+          *--ps = pd[1];
+    }
+    else if (base == 16)
     {
        if(!x)
           prefixing = 0; /* no prefixing of 0x according to the C standard */
@@ -789,6 +819,8 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0xf];
           x >>= 4;
        }
+
+       *--ps = digit[x];
     }
     else if (base == 8)
     {
@@ -800,6 +832,8 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0x7];
           x >>= 3;
        }
+
+       *--ps = digit[x];
     }
     else if (base == 2)
     {
@@ -811,6 +845,8 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0x1];
           x >>= 1;
        }
+
+       *--ps = digit[x];
     }
     else
     {
@@ -820,8 +856,9 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
           x /= base;
           *--ps = digit[tmp - (x * base)];
        }
+
+       *--ps = digit[x];
     }
-    *--ps = digit[x];
 
     length = (size_t) (pe - ps);
 
@@ -866,7 +903,26 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     if(base < 2)
        goto Exit;
 
-    if (base == 16)
+    if (base == 10)
+    {
+       const char * pd;
+
+       while (x >= 100)
+       {
+          uint32_t tmp = x;
+          x = tmp / 100;
+          pd = d00 + ((tmp - x * 100) * 2);
+          *--ps = pd[0];
+          *--ps = pd[1];
+       }
+
+       pd = d00 + (x * 2);
+       *--ps = pd[0];
+
+       if(x >= 10)
+          *--ps = pd[1];
+    }
+    else if (base == 16)
     {
        if(!x)
           prefixing = 0; /* no prefixing of 0x according to the C standard */
@@ -876,6 +932,8 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0xf];
           x >>= 4;
        }
+
+       *--ps = digit[x];
     }
     else if (base == 8)
     {
@@ -887,6 +945,8 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0x7];
           x >>= 3;
        }
+
+       *--ps = digit[x];
     }
     else if (base == 2)
     {
@@ -898,6 +958,8 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
           *--ps = digit[x & 0x1];
           x >>= 1;
        }
+
+       *--ps = digit[x];
     }
     else
     {
@@ -907,9 +969,9 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
           x /= base;
           *--ps = digit[tmp - (x * base)];
        }
-    }
 
-    *--ps = digit[x];
+       *--ps = digit[x];
+    }
 
     length = (size_t) (pe - ps);
 

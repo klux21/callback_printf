@@ -309,6 +309,8 @@ int run_tests()
  //   TEST_VSPRINTF( "%s",            "<NULL>",         (char *) NULL );
     TEST_VSPRINTF( "%s",            "%%%%",           (char *) "%%%%" );
     TEST_VSPRINTF( "%u",            "4294967295",     (int) -1 );
+    TEST_VSPRINTF( "%u",            "2147483648",     (unsigned int) 0x80000000 );
+    TEST_VSPRINTF( "%d",            "-2147483648",    (int) 0x80000000 );
     TEST_VSPRINTF( "%jd",           "-1",             (intmax_t) -1 );
     TEST_VSPRINTF( "%F",            "0.000000",       (double) 0 );
     TEST_VSPRINTF( "x%cx",          "xXx",            (int) 0x100+'X' );

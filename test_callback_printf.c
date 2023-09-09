@@ -248,6 +248,8 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%s",            "<NULL>",         (char *) NULL );
     TEST_SVSPRINTF( "%s",            "%%%%",           (char *) "%%%%" );
     TEST_SVSPRINTF( "%u",            "4294967295",     (int) -1 );
+    TEST_SVSPRINTF( "%u",            "2147483648",     (unsigned int) 0x80000000 );
+    TEST_SVSPRINTF( "%d",            "-2147483648",    (int) 0x80000000 );
     TEST_SVSPRINTF( "%w",            "",               (int) -1 );
     TEST_SVSPRINTF( "%h",            "",               (int) -1 );
     TEST_SVSPRINTF( "%j",            "",               (intmax_t) -1 );
@@ -270,6 +272,7 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%l2c",          "\xe3\x81\x82" /*""*/, (int) 0x3042 );
     TEST_SVSPRINTF( "a%Cb",          "a\xe3\x81\x82" "b",   (int) 0x3042 );
     TEST_SVSPRINTF( "%lld",          "-8589934591",   (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
+    TEST_SVSPRINTF( "%llu",          "18446744065119617025", (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
     TEST_SVSPRINTF( "%I32d",         "1",             (int) 1 );
     TEST_SVSPRINTF( "%.0f",          "-2",            (double) -1.5 );
     TEST_SVSPRINTF( "%.0f",          "-1",            (double) -0.5 );

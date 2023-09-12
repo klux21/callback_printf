@@ -796,16 +796,15 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
           ps[1] = pd[1];
        }
 
-       pd = d00 + (x * 2);
-
        if(x >= 10)
        {
+          pd = d00 + (x * 2);
           ps -= 2;
           ps[0] = pd[0];
           ps[1] = pd[1];
        }
        else
-          *--ps = pd[1];
+          *--ps = digit[x];;
     }
     else if (base == 16)
     {
@@ -915,16 +914,15 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
           ps[1] = pd[1];
        }
 
-       pd = d00 + (x * 2);
-
        if(x >= 10)
        {
+          pd = d00 + (x * 2);
           ps -= 2;
           ps[0] = pd[0];
           ps[1] = pd[1];
        }
        else
-          *--ps = pd[1];
+          *--ps = digit[x];;
     }
     else if (base == 16)
     {

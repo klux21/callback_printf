@@ -52,7 +52,7 @@ the letter 'e' which is a part of the regular digits of those bases.
 An interesting feature is the unintentional and very fast generic mantisse
 and exponent calculation for the different numeric base systems that enables
 the support of all of those numeric systems.
-Where else do you find a genereric solution for printing foating points in
+Where else do you find a genereric solution for printing floating points in
 many different base systems?
 
 The little benchmark vsprintf_bench.c is an easy way for checking the

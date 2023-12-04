@@ -2913,7 +2913,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                pCB(pUserData, pe, 0);
                goto Exit;
             }
-            }
+         }
          else
          { /* unknown format specification -> skip all remaining string data */
             pCB(pUserData, pe, 0);

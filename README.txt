@@ -74,7 +74,7 @@ weapons or spyware because it's very good tracable in binaries.
 That's not a big deal for most people except for the ones who make money out
 of wars and things that are usually pretty nasty. I don't expect anything
 good in return of supporting those people for free any longer.
-Of course the new license should't be a big problem for most people but an
+Of course the new license shouldn't be a big problem for most people but an
 advantage. It is much more permissive if it comes to commercial usage than
 the GPL. Despite of that it's for sure a good idea to use the software
 legally only by caring the conditions of the license.
@@ -83,7 +83,7 @@ wasn't any feedback most likely just because of the GPLv3.
 I would be glad if other people adopt that new license and I hope that more
 people have fun with the usage of that software now because of the new
 and more permissive license conditions even if it not open source any
-longer because if comes to some special definitions of that!
+longer if comes to some special definitions of that.
 
 
 Kind regards,

@@ -66,9 +66,9 @@ which can be a problem in some use cases.
 
 
 Why that 'Civil Usage Public License' and not the GPLv3 anymore?
-The new license is kind a mix of the BSD or Apache license but in opposite
-to the former it prohibits the usage for weapons, spyware and usually
-unwanted secret monitoring of people without their agreements.
+The new license is kind a mix of the conditiond of BSD or Apache license
+but in opposite to the former it prohibits any usage for weapons, spyware
+and secret monitoring of any people without their knowledge or agreement.
 I dislike the idea to find anything of my software in military devices,
 weapons or spyware because it's very good tracable in binaries.
 That's not a big deal for most people except for the ones who make money out
@@ -79,11 +79,11 @@ advantage. It is much more permissive if it comes to commercial usage than
 the GPL. Despite of that it's for sure a good idea to use the software
 legally only by caring the conditions of the license.
 I doubt that anybody has a problem with the changed license because there
-wasn't any feedback most likely just because of the GPLv3.
-I would be glad if other people adopt that new license and I hope that more
-people have fun with the usage of that software now because of the new
-and more permissive license conditions even if it not open source any
-longer if comes to some special definitions of that.
+wasn't any feedback may be right because the license conditions before.
+I would be glad if other people adopt that license as well and I hope that
+more people have fun with the usage of that software now because of the new
+and more permissive license conditions even if it not open source if comes
+to the definition of the OSI.
 
 
 Kind regards,

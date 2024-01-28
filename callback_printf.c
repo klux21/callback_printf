@@ -2962,7 +2962,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
 
 /* ========================================================================= *\
-   Sample implementation of our vsnprintf wrapper
+   Implementation of our vsnprintf wrapper
 \* ========================================================================= */
 
 /* ------------------------------------------------------------------------- *\
@@ -2984,11 +2984,11 @@ struct _STRING_WRITE_DATA
 
 
 /* ------------------------------------------------------------------------- *\
-   v_string_write_callback is our callback for callback_printf that is used
-   by the s*sprintf functions
+   vsnprintf_write_callback is our callback for callback_printf that is used
+   by the svsnprintf function
 \* ------------------------------------------------------------------------- */
 
-static void v_string_write_callback(void * pUserData, const char * pSrc, size_t Length)
+static void vsnprintf_write_callback(void * pUserData, const char * pSrc, size_t Length)
 {
    STRING_WRITE_DATA * pwd = (STRING_WRITE_DATA *) pUserData;
 
@@ -3019,8 +3019,7 @@ static void v_string_write_callback(void * pUserData, const char * pSrc, size_t 
 
       pwd->pDst = pd;
    }
-} /* void  v_string_write_callback(void * pUserData, const char * pSrc, size_t Length) */
-
+} /* void  vsnprintf_write_callback(void * pUserData, const char * pSrc, size_t Length) */
 
 
 /* ------------------------------------------------------------------------- *\
@@ -3035,13 +3034,13 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
       pDst,
 #endif
       pDst,
-      n,
+      pDst ? n : 0,
       0
    };
 
-   size_t zRet = callback_printf(&swd, &v_string_write_callback, pFmt, val);
+   size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
 
-   if(pDst && swd.DstSize)
+   if(swd.DstSize)
       pDst[zRet] = '\0'; /* add the string terminating character */
 
    if(swd.Err)

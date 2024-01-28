@@ -2961,6 +2961,15 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 } /* size_t cbk_printf(void * pUserData, PRINT_CALL_BACK * pCB, const char * pFmt, va_list val) */
 
 
+/* ========================================================================= *\
+   Sample implementation of our vsnprintf wrapper
+\* ========================================================================= */
+
+/* ------------------------------------------------------------------------- *\
+   STRING_WRITE_DATA is our user defined struct that contains the required
+   information  of our callback function v_string_write_calback for writing
+   the string data and storing error values
+\* ------------------------------------------------------------------------- */
 
 typedef struct _STRING_WRITE_DATA STRING_WRITE_DATA;
 struct _STRING_WRITE_DATA
@@ -2974,13 +2983,12 @@ struct _STRING_WRITE_DATA
 };
 
 
-
 /* ------------------------------------------------------------------------- *\
-   vStrWriteCallback is our callback for callback_printf that is used by the
-   s*sprintf functions
+   v_string_write_calback is our callback for callback_printf that is used
+   by the s*sprintf functions
 \* ------------------------------------------------------------------------- */
 
-static void vStrWriteCallback(void * pUserData, const char * pSrc, size_t Length)
+static void v_string_write_calback(void * pUserData, const char * pSrc, size_t Length)
 {
    STRING_WRITE_DATA * pwd = (STRING_WRITE_DATA *) pUserData;
 
@@ -3006,11 +3014,11 @@ static void vStrWriteCallback(void * pUserData, const char * pSrc, size_t Length
          *pd++ = *pSrc++;
    }
    else if (!Length)
-   {
+   { /* callback_printf calls the callback a last time with zero length data in case of any errors within the format string */
       if(!pwd->Err)
          pwd->Err = EINVAL; /* invalid argument detected */
    }
-} /* void vStrWriteCallback(void * pUserData, const char * pSrc, size_t Length) */
+} /* void  v_string_write_calback(void * pUserData, const char * pSrc, size_t Length) */
 
 
 
@@ -3030,7 +3038,7 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
       0
    };
 
-   size_t zRet = callback_printf(&swd, &vStrWriteCallback, pFmt, val);
+   size_t zRet = callback_printf(&swd, &v_string_write_calback, pFmt, val);
 
    if(pDst && swd.DstSize)
       pDst[zRet] = '\0'; /* add the string terminating character */

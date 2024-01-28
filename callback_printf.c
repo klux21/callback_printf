@@ -2984,28 +2984,33 @@ struct _STRING_WRITE_DATA
 
 
 /* ------------------------------------------------------------------------- *\
-   v_string_write_calback is our callback for callback_printf that is used
+   v_string_write_callback is our callback for callback_printf that is used
    by the s*sprintf functions
 \* ------------------------------------------------------------------------- */
 
-static void v_string_write_calback(void * pUserData, const char * pSrc, size_t Length)
+static void v_string_write_callback(void * pUserData, const char * pSrc, size_t Length)
 {
    STRING_WRITE_DATA * pwd = (STRING_WRITE_DATA *) pUserData;
 
-   if(Length > pwd->DstSize)
-   {
+   if (!Length)
+   { /* callback_printf calls the callback a last time with zero length data in case of any errors within the format string */
       if(!pwd->Err)
-#ifdef ENOBUFS
-         pwd->Err = ENOBUFS; /* buffer size exceeded */
-#else
-         pwd->Err = ENOMEM; /* buffer size exceeded (ENOBUFS is unknown by old MSVC compilers) */
-#endif
-      Length = pwd->DstSize;
+         pwd->Err = EINVAL; /* invalid argument detected */
    }
-
-   if(pwd->pDst && Length)
+   else
    {
       char * pd = pwd->pDst;
+
+      if(Length > pwd->DstSize)
+      {
+         if(!pwd->Err)
+#ifdef ENOBUFS
+            pwd->Err = ENOBUFS; /* buffer size exceeded */
+#else
+            pwd->Err = ENOMEM; /* buffer size exceeded (ENOBUFS is unknown by old MSVC compilers) */
+#endif
+         Length = pwd->DstSize;
+      }
 
       pwd->pDst    += Length;
       pwd->DstSize -= Length;
@@ -3013,12 +3018,7 @@ static void v_string_write_calback(void * pUserData, const char * pSrc, size_t L
       while(Length--)
          *pd++ = *pSrc++;
    }
-   else if (!Length)
-   { /* callback_printf calls the callback a last time with zero length data in case of any errors within the format string */
-      if(!pwd->Err)
-         pwd->Err = EINVAL; /* invalid argument detected */
-   }
-} /* void  v_string_write_calback(void * pUserData, const char * pSrc, size_t Length) */
+} /* void  v_string_write_callback(void * pUserData, const char * pSrc, size_t Length) */
 
 
 
@@ -3038,7 +3038,7 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
       0
    };
 
-   size_t zRet = callback_printf(&swd, &v_string_write_calback, pFmt, val);
+   size_t zRet = callback_printf(&swd, &v_string_write_callback, pFmt, val);
 
    if(pDst && swd.DstSize)
       pDst[zRet] = '\0'; /* add the string terminating character */

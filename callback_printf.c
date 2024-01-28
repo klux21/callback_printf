@@ -3012,11 +3012,12 @@ static void v_string_write_callback(void * pUserData, const char * pSrc, size_t 
          Length = pwd->DstSize;
       }
 
-      pwd->pDst    += Length;
       pwd->DstSize -= Length;
 
       while(Length--)
          *pd++ = *pSrc++;
+
+      pwd->pDst = pd;
    }
 } /* void  v_string_write_callback(void * pUserData, const char * pSrc, size_t Length) */
 

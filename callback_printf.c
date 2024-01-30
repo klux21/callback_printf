@@ -2967,8 +2967,8 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
 /* ------------------------------------------------------------------------- *\
    STRING_WRITE_DATA is our user defined struct that contains the required
-   information  of our callback function v_string_write_calback for writing
-   the string data and storing error values
+   information  of our callback function vsnprintf_write_calback for writing
+   the string data and storing the error values
 \* ------------------------------------------------------------------------- */
 
 typedef struct _STRING_WRITE_DATA STRING_WRITE_DATA;

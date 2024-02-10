@@ -85,16 +85,57 @@ exit $?
 #include <float.h>
 #include <string.h>
 #include <inttypes.h>
+
+#if defined (_WIN32) || defined (__CYGWIN__)
+#include <windows.h>
+#else
 #include <sys/time.h>
+#endif
 
 #include <callback_printf.h>
 
+#if defined (_WIN32) || defined (__CYGWIN__)
+void (WINAPI * vGetSystemTimePreciseAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
+
+/* ------------------------------------------------------------------------- *\
+   UnixTime delivers the Unix time in microsecond (time since 01/01/1970)
+\* ------------------------------------------------------------------------- */
 int64_t UnixTime()
-{/* WARNING: This implementation is not year 2038 safe on most common 32 bit platforms! */
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return ((((int64_t) tv.tv_sec) *1000000ul)+tv.tv_usec );
+{
+   int64_t iRet;
+   FILETIME CurrentTime;
+
+   if(vGetSystemTimePreciseAsFileTime)
+      vGetSystemTimePreciseAsFileTime(&CurrentTime);
+   else
+      GetSystemTimeAsFileTime(&CurrentTime);
+
+   iRet  = ((int64_t) CurrentTime.dwHighDateTime << 32);
+   iRet += (int64_t)  CurrentTime.dwLowDateTime;
+   iRet -= (int64_t)  116444736 * 1000000 * 1000; /* offset of Windows FileTime to start of Unix time */
+   return (iRet / 10);
 }/* int64_t UnixTime() */
+
+#else
+
+int64_t UnixTime()
+{
+   int64_t tRet;
+   struct timeval tv;
+
+   gettimeofday(&tv, NULL);
+
+   tRet = (int64_t) tv.tv_sec;
+
+   /* Try to turn the year 2038 problem into a year 2106 problem. */
+   if((sizeof(time_t) <= 4) && (tv.tv_sec < 0))
+      tRet += (int64_t) 0x80000000ul + (int64_t) 0x80000000ul;
+
+   tRet *= 1000000ul;
+   tRet += tv.tv_usec;
+   return (tRet);
+}/* int64_t UnixTime() */
+#endif
 
 
 //int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4);
@@ -118,13 +159,21 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     } results[8];
     struct _result * pr = results;
 
+#if defined (_WIN32) || defined (__CYGWIN__)
+    size_t loops = vGetSystemTimePreciseAsFileTime ? 20000 : 200000;
+    size_t div   = vGetSystemTimePreciseAsFileTime ? 2 : 20;
+#else
+    size_t loops = 20000;
+    size_t div   = 2;
+#endif;
+
     size_t count = 0;
 
     memset(results, 0, sizeof(results));
     memset(buf, 0xfefefefe,  sizeof(buf));
 
     /* --------------------------------------------------------------------------- */
-    count = 10000;
+    count = loops;
     pr->name = "vsprintf";
     pr->pb   = pb;
     pr->ts   = UnixTime();
@@ -139,7 +188,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     pr++;
 
     /* --------------------------------------------------------------------------- */
-    count = 10000;
+    count = loops;
     pr->name = "vsnprintf";
     pr->pb   = pb;
     pr->ts   = UnixTime();
@@ -154,7 +203,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     pr++;
 
     /* --------------------------------------------------------------------------- */
-    count = 10000;
+    count = loops;
     pr->name = "svsprintf";
     pr->pb   = pb;
     pr->ts   = UnixTime();
@@ -169,7 +218,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     pr++;
 
     /* --------------------------------------------------------------------------- */
-    count = 10000;
+    count = loops;
     pr->name = "svsnprintf";
     pr->pb   = pb;
     pr->ts   = UnixTime();
@@ -192,7 +241,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     {
        int64_t tm   = pr->te - pr->ts;
        int     failed = (outlen != pr->ret) || strcmp(pout, pr->pb);
-       printf("%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / 10000), (long) (tm % 10000), failed ? "!NOK!" : "  OK ", pr->pb);
+       printf("%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / loops), (long) ((tm % loops + (div / 2)) / div), failed ? "!NOK!" : "  OK ", pr->pb);
        if(failed)
        bRet = 0;
        ++pr;
@@ -234,8 +283,13 @@ int run_tests()
     TEST_VSPRINTF( "%#1.1g",        "8.e+08",                    (double) 789456123.0 );
     TEST_VSPRINTF( "%+#23.15Le",    " +1.000000000000000e-01",   (long double) 1.0e-1l );
     TEST_VSPRINTF( "%+#23.15Le",    " +3.900000000000000e+00",   (long double) 3.9l );
+#ifdef _WIN32
+    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
+    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );
+#else
     TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e-4307",(long double) 7.89456123e-4307l );
     TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e+4307",(long double) 7.89456123e+4307l );
+#endif
     TEST_VSPRINTF( "%+#23.15Le",    " +7.894561230000000e+08",   (long double) 789456123.0l );
     TEST_VSPRINTF( "%-#23.15Le",    "7.894561230000000e+08  ",   (long double) 789456123.0l );
     TEST_VSPRINTF( "%#23.15Le",     "  7.894561230000000e+08",   (long double) 789456123.0l );
@@ -459,8 +513,15 @@ int run_tests()
 int main(int argc, char * argv[])
 {
     int iRet = 1;
+
+#if defined (_WIN32) || defined (__CYGWIN__)
+    HMODULE hmKernel32Dll = LoadLibrary("Kernel32.dll");
+    if(hmKernel32Dll)
+        vGetSystemTimePreciseAsFileTime = (void (WINAPI * )(LPFILETIME)) GetProcAddress(hmKernel32Dll, "GetSystemTimePreciseAsFileTime");
+#endif
+
     if(!run_tests())
-         goto Exit;
+        goto Exit;
 
     iRet = 0;
 

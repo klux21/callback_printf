@@ -95,30 +95,47 @@ exit $?
 #include <callback_printf.h>
 
 #if defined (_WIN32) || defined (__CYGWIN__)
-void (WINAPI * vGetSystemTimePreciseAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
+
+static void (WINAPI * vGetSystemTimePreciseAsFileTime)(LPFILETIME lpSystemTimeAsFileTime);
+static HMODULE hmKernel32Dll = (HMODULE) -1;
 
 /* ------------------------------------------------------------------------- *\
-   UnixTime delivers the Unix time in microsecond (time since 01/01/1970)
+   unix_time returns the Unix time in microsecond (time since 01/01/1970)
 \* ------------------------------------------------------------------------- */
-int64_t UnixTime()
+int64_t unix_time()
 {
    int64_t iRet;
    FILETIME CurrentTime;
 
    if(vGetSystemTimePreciseAsFileTime)
+   {
       vGetSystemTimePreciseAsFileTime(&CurrentTime);
+   }
+   else if(hmKernel32Dll == (HMODULE) -1)
+   { /* 1rst call */
+      hmKernel32Dll = LoadLibrary("Kernel32.dll");
+      if(hmKernel32Dll)
+         vGetSystemTimePreciseAsFileTime = (void (WINAPI * )(LPFILETIME)) GetProcAddress(hmKernel32Dll, "GetSystemTimePreciseAsFileTime");
+
+      if(vGetSystemTimePreciseAsFileTime)
+         vGetSystemTimePreciseAsFileTime(&CurrentTime);
+      else
+         GetSystemTimeAsFileTime(&CurrentTime);
+   }
    else
+   {
       GetSystemTimeAsFileTime(&CurrentTime);
+   }
 
    iRet  = ((int64_t) CurrentTime.dwHighDateTime << 32);
    iRet += (int64_t)  CurrentTime.dwLowDateTime;
    iRet -= (int64_t)  116444736 * 1000000 * 1000; /* offset of Windows FileTime to start of Unix time */
    return (iRet / 10);
-}/* int64_t UnixTime() */
+}/* int64_t unix_time() */
 
 #else
 
-int64_t UnixTime()
+int64_t unix_time()
 {
    int64_t tRet;
    struct timeval tv;
@@ -134,11 +151,11 @@ int64_t UnixTime()
    tRet *= 1000000ul;
    tRet += tv.tv_usec;
    return (tRet);
-}/* int64_t UnixTime() */
+}/* int64_t unix_time() */
 #endif
 
 
-//int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4);
+/* int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); */
 
 int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
 {
@@ -176,14 +193,14 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     count = loops;
     pr->name = "vsprintf";
     pr->pb   = pb;
-    pr->ts   = UnixTime();
+    pr->ts   = unix_time();
     while(count--)
     {
        va_start(VarArgs, pfmt);
        pr->ret = vsprintf(pb, pfmt, VarArgs);
        va_end(VarArgs);
     }
-    pr->te   = UnixTime();
+    pr->te   = unix_time();
     pb += 1024;
     pr++;
 
@@ -191,14 +208,14 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     count = loops;
     pr->name = "vsnprintf";
     pr->pb   = pb;
-    pr->ts   = UnixTime();
+    pr->ts   = unix_time();
     while(count--)
     {
        va_start(VarArgs, pfmt);
        pr->ret = vsnprintf(pb, 1024, pfmt, VarArgs);
        va_end(VarArgs);
     }
-    pr->te   = UnixTime();
+    pr->te   = unix_time();
     pb += 1024;
     pr++;
 
@@ -206,14 +223,14 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     count = loops;
     pr->name = "svsprintf";
     pr->pb   = pb;
-    pr->ts   = UnixTime();
+    pr->ts   = unix_time();
     while(count--)
     {
        va_start(VarArgs, pfmt);
        pr->ret = svsprintf(pb, pfmt, VarArgs);
        va_end(VarArgs);
     }
-    pr->te   = UnixTime();
+    pr->te   = unix_time();
     pb += 1024;
     pr++;
 
@@ -221,14 +238,14 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     count = loops;
     pr->name = "svsnprintf";
     pr->pb   = pb;
-    pr->ts   = UnixTime();
+    pr->ts   = unix_time();
     while(count--)
     {
        va_start(VarArgs, pfmt);
        pr->ret = svsnprintf(pb, 1024, pfmt, VarArgs);
        va_end(VarArgs);
     }
-    pr->te   = UnixTime();
+    pr->te   = unix_time();
     pb += 1024;
     pr++;
 
@@ -513,12 +530,6 @@ int run_tests()
 int main(int argc, char * argv[])
 {
     int iRet = 1;
-
-#if defined (_WIN32) || defined (__CYGWIN__)
-    HMODULE hmKernel32Dll = LoadLibrary("Kernel32.dll");
-    if(hmKernel32Dll)
-        vGetSystemTimePreciseAsFileTime = (void (WINAPI * )(LPFILETIME)) GetProcAddress(hmKernel32Dll, "GetSystemTimePreciseAsFileTime");
-#endif
 
     if(!run_tests())
         goto Exit;

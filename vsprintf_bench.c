@@ -182,7 +182,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
 #else
     size_t loops = 20000;
     size_t div   = 2;
-#endif;
+#endif
 
     size_t count = 0;
 

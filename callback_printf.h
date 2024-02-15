@@ -118,18 +118,18 @@
 \*****************************************************************************/
 
 
-#ifndef __CALLBACK_PRINTF_H__
-#define __CALLBACK_PRINTF_H__
+#ifndef CALLBACK_PRINTF_H
+#define CALLBACK_PRINTF_H
 
 #include <stddef.h>
 #include <stdarg.h>
 #include <inttypes.h> /* a wrapper for Microsoft Windows can be found in the Win32 subdirectory */
 
-#ifndef __PRINTF_LIKE_ARGS
+#ifndef PRINTF_LIKE_ARGS
     #if defined(__GNUC__) && __GNUC__
-        #define __PRINTF_LIKE_ARGS( fmtidx, argidx )        __attribute__(( format( printf, fmtidx, argidx ) ))
+        #define PRINTF_LIKE_ARGS( fmtidx, argidx )        __attribute__(( format( printf, fmtidx, argidx ) ))
     #else
-        #define __PRINTF_LIKE_ARGS( fmtidx, argidx )        /* as nothing */
+        #define PRINTF_LIKE_ARGS( fmtidx, argidx )        /* as nothing */
     #endif
 #endif
 
@@ -196,8 +196,8 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
 \* ------------------------------------------------------------------------- */
 size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list ap);
 size_t svsprintf(char * pDst, const char * pFmt, va_list ap);
-size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) __PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
-size_t ssprintf(char * pDst, const char * pFmt, ...) __PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
+size_t ssprintf(char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
 
 /* ------------------------------------------------------------------------- *\
   User defined callback function for callback_printf for writing the output
@@ -220,7 +220,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 }/* extern "C" */
 #endif
 
-#endif /* __CALLBACK_PRINTF_H__ */
+#endif /* CALLBACK_PRINTF_H */
 
 /* ========================================================================= *\
    END OF FILE

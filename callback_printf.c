@@ -2971,8 +2971,8 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
    the string data and storing the error values
 \* ------------------------------------------------------------------------- */
 
-typedef struct _STRING_WRITE_DATA STRING_WRITE_DATA;
-struct _STRING_WRITE_DATA
+typedef struct STRING_WRITE_DATA_S STRING_WRITE_DATA;
+struct STRING_WRITE_DATA_S
 {
 #ifdef _DEBUG
    char * pSart;   /* start pointer to destination buffer for watching the data changes during debugging */

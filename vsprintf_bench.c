@@ -1,6 +1,6 @@
 #if 0
 rm -f ./_vsprintf_bench
-cc -Wall -O3 -o _vsprintf_bench -I . vsprintf_bench.c callback_printf.c
+cc -Wall -O3 -o _vsprintf_bench -I . vsprintf_bench.c sfprintf.c callback_printf.c
 ./_vsprintf_bench
 exit $?
 #endif
@@ -93,6 +93,7 @@ exit $?
 #endif
 
 #include <callback_printf.h>
+#include <sfprintf.h>
 
 #if defined (_WIN32) || defined (__CYGWIN__)
 
@@ -258,7 +259,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
     {
        int64_t tm   = pr->te - pr->ts;
        int     failed = (outlen != pr->ret) || strcmp(pout, pr->pb);
-       printf("%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / loops), (long) ((tm % loops + (div / 2)) / div), failed ? "!NOK!" : "  OK ", pr->pb);
+       sfprintf(stdout, "%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / loops), (long) ((tm % loops + (div / 2)) / div), failed ? "!NOK!" : "  OK ", pr->pb);
        if(failed)
        bRet = 0;
        ++pr;
@@ -283,6 +284,7 @@ int run_tests()
 #define TEST_VSPRINTF(pfmt, pout, val) bRet &= test_vsprintf(pout, #pfmt ", " #val " : " #pout , pfmt, val);
 
     TEST_VSPRINTF( "Hallo Welt!",   "Hallo Welt!",               0);
+    TEST_VSPRINTF( "%s",            "Hallo Welt!",              "Hallo Welt!");
     TEST_VSPRINTF( "%.10s!",        "Hallo Welt!",               "Hallo Welt");
     TEST_VSPRINTF( "%.*s!",         "Hallo Welt!",               (int) 10 ARG("Hallo Welt"));
     TEST_VSPRINTF( "%.5s %.5s",     "Hallo Welt!",               "Hallo" ARG("Welt!"));
@@ -335,6 +337,8 @@ int run_tests()
     TEST_VSPRINTF( "% 8.5lld",      "   00100",                  (unsigned long long) 100 );
     TEST_VSPRINTF( "% 8.5lld",      "  -00100",                  (unsigned long long) -100 );
     TEST_VSPRINTF( "%.0lld",        "",                          (unsigned long long) 0 );
+    TEST_VSPRINTF( "%8.0lld",       "        ",                  (unsigned long long) 0 );
+    TEST_VSPRINTF( "%08.0lld",      "        ",                  (unsigned long long) 0 );
     TEST_VSPRINTF( "%#+21.18llx",   " 0x00ffffffffffffff9c",     (unsigned long long) -100 );
     TEST_VSPRINTF( "%#.25llo",      "0001777777777777777777634", (unsigned long long) -100 );
     TEST_VSPRINTF( "%#+24.20llo",   " 01777777777777777777634",  (unsigned long long) -100 );
@@ -374,7 +378,10 @@ int run_tests()
     TEST_VSPRINTF( "%.0s",          "",               (char *) "foo" );
     TEST_VSPRINTF( "hello",         "hello",          0 );
     TEST_VSPRINTF( "%b",            "101010",         (int) 42 );
+    TEST_VSPRINTF( "%#b",           "0b101010",       (int) 42 );
+    TEST_VSPRINTF( "%#B",           "0B101010",       (int) 42 );
     TEST_VSPRINTF( "%3c",           "  a",            (int) 'a' );
+    TEST_VSPRINTF( "%-3c",          "a  ",            (int) 'a' );
     TEST_VSPRINTF( "%3d",           "1234",           (int) 1234 );
     TEST_VSPRINTF( "%-1d",          "2",              (int) 2 );
     TEST_VSPRINTF( "%2.4f",         "8.6000",         (double) 8.6 );
@@ -538,10 +545,12 @@ int main(int argc, char * argv[])
 
     Exit:;
 
+#if 0
     if(!iRet)
-        printf("All tests passed!\n");
+        sfprintf(stdout, "All tests passed!\n");
     else
-        printf("Tests failed!\n");
+        sfprintf(stderr, "Tests failed!\n");
+#endif
 
     return (iRet);
 }/* main() */

@@ -702,7 +702,8 @@ static size_t cbk_print_number(void *            pUserData,      /* user specifi
           pCB(pUserData, pzeros, minwidth);
        }
 
-       pCB(pUserData, pvalue, length); /* output of value at begin */
+       if(length)
+          pCB(pUserData, pvalue, length); /* output of value at begin */
     }
     else
     { /* we have to add filler characters for ensuring the minimum field width */
@@ -712,8 +713,8 @@ static size_t cbk_print_number(void *            pUserData,      /* user specifi
 
        if(prelen && (padding == pzeros))
        {
-           pCB(pUserData, prefix, prelen);
-           prelen = 0;
+          pCB(pUserData, prefix, prelen);
+          prelen = 0;
        }
 
        if (!left_justified)
@@ -739,7 +740,8 @@ static size_t cbk_print_number(void *            pUserData,      /* user specifi
           pCB(pUserData, pzeros, minwidth);
        }
 
-       pCB(pUserData, pvalue, length); /* output of value at begin */
+       if(length)
+          pCB(pUserData, pvalue, length); /* output of value at begin */
 
        if (left_justified)
        { /* fill in trailing blanks */
@@ -2144,6 +2146,53 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
 
 
 /* ------------------------------------------------------------------------- *\
+   cbk_print_char prints a character using a printf callback function and
+   returns the written string data length.
+\* ------------------------------------------------------------------------- */
+
+static size_t cbk_print_char(void *            pUserData,      /* user specific context for the callback */
+                             PRINTF_CALLBACK * pCB,            /* data write callback */
+                             char              c,
+                             size_t            length,
+                             size_t            minimum_width,
+                             uint8_t           left_justified)
+{
+   size_t zRet;
+
+   if (minimum_width <= length)
+   {
+      zRet = length;
+      while (length--)
+         pCB(pUserData, &c, 1);
+   }
+   else
+   {
+      zRet = minimum_width;
+
+      minimum_width -= length;
+      if(left_justified)
+         while (length--)
+            pCB(pUserData, &c, 1);
+
+      while (minimum_width > 32)
+      {
+         pCB(pUserData, pblanks, 32);
+         minimum_width -= 32;
+      }
+
+      pCB(pUserData, pblanks, minimum_width);
+
+      if(!left_justified)
+         while (length--)
+             pCB(pUserData, &c, 1);
+   }
+
+   return (zRet);
+} /* size_t cbk_print_char(...) */
+
+
+
+/* ------------------------------------------------------------------------- *\
    cbk_print_string prints a string using a printf callback function and
    returns the written string data length.
 \* ------------------------------------------------------------------------- */
@@ -2155,20 +2204,24 @@ static size_t cbk_print_string(void *            pUserData,      /* user specifi
                                size_t            minimum_width,
                                uint8_t           left_justified)
 {
-   size_t zRet = 0;
+   size_t zRet;
 
    if (minimum_width <= length)
    {
-      zRet += length;
-      pCB(pUserData, ps, length);
+      zRet = length;
+      if(length)
+         pCB(pUserData, ps, length);
    }
    else
    {
-      zRet += minimum_width;
+      zRet = minimum_width;
 
-      minimum_width -= length;
-      if(left_justified && length)
-         pCB(pUserData, ps, length);
+      if(length)
+      {
+         minimum_width -= length;
+         if(left_justified)
+            pCB(pUserData, ps, length);
+      }
 
       while (minimum_width > 32)
       {
@@ -2362,7 +2415,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                i = -i;
             }
 
-            minimum_width =  (size_t) i;
+            minimum_width = (size_t) i;
 
             if(IS_DIGIT(*(++ps)))
             { /* we do not yet handle indexed arguments */
@@ -2453,7 +2506,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             else if(*pe == 'c')
             {
                char c = (char) va_arg(val, int);
-               zRet += cbk_print_string(pUserData, pCB, &c, 1, minimum_width, left_justified);
+               zRet += cbk_print_char(pUserData, pCB, c, (precision == ~(size_t) 0) ? 1 : precision, minimum_width, left_justified);
             }
             else if(*pe == 'p')
             {

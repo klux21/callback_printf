@@ -387,6 +387,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sfprintf.c"
+				>
+			</File>
+			<File
 				RelativePath="..\vsprintf_bench.c"
 				>
 			</File>
@@ -401,6 +405,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sfprintf.h"
 				>
 			</File>
 			<File

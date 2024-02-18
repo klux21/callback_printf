@@ -189,8 +189,13 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%#1.1g",      "8.e+08", (double) 789456123.0 );
     TEST_SVSPRINTF( "%+#23.15Le",  " +1.000000000000000e-01", (long double) 1.0e-1l );
     TEST_SVSPRINTF( "%+#23.15Le",  " +3.900000000000000e+00", (long double) 3.9l );
+#ifdef _WIN32
+    TEST_SVSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
+    TEST_SVSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );
+#else
     TEST_SVSPRINTF( "%+#24.14Le",  " +7.89456123000000e-4307", (long double) 7.89456123e-4307l );
     TEST_SVSPRINTF( "%+#24.14Le",  " +7.89456123000000e+4307", (long double) 7.89456123e+4307l );
+#endif
     TEST_SVSPRINTF( "%+#23.15Le",  " +7.894561230000000e+08", (long double) 789456123.0l );
     TEST_SVSPRINTF( "%-#23.15Le",  "7.894561230000000e+08  ", (long double) 789456123.0l );
     TEST_SVSPRINTF( "%#23.15Le",   "  7.894561230000000e+08", (long double) 789456123.0l );
@@ -220,6 +225,9 @@ int test_ssprintf()
     TEST_SVSPRINTF( "% 8.5I64d",   "   00100",                (unsigned long long) 100 );
     TEST_SVSPRINTF( "% 8.5I64d",   "  -00100",                (unsigned long long) -100 );
     TEST_SVSPRINTF( "%.0I64d",     "",                        (unsigned long long) 0 );
+    TEST_SVSPRINTF( "%.0lld",        "",                          (unsigned long long) 0 );
+    TEST_SVSPRINTF( "%8.0lld",       "        ",                  (unsigned long long) 0 );
+    TEST_SVSPRINTF( "%08.0lld",      "        ",                  (unsigned long long) 0 );
     TEST_SVSPRINTF( "%#+21.18I64x",  " 0x00ffffffffffffff9c",     (unsigned long long) -100 );
     TEST_SVSPRINTF( "%#.25I64o",     "0001777777777777777777634", (unsigned long long) -100 );
     TEST_SVSPRINTF( "%#+24.20I64o",  " 01777777777777777777634",  (unsigned long long) -100 );
@@ -273,8 +281,13 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%w-s",          "",            (wchar_t *) L"wide" );
     TEST_SVSPRINTF( "%ls",           "wide",        (wchar_t *) L"wide" );
     TEST_SVSPRINTF( "%Ls",           "",            (wchar_t *) "not wide" );
+    TEST_SVSPRINTF( "%6.4c",         "  ____",      (int) '_' );
+    TEST_SVSPRINTF( "%-6.4c",         "____  ",     (int) '_' );
     TEST_SVSPRINTF( "%b",            "101010",      (int) 42 );
+    TEST_SVSPRINTF( "%#b",           "0b101010",    (int) 42 );
+    TEST_SVSPRINTF( "%#B",           "0B101010",    (int) 42 );
     TEST_SVSPRINTF( "%3c",           "  a",         (int) 'a' );
+    TEST_SVSPRINTF( "%-3c",          "a  ",         (int) 'a' );
     TEST_SVSPRINTF( "%3d",           "1234",        (int) 1234 );
     TEST_SVSPRINTF( "%3h",           "",             0 );
     TEST_SVSPRINTF( "%k%m%q%r%t%v%y%z", "",          0 );

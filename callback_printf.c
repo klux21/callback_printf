@@ -1027,9 +1027,9 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
 
 static void base10l(long double value, long double * mantissa, int32_t * exponent)
 {
-   static struct _basepows {  long double p; long double rp; int32_t e; } basepow [16] = {{1e+1l, 1e-1l, 1}, {1e+2l, 1e-2l, 2}, {1e+4l, 1e-4l, 4}, {1e+8l, 1e-8l, 8}, {1e+16l, 1e-16l, 16}, {1e+32l, 1e-32l, 32}, {1e+64l, 1e-64l, 64}, {1e+128l, 1e-128l, 128},
+   static struct basepows_s {  long double p; long double rp; int32_t e; } basepow [16] = {{1e+1l, 1e-1l, 1}, {1e+2l, 1e-2l, 2}, {1e+4l, 1e-4l, 4}, {1e+8l, 1e-8l, 8}, {1e+16l, 1e-16l, 16}, {1e+32l, 1e-32l, 32}, {1e+64l, 1e-64l, 64}, {1e+128l, 1e-128l, 128},
                                                                                           {1e+256l, 1e-256l, 256}, {1e+512l, 1e-512l, 512}, {1e+1024l, 1e-1024l, 1024}, {1e+1024l, 1e-1024l, 1024}, {1e+2048l, 1e-2048l, 2048}, {1e+4096l, 1e-4096l, 4096}, {0.0, 0.0, 0}};
-   struct _basepows * pb = basepow;
+   struct basepows_s * pb = basepow;
    int32_t expo = 0;
    int     sign = value < 0;
    long double  mant = sign ? -value : value;
@@ -1079,8 +1079,8 @@ static void base10l(long double value, long double * mantissa, int32_t * exponen
 
 static void base10(double value, double * mantissa, int32_t * exponent)
 {
-   static struct _basepows {  double p; double rp; int32_t e; } basepow [16] = {{1e+1, 1e-1, 1}, {1e+2, 1e-2, 2}, {1e+4, 1e-4, 4}, {1e+8, 1e-8, 8}, {1e+16, 1e-16, 16}, {1e+32, 1e-32, 32}, {1e+64, 1e-64, 64}, {1e+128, 1e-128, 128}, {1e+256, 1e-256, 256}, {0.0, 0.0, 0}};
-   struct _basepows * pb = basepow;
+   static struct basepows_s {  double p; double rp; int32_t e; } basepow [16] = {{1e+1, 1e-1, 1}, {1e+2, 1e-2, 2}, {1e+4, 1e-4, 4}, {1e+8, 1e-8, 8}, {1e+16, 1e-16, 16}, {1e+32, 1e-32, 32}, {1e+64, 1e-64, 64}, {1e+128, 1e-128, 128}, {1e+256, 1e-256, 256}, {0.0, 0.0, 0}};
+   struct basepows_s * pb = basepow;
    int32_t expo = 0;
    int     sign = value < 0;
    double  mant = sign ? -value : value;
@@ -1171,8 +1171,8 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, in
    }
    else
    {
-      struct _basepows {long double p; int32_t e; } basepow [32];
-      struct _basepows * pb = basepow;
+      struct basepows_s {long double p; int32_t e; } basepow [32];
+      struct basepows_s * pb = basepow;
       int32_t      expo = 0;
       int          sign = value < 0;
       long double  mant = sign ? -value : value;
@@ -1284,8 +1284,8 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
    }
    else
    {
-      struct _basepows {  double p; int32_t e; } basepow [20];
-      struct _basepows * pb = basepow;
+      struct basepows_s {  double p; int32_t e; } basepow [20];
+      struct basepows_s * pb = basepow;
       int32_t expo = 0;
       int     sign = value < 0;
       double  mant = sign ? -value : value;
@@ -1360,8 +1360,8 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
 
 static long double powil (long double base, int32_t iexpo)
 {
-   struct _basepows {long double p; int32_t e; } basepow [32];
-   struct _basepows * pb = basepow;
+   struct basepows_s {long double p; int32_t e; } basepow [32];
+   struct basepows_s * pb = basepow;
    long double p = base;
    int32_t expo = 1;
    int32_t sign = iexpo < 0;
@@ -1403,8 +1403,8 @@ static long double powil (long double base, int32_t iexpo)
 
 static double powi (double base, int32_t iexpo)
 {
-   struct _basepows {  double p; int32_t e; } basepow [20];
-   struct _basepows * pb = basepow;
+   struct basepows_s {  double p; int32_t e; } basepow [20];
+   struct basepows_s * pb = basepow;
    double p = base;
    int32_t expo = 1;
    int32_t sign = iexpo < 0;

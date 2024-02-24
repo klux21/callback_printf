@@ -302,6 +302,8 @@ int run_tests()
     TEST_VSPRINTF( "%#1.1g",        "8.e+08",                    (double) 789456123.0 );
     TEST_VSPRINTF( "%+#23.15Le",    " +1.000000000000000e-01",   (long double) 1.0e-1l );
     TEST_VSPRINTF( "%+#23.15Le",    " +3.900000000000000e+00",   (long double) 3.9l );
+    TEST_VSPRINTF( "%+#27.6e",    "             +1.594561e-317", (double) 1.59456123e-317 );
+    TEST_VSPRINTF( "%+#27.16e",    "   +1.5945612300000000e+308", (double) 1.59456123e+308 );
 #ifdef _WIN32
     TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
     TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );

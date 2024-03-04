@@ -73,8 +73,8 @@
 \*****************************************************************************/
 
 
-#ifndef __INTTYPES_H__
-#define __INTTYPES_H__
+#ifndef INTTYPES_H
+#define INTTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -148,7 +148,7 @@ typedef unsigned __int64 uintmax_t;
 }/* extern "C" */
 #endif
 
-#endif /* __INTTYPES_H__ */
+#endif /* INTTYPES_H */
 
 /* ========================================================================== *\
    END OF FILE

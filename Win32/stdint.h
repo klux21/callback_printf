@@ -73,10 +73,10 @@
 \*****************************************************************************/
 
 
-#ifndef __STDINT_H__
-#define __STDINT_H__
+#ifndef STDINT_H
+#define STDINT_H
 #include <inttypes.h>
-#endif /* __STDINT_H__ */
+#endif /* STDINT_H */
 
 /* ========================================================================== *\
    END OF FILE

@@ -3,5 +3,5 @@ _*
 *.ncb
 *.suo
 *.user
-x64
-Win32
+VS2008/x64
+VS2008/Win32

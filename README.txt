@@ -6,12 +6,12 @@ systems can be be very annoying. All the required workarounds and
 adjustments cost the programmers a lot of time.
 Who wants to mess around with different prefixes or format strings on every
 new platform? OK - there are a plenty of other sprintf implementations already
-that you can use as well. But most of those don't really care the performance
-and the portability, lack floating point and especially long double support,
-don't convert any Unicode strings to UTF-8 and don't care much about the
-conformance to the C standard formats and even less about the printf parameter
-validation features of the gcc which are a great thing for preventing
-unexpected crashes within printf like function.
+but many of them don't really care the performance and the portability,
+or lack floating point and especially long double support, they don't convert
+Unicode strings to UTF-8 and don't care much about the conformance to
+the C standard formats or the printf parameter validation features of the gcc
+which are a great thing for preventing unexpected crashes within printf
+like function.
 You don't want any internal locks, unnecessary allocations or strange
 implementations which may slow down your code even if every microsecond
 counts. callback_printf uses only the stack of the calling thread and neither
@@ -20,8 +20,8 @@ It allows you to debug and fix problems very easy if something doesn't work
 as expected.
 I guess that every programmer who really likes C hates the trouble with printf
 like functions and even more the problems and the difficulties if he want to
-use the argument format for own output functions or wants to add extensions
-to that format.
+use the argument format for own output functions or wants own extensions
+of the format.
 If it comes to me it was always a wish of me to get rid of all this trouble
 and the portability issues that most programmers are struggling with.
 And I did want to add some extra length specifiers for using arguments of type
@@ -41,9 +41,9 @@ which specify the byte width of the integer arguments.
 The supported lenght modifiers for the formats s and c are l for wchar_t
 arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.
-For the floating point formats a, A, e, E, f, F, g and G is the prefix L for
-long double arguments is supported. As extension the prefix for specifying
-the numeric floating point base can be added. Currently are r0 for base 10,
+For the floating point formats a, A, e, E, f, F, g and G the prefix L for
+long double arguments is supported. Additionally a prefix for specifying
+the numeric floating point base is supported. Currently are r0 for base 10,
 r1 for base 16 and r2 ... r9 for the bases 2 til 9 supported. Instead of a
 digit an asterisk * can be specified. In that case the base needs to be
 specified by an additional argument of type int just before the floating

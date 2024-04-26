@@ -81,7 +81,7 @@ software for free. It's for sure a good idea to use the software legally only
 by caring the conditions of the license.
 I doubt that anybody has a problem with the changed license because there
 wasn't any feedback because of the much more restrictive license conditions of
-the GPL before either. It would be nice if other people adopt that license.
+the GPL before either. It would be nice if more people would use that license.
 
 
 Kind regards,

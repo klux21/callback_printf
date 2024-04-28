@@ -28,7 +28,7 @@ And I did want to add some extra length specifiers for using arguments of type
 int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
 inttypes.h and as well in stdint.h since C11 now.
 In the C 23 standard there will be be some different length specifiers for
-that then the l1, l2, l3 or l8 prefixes that callback_printf uses. But it's
+that then the l1, l2, l4 or l8 prefixes that callback_printf uses. But it's
 not a big thing to update the code for supporting the new prefixes too once
 the new C standard is finally available.
 The supported format specifiers are b, B, d, i, o, u, x, X, a, A, e, E, f, F,

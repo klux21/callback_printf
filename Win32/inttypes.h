@@ -90,6 +90,23 @@ extern "C" {
 #undef uint32_t
 #undef int64_t
 #undef uint64_t
+#undef int_fast8_t
+#undef uint_fast8_t
+#undef int_fast16_t
+#undef uint_fast16_t
+#undef int_fast32_t
+#undef uint_fast32_t
+#undef int_fast64_t
+#undef uint_fast64_t
+#undef int_least8_t
+#undef uint_least8_t
+#undef int_least16_t
+#undef uint_least16_t
+#undef int_least32_t
+#undef uint_least32_t
+#undef int_least64_t
+#undef uint_least64_t
+
 #undef intmax_t
 #undef uintmax_t
 
@@ -102,9 +119,26 @@ typedef unsigned __int32 uint32_t;
 typedef          __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 
+typedef          __int8  int_fast8_t;
+typedef unsigned __int8  uint_fast8_t;
+typedef          __int16 int_fast16_t;
+typedef unsigned __int16 uint_fast16_t;
+typedef          __int32 int_fast32_t;
+typedef unsigned __int32 uint_fast32_t;
+typedef          __int64 int_fast64_t;
+typedef unsigned __int64 uint_fast64_t;
+
+typedef          __int8  int_least8_t;
+typedef unsigned __int8  uint_least8_t;
+typedef          __int16 int_least16_t;
+typedef unsigned __int16 uint_least16_t;
+typedef          __int32 int_least32_t;
+typedef unsigned __int32 uint_least32_t;
+typedef          __int64 int_least64_t;
+typedef unsigned __int64 uint_least64_t;
+
 typedef          __int64 intmax_t;
 typedef unsigned __int64 uintmax_t;
-
 
 #define int8_t   int8_t
 #define uint8_t  uint8_t
@@ -114,6 +148,24 @@ typedef unsigned __int64 uintmax_t;
 #define uint32_t uint32_t
 #define int64_t  int64_t
 #define uint64_t uint64_t
+
+#define int_fast8_t   int_fast8_t
+#define uint_fast8_t  uint_fast8_t
+#define int_fast16_t  int_fast16_t
+#define uint_fast16_t uint_fast16_t
+#define int_fast32_t  int_fast32_t
+#define uint_fast32_t uint_fast32_t
+#define int_fast64_t  int_fast64_t
+#define uint_fast64_t uint_fast64_t
+
+#define int_least8_t   int_least8_t
+#define uint_least8_t  uint_least8_t
+#define int_least16_t  int_least16_t
+#define uint_least16_t uint_least16_t
+#define int_least32_t  int_least32_t
+#define uint_least32_t uint_least32_t
+#define int_least64_t  int_least64_t
+#define uint_least64_t uint_least64_t
 
 #define intmax_t  intmax_t
 #define uintmax_t uintmax_t

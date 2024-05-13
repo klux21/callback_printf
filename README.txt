@@ -44,14 +44,16 @@ arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.
 For the floating point formats a, A, e, E, f, F, g and G the prefix L for
 long double arguments is supported.
-Additionally a special prefix for specifying the numeric floating point base
-is supported. It's r0 for base 10, r1 for base 16 and r2 ... r9 for the
-bases 2 til 9. Instead of a digit an asterisk * can be specified as well.
-In that case the base needs to be specified by an additional argument
-of type int just before the floating point value. The highest supported
-numeric base for floating points is 36.
-Exponents for bases higher than 14 are prefixed by a tilde (~) istead of
-the letter 'e' which becomes a member of the regular digits of those bases.
+Additionally a special prefix for specifying a specific numeric base of integer
+or floating point numbers is supported. It's r0 for base 10, r1 for base 16 and
+r2 ... r9 for the bases 2 til 9. Instead of a numeric value an asterisk * can
+be specified as well.
+In that case the base needs to be specified by an additional argument of type
+int just before the integer or floating specifier or it's optional length
+specifier. The highest supported numeric base is 36.
+Floating point exponents for bases higher than 14 are prefixed by a tilde
+(~) istead of the letter 'e' which becomes a member of the regular digits
+of those bases.
 An interesting feature is the unintentional and very fast generic mantisse
 and exponent calculation for the different numeric base systems that enables
 the support of all of those numeric systems.

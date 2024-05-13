@@ -84,10 +84,12 @@
 *              features as the common length modiers for %n, output of        *
 *              integers in binary format and a fully featured floating point  *
 *              output in tridynal, quadral, hexal, heptal, octal and nonal    *
-*              system. For selecting another base just add a r2 .. r9 prefix  *
-*              to any of the common floation point format specifiers e, f, g, *
-*              E, F, G, Le, Lf, Lg, LE, LF and LG                             *
-*              (I did miss something like that since a long time. ;o) )       *
+*              system. For selecting a special numeric base just add a        *
+*              r2 .. r9 prefix to common integer or floation point format     *
+*              specifiers. It's possible to speficy the numeric base using r* *
+*              prefix and and additional integer argument that contains the   *
+*              base, e.g for printing a long int using numeric base 4         *
+*                ssprintf(buffer, "%r*ld", (int) 4, LONG_MIN);                *
 *              callback_printf supports the Windows I64 and I32 integer       *
 *              length modifiers as well as the additional modifiers l1, l2,   *
 *              l4 and l8 for 8, 16, 32 and 64 bit wide integer arguments.     *
@@ -220,5 +222,5 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 #endif /* CALLBACK_PRINTF_H */
 
 /* ========================================================================= *\
-   END OF FILE
+   E N D   O F   F I L E
 \* ========================================================================= */

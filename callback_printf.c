@@ -3219,17 +3219,17 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      if((s3 == '6') && (s4 == '4'))
                      { /* integer of 8 bytes width */
                         CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, *pe, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if((s3 == '3') && (s4 == '2'))
                      { /* integer of 4 bytes width */
                         CHECK_SIGN (int32_t, uint32_t, int32_t, uint32_t);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, *pe, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if((s3 == '1') && (s4 == '6'))
                      { /* integer of 2 bytes width */
                         CHECK_SIGN (int16_t, uint16_t, int, unsigned int);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, *pe, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else
                      { /* unknown format */

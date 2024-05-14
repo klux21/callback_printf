@@ -2562,9 +2562,10 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          }
          else if(pe == (ps + 1))
          {
+            char s0 = *ps;
+
             if (IS_PRINTF_FMT_INT(e0))
             {
-               char s0 = *ps;
                if(s0 == 'l')
                {
                   CHECK_SIGN (long, unsigned long, long, unsigned long);
@@ -2601,7 +2602,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if(e0 == 'n')
             {
-               char s0 = *ps;
                if(s0 == 'l')
                {
                   long * pl = va_arg(val, long *);
@@ -2628,7 +2628,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   goto Exit;
                }
             }
-            else if(*ps == 'L')
+            else if(s0 == 'L')
             {
                if(IS_PRINTF_FMT_FLT(e0))
                {
@@ -2646,7 +2646,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   goto Exit;
                }
             }
-            else if(*ps == 'l')
+            else if(s0 == 'l')
             {
                if(e0 == 's')
                {
@@ -2684,11 +2684,13 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          }
          else if(pe == (ps + 2))
          {
+            char s0 = *ps;
+            char s1 = *(ps+1);
+
             if (IS_PRINTF_FMT_INT(e0))
             {
-               if(*ps == 'l')
+               if(s0 == 'l')
                {
-                  char s1 = *(ps+1);
                   if(s1 == '8')
                   { /* integer of 8 bytes width */
                      CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
@@ -2720,10 +2722,38 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      goto Exit;
                   }
                }
-               else if((*ps == 'h') && (*(ps+1) == 'h'))
+               else if((s0 == 'h') && (s1 == 'h'))
                {
                   CHECK_SIGN (signed char, unsigned char, int, unsigned int);
                   zRet += cbk_print_u32(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+               }
+               else if ((s0 == 'r') && IS_PRINTF_FMT_INT(e0))
+               {
+                  uint8_t base;
+                  if(s1 == '*')
+                  {
+                     base = (uint8_t) va_arg(val, int);
+
+                     if(base > 36)
+                     { /* unsupported base */
+                        pCB(pUserData, ps, 0);
+                        goto Exit;
+                     }
+                  }
+                  else if(IS_DIGIT(s1))
+                  {
+                     base = (uint8_t) (s1 - '0');
+                  }
+                  else
+                  { /* unsupported base */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
+
+                  {
+                     CHECK_SIGN (int, unsigned int, int, unsigned int);
+                     zRet += cbk_print_u32(pUserData, pCB, u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                  }
                }
                else
                { /* unknown format */
@@ -2733,9 +2763,8 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if (IS_PRINTF_FMT_FLT(e0))
             {
-               if (*ps == 'r')
+               if (s0 == 'r')
                {
-                  char s1 = *(ps+1);
                   double  dbl;
                   uint8_t base;
 
@@ -2873,9 +2902,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if(e0 == 'n')
             {
-               if(*ps == 'l')
+               char s0 = *ps;
+               char s1 = *(ps+1);
+
+               if(s0 == 'l')
                {
-                  char s1 = *(ps+1);
                   if(s1 == '8')
                   { /* integer of 8 bytes width */
                      int64_t * pl = va_arg(val, int64_t *);
@@ -2907,40 +2938,10 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      goto Exit;
                   }
                }
-               else if((*ps == 'h') && (*(ps+1) == 'h'))
+               else if((s0 == 'h') && (s1 == 'h'))
                {
                   char * pl = va_arg(val, char *);
                   *pl = (char) zRet;
-               }
-               else if (IS_PRINTF_FMT_INT(e0) && (*ps == 'r'))
-               {
-                  uint8_t base;
-                  char s1 = *(ps+1);
-
-                  if(s1 == '*')
-                  {
-                     base = (uint8_t) va_arg(val, int);
-
-                     if(base > 36)
-                     { /* unsupported base */
-                        pCB(pUserData, ps, 0);
-                        goto Exit;
-                     }
-                  }
-                  else if(IS_DIGIT(s1))
-                  {
-                     base = (uint8_t) (s1 - '0');
-                  }
-                  else
-                  { /* unsupported base */
-                     pCB(pUserData, ps, 0);
-                     goto Exit;
-                  }
-
-                  {
-                     CHECK_SIGN (int, unsigned int, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-                  }
                }
                else
                { /* unknown format */
@@ -2956,13 +2957,14 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          }
          else if(pe == (ps + 3))
          {
+            char s0 = *ps;
+            char s1 = *(ps+1);
+            char s2 = *(ps+2);
+
             if (IS_PRINTF_FMT_INT(e0))
             {
-               if (*ps =='I')
+               if (s0 =='I')
                {
-                  char s1 = *(ps+1);
-                  char s2 = *(ps+2);
-
                   if((s1 == '6') && (s2 == '4'))
                   { /* integer of 8 bytes width */
                      CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
@@ -2984,10 +2986,8 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      goto Exit;
                   }
                }
-               else if (*ps == 'r')
+               else if (s0 == 'r')
                {
-                  char s1 = *(ps+1);
-                  char s2 = *(ps+2);
                   uint8_t base;
 
                   if(s1 == '*')
@@ -3052,12 +3052,12 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if(IS_PRINTF_FMT_FLT(e0))
             {
-               if ((*ps == 'r') && (*(ps+2) == 'L'))
+               if ((s0 == 'r') && (s2 == 'L'))
                {
                   double  long ldbl;
                   uint8_t base;
 
-                  if(*(ps+1) == '*')
+                  if(s1 == '*')
                   {
                      base = (uint8_t) va_arg(val, int);
                      ldbl = va_arg(val, long double);
@@ -3068,10 +3068,10 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                         goto Exit;
                      }
                   }
-                  else if(IS_DIGIT(*(ps+1)))
+                  else if(IS_DIGIT(s1))
                   {
                      ldbl = va_arg(val, long double);
-                     base = (uint8_t) (*(ps+1) - '0');
+                     base = (uint8_t) (s1 - '0');
                   }
                   else
                   { /* unsupported base */

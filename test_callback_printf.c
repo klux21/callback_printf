@@ -207,6 +207,7 @@ int test_ssprintf()
     TEST_SVSPRINTF( "%+.8I64d",    "+00000100",               (unsigned long long) 100 );
     TEST_SVSPRINTF( "%+10.8I64d",  " +00000100",              (unsigned long long) 100 );
     TEST_SVSPRINTF( "%_1I64d",     "",                        (unsigned long long) 100 );
+    TEST_SVSPRINTF( "%_1lld",     "",                         (unsigned long long) 100 );
     TEST_SVSPRINTF( "%-1.5I64d",   "-00100",                  (unsigned long long) -100 );
     TEST_SVSPRINTF( "%5I64d",      "  100",                   (unsigned long long) 100 );
     TEST_SVSPRINTF( "%5I64d",      " -100",                   (unsigned long long) -100 );
@@ -460,6 +461,33 @@ int test_ssprintf()
     TEST_SVSPRINTF("%+5.10r*LE %+10.10r*Le %+10.10r*Le %+10.10r*Le %+10.0Le %+10.0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
                     (int) 2 ARG((long double) 3.9) ARG((int) 2) ARG((long double) 7.89456123e-307) ARG((int) 7) ARG((long double) 7.89456123e+307) ARG((int) 4) ARG((long double) 789456123.0) ARG((long double) 0.789456123) ARG((long double) DBL_MIN));
 
+    TEST_SVSPRINTF( "%r0I16d",     "100",                       (int16_t) 100 );
+    TEST_SVSPRINTF( "%r1I16d",     "64",                        (int16_t) 100 );
+
+    TEST_SVSPRINTF( "%r0I32d",     "100",                       (int32_t) 100 );
+    TEST_SVSPRINTF( "%r1I32d",     "64",                        (int32_t) 100 );
+
+    TEST_SVSPRINTF( "%r0I64d",     "100",                       (int64_t) 100 );
+    TEST_SVSPRINTF( "%r1I64d",     "64",                        (int64_t) 100 );
+
+    TEST_SVSPRINTF( "%r0d",        "100",                       (int) 100 );
+    TEST_SVSPRINTF( "%r1d",        "64",                        (int) 100 );
+
+    TEST_SVSPRINTF( "%r0u",        "100",                       (unsigned int) 100 );
+    TEST_SVSPRINTF( "%r1u",        "64",                        (unsigned int) 100 );
+
+    TEST_SVSPRINTF( "%r0ld",       "100",                       (long) 100 );
+    TEST_SVSPRINTF( "%r1ld",       "64",                        (long) 100 );
+
+    TEST_SVSPRINTF( "%r0lu",       "100",                       (unsigned long) 100 );
+    TEST_SVSPRINTF( "%r1lu",       "64",                        (unsigned long) 100 );
+
+    TEST_SVSPRINTF( "%r0lld",      "100",                       (long long) 100 );
+    TEST_SVSPRINTF( "%r1lld",      "64",                        (long long) 100 );
+
+    TEST_SVSPRINTF( "%r0llu",      "100",                       (unsigned long long) 100 );
+    TEST_SVSPRINTF( "%r1llu",      "64",                        (unsigned long long) 100 );
+ 
     return (bRet);
 } /* test_ssprintf() */
 

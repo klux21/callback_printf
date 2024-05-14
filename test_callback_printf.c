@@ -463,55 +463,83 @@ int test_ssprintf()
 
     TEST_SVSPRINTF( "%r0I16d",     "100",                       (int16_t) 100 );
     TEST_SVSPRINTF( "%r1I16d",     "64",                        (int16_t) 100 );
+    TEST_SVSPRINTF( "%r*I16d",     "-1000",                     (int) 5 ARG((int16_t) -125));
 
     TEST_SVSPRINTF( "%r0I32d",     "100",                       (int32_t) 100 );
     TEST_SVSPRINTF( "%r1I32d",     "64",                        (int32_t) 100 );
+    TEST_SVSPRINTF( "%r*I32d",     "-1000",                     (int) 5 ARG((int32_t) -125));
 
     TEST_SVSPRINTF( "%r0I64d",     "100",                       (int64_t) 100 );
     TEST_SVSPRINTF( "%r1I64d",     "64",                        (int64_t) 100 );
+    TEST_SVSPRINTF( "%r*I64d",     "-1000",                     (int) 5 ARG((int64_t) -125));
+
+    TEST_SVSPRINTF( "%r0I16u",     "100",                       (uint16_t) 100 );
+    TEST_SVSPRINTF( "%r1I16u",     "64",                        (uint16_t) 100 );
+    TEST_SVSPRINTF( "%r*I16u",     "1000",                      (int) 5 ARG((uint16_t) 125));
+
+    TEST_SVSPRINTF( "%r0I32u",     "100",                       (uint32_t) 100 );
+    TEST_SVSPRINTF( "%r1I32u",     "64",                        (uint32_t) 100 );
+    TEST_SVSPRINTF( "%r*I32u",     "1000",                      (int) 5 ARG((uint32_t) 125));
+
+    TEST_SVSPRINTF( "%r0I64u",     "100",                       (int64_t) 100 );
+    TEST_SVSPRINTF( "%r1I64u",     "64",                        (int64_t) 100 );
+    TEST_SVSPRINTF( "%r*I64u",     "1000",                      (int) 5 ARG((uint64_t) 125));
 
     TEST_SVSPRINTF( "%r0d",        "100",                       (int) 100 );
     TEST_SVSPRINTF( "%r1d",        "64",                        (int) 100 );
+    TEST_SVSPRINTF( "%r*d",        "-1000",                     (int) 5 ARG((int) -125));
 
     TEST_SVSPRINTF( "%r0u",        "100",                       (unsigned int) 100 );
     TEST_SVSPRINTF( "%r1u",        "64",                        (unsigned int) 100 );
+    TEST_SVSPRINTF( "%r*u"   ,     "1000",                      (int) 5 ARG((unsigned int) 125));
 
     TEST_SVSPRINTF( "%r0ld",       "100",                       (long) 100 );
     TEST_SVSPRINTF( "%r1ld",       "64",                        (long) 100 );
+    TEST_SVSPRINTF( "%r*ld",       "-1000",                     (int) 5 ARG((long) -125));
 
     TEST_SVSPRINTF( "%r0lu",       "100",                       (unsigned long) 100 );
     TEST_SVSPRINTF( "%r1lu",       "64",                        (unsigned long) 100 );
+    TEST_SVSPRINTF( "%r*lu",       "1000",                      (int) 5 ARG((unsigned long) 125));
 
     TEST_SVSPRINTF( "%r0lld",      "100",                       (long long) 100 );
     TEST_SVSPRINTF( "%r1lld",      "64",                        (long long) 100 );
+    TEST_SVSPRINTF( "%r*lld",      "-1000",                     (int) 5 ARG((long long) -125));
 
     TEST_SVSPRINTF( "%r0llu",      "100",                       (unsigned long long) 100 );
     TEST_SVSPRINTF( "%r1llu",      "64",                        (unsigned long long) 100 );
+    TEST_SVSPRINTF( "%r*llu",      "1000",                      (int) 5 ARG((unsigned long long) 125));
 
     TEST_SVSPRINTF( "%r0l1u",      "100",                       (uint8_t) 100 );
     TEST_SVSPRINTF( "%r1l1u",      "64",                        (uint8_t) 100 );
+    TEST_SVSPRINTF( "%r*l1u",      "1000",                      (int) 5 ARG((uint8_t) 125));
 
     TEST_SVSPRINTF( "%r0l1d",      "100",                       (int8_t) 100 );
     TEST_SVSPRINTF( "%r1l1d",      "64",                        (int8_t) 100 );
+    TEST_SVSPRINTF( "%r*l1d",      "-1000",                     (int) 5 ARG((int8_t) -125));
 
     TEST_SVSPRINTF( "%r0l2u",      "100",                       (uint16_t) 100 );
     TEST_SVSPRINTF( "%r1l2u",      "64",                        (uint16_t) 100 );
+    TEST_SVSPRINTF( "%r*l2u",      "1000",                      (int) 5 ARG((uint16_t) 125));
 
     TEST_SVSPRINTF( "%r0l2d",      "100",                       (int16_t) 100 );
     TEST_SVSPRINTF( "%r1l2d",      "64",                        (int16_t) 100 );
+    TEST_SVSPRINTF( "%r*l2d",      "-1000",                     (int) 5 ARG((int16_t) -125));
 
     TEST_SVSPRINTF( "%r0l4u",      "100",                       (uint32_t) 100 );
     TEST_SVSPRINTF( "%r1l4u",      "64",                        (uint32_t) 100 );
+    TEST_SVSPRINTF( "%r*l4u",      "1000",                      (int) 5 ARG((uint32_t) 125));
 
     TEST_SVSPRINTF( "%r0l4d",      "100",                       (int32_t) 100 );
     TEST_SVSPRINTF( "%r1l4d",      "64",                        (int32_t) 100 );
+    TEST_SVSPRINTF( "%r*l4d",      "-1000",                     (int) 5 ARG((int32_t) -125));
 
     TEST_SVSPRINTF( "%r0l8u",      "100",                       (uint64_t) 100 );
     TEST_SVSPRINTF( "%r1l8u",      "64",                        (uint64_t) 100 );
+    TEST_SVSPRINTF( "%r*l8u",      "1000",                      (int) 5 ARG((uint64_t) 125));
 
     TEST_SVSPRINTF( "%r0l8d",      "100",                       (int64_t) 100 );
     TEST_SVSPRINTF( "%r1l8d",      "64",                        (int64_t) 100 );
-
+    TEST_SVSPRINTF( "%r*l8d",      "-1000",                     (int) 5 ARG((int64_t) -125));
  
     return (bRet);
 } /* test_ssprintf() */

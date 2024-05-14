@@ -2727,7 +2727,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   CHECK_SIGN (signed char, unsigned char, int, unsigned int);
                   zRet += cbk_print_u32(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
-               else if ((s0 == 'r') && IS_PRINTF_FMT_INT(e0))
+               else if (s0 == 'r')
                {
                   uint8_t base;
                   if(s1 == '*')

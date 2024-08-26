@@ -73,7 +73,7 @@ Why that 'Civil Usage Public License' and not the GPL anymore?
 The new license is kind a mix of the conditions of BSD or Apache license but in
 opposite to the former it prohibits any usage for weapons, spyware and secret
 monitoring of any people without their knowledge or agreement.
-That's fine for most commercial us cases but I dislike the idea to find any
+That's fine for most commercial use cases but I dislike the idea to find any
 of my software in military devices, weapons or spyware because it's pretty
 good tracable in the binaries of nearly all common compilers.
 A civil only usage is not a big deal for most people except for the ones who

@@ -2321,6 +2321,7 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
    See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
 
+
 size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val)
 {
    size_t       zRet = 0;
@@ -2339,7 +2340,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
       ++pf;
 
    if(pf != pFmt)
-   {
+   { /* print leading string without any argment format specifications */
       zRet = (size_t) (pf - pFmt);
       pCB(pUserData, pFmt, zRet);
       pFmt = pf;  /* end of format string or first format specification */
@@ -2372,16 +2373,17 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
          if (IS_DIGIT(*ps))
          {
-            while (IS_DIGIT(*(++ps)))
-            {}
+            /* size_t idx = (*ps - '0'); */
+
+            while(IS_DIGIT(*(++ps)))
+            {
+               /* idx = (idx * 10) + (*ps - '0'); */
+            }
 
             if (*ps == '$')
-            { /*  size_t Idx = 0;
-              while(pf != ps)
-              Idx = (Idx * 10) + (*pf - '0'); */  /* "Todo: allow a different sequence of the arguments according to the Posix standard */
-
+            { /* we do not yet handle indexed arguments */
                pCB(pUserData, ps, 0);
-               goto Exit; /* we do not yet handle indexed arguments */
+               goto Exit;
             }
 
             ps = pf; /* may be a minimum width */
@@ -2407,20 +2409,34 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
          if(*ps == '*')
          {
-            int i = va_arg(val, int);
-
-            if(i < 0)
-            {/* handle this according to the C standard */
-               left_justified = 1;
-               i = -i;
-            }
-
-            minimum_width = (size_t) i;
-
             if(IS_DIGIT(*(++ps)))
-            { /* we do not yet handle indexed arguments */
+            { /* handle indexed arguments */
+               size_t idx = (*ps - '0');
+
+               while(IS_DIGIT(*(++ps)))
+                  idx = (idx * 10) + (*ps - '0');
+
+               if (*ps != '$')
+               { /* invalid format */
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
+               }
+
+               /* we do not yet support this :o( */
                pCB(pUserData, ps, 0);
                goto Exit;
+            }
+            else
+            {
+               int i = va_arg(val, int);
+
+               if(i < 0)
+               {/* handle this according to the C standard */
+                  left_justified = 1;
+                  i = -i;
+               }
+
+               minimum_width = (size_t) i;
             }
          }
          else if(IS_DIGIT(*ps))
@@ -2437,14 +2453,34 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          {
             if(*(++ps) == '*')
             {
-               int i = va_arg(val, int);
-               if(i >= 0)
-                  precision = (size_t) i;
-
                if(IS_DIGIT(*(++ps)))
-               {/* we do not yet handle indexed arguments */
+               { /* handle indexed arguments */
+                  size_t idx = (*ps - '0');
+
+                  while(IS_DIGIT(*(++ps)))
+                     idx = (idx * 10) + (*ps - '0');
+
+                  if (*ps != '$')
+                  { /* invalid format */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
+
+                  /* we do not yet support this :o( */
                   pCB(pUserData, ps, 0);
                   goto Exit;
+               }
+               else
+               {
+                  int i = va_arg(val, int);
+                  if(i >= 0)
+                     precision = (size_t) i;
+
+                  if(IS_DIGIT(*(++ps)))
+                  {/* we do not yet handle indexed arguments */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
                }
             }
             else if(IS_DIGIT(*ps))
@@ -2502,7 +2538,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 /* ------------------------------------------------------------------------- */
 
                CHECK_SIGN (int, unsigned int, int, unsigned int);
-               zRet += cbk_print_u32(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+
+               if(sizeof(u) <= 4)
+                   zRet += cbk_print_u32(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+               else
+                   zRet += cbk_print_u64(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
             }
             else if(e0 == 'c')
             {

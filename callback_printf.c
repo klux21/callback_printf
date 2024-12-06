@@ -2407,7 +2407,13 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             ++ps;
          }
 
-         if(*ps == '*')
+         if(IS_DIGIT(*ps))
+         {
+            minimum_width = *ps++ - '0';
+            while(IS_DIGIT(*ps))
+               minimum_width = (minimum_width * 10) + (*ps++ - '0');
+         }
+         else if(*ps == '*')
          {
             if(IS_DIGIT(*(++ps)))
             { /* handle indexed arguments */
@@ -2439,19 +2445,19 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                minimum_width = (size_t) i;
             }
          }
-         else if(IS_DIGIT(*ps))
-         {
-            minimum_width = *ps++ - '0';
-            while(IS_DIGIT(*ps))
-               minimum_width = (minimum_width * 10) + (*ps++ - '0');
-         }
 
          if(left_justified)
             blank_padding = 1;
 
          if(*ps == '.')
          {
-            if(*(++ps) == '*')
+            if(IS_DIGIT(*(++ps)))
+            {
+               precision = *ps++ - '0';
+               while(IS_DIGIT(*ps))
+                  precision = (precision * 10) + (*ps++ - '0');
+            }
+            else if(*ps == '*')
             {
                if(IS_DIGIT(*(++ps)))
                { /* handle indexed arguments */
@@ -2476,12 +2482,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   if(i >= 0)
                      precision = (size_t) i;
                }
-            }
-            else if(IS_DIGIT(*ps))
-            {
-               precision = *ps++ - '0';
-               while(IS_DIGIT(*ps))
-                  precision = (precision * 10) + (*ps++ - '0');
             }
          }
 

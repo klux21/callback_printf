@@ -2475,12 +2475,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   int i = va_arg(val, int);
                   if(i >= 0)
                      precision = (size_t) i;
-
-                  if(IS_DIGIT(*(++ps)))
-                  {/* we do not yet handle indexed arguments */
-                     pCB(pUserData, ps, 0);
-                     goto Exit;
-                  }
                }
             }
             else if(IS_DIGIT(*ps))

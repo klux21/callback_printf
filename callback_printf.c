@@ -2506,6 +2506,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                length = (size_t) (ps - pa); /* contains string len to be printed now */
                zRet += cbk_print_string(pUserData, pCB, pa, length, minimum_width, left_justified);
             }
+            else if(e0 == 'c')
+            {
+               char c = (char) va_arg(val, int);
+               zRet += cbk_print_char(pUserData, pCB, c, (precision == ~(size_t) 0) ? 1 : precision, minimum_width, left_justified);
+            }
             else if (IS_PRINTF_FMT_INT(e0))
             {
 /* ------------------------------------------------------------------------- */
@@ -2537,11 +2542,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                    zRet += cbk_print_u32(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                else
                    zRet += cbk_print_u64(pUserData, pCB, u, e0, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-            }
-            else if(e0 == 'c')
-            {
-               char c = (char) va_arg(val, int);
-               zRet += cbk_print_char(pUserData, pCB, c, (precision == ~(size_t) 0) ? 1 : precision, minimum_width, left_justified);
             }
             else if(e0 == 'p')
             {
@@ -3306,6 +3306,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
    Exit:;
    return (zRet);
 } /* size_t cbk_printf(void * pUserData, PRINT_CALL_BACK * pCB, const char * pFmt, va_list val) */
+
 
 
 /* ========================================================================= *\

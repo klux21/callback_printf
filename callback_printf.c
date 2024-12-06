@@ -2340,7 +2340,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
       ++pf;
 
    if(pf != pFmt)
-   { /* print leading string without any argment format specifications */
+   { /* print the leading string without format specifications */
       zRet = (size_t) (pf - pFmt);
       pCB(pUserData, pFmt, zRet);
       pFmt = pf;  /* end of format string or first format specification */

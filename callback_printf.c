@@ -2340,7 +2340,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
       ++pf;
 
    if(pf != pFmt)
-   { /* print the leading string without format specifications */
+   { /* print the leading string that contains no argument format specifications */
       zRet = (size_t) (pf - pFmt);
       pCB(pUserData, pFmt, zRet);
       pFmt = pf;  /* end of format string or first format specification */
@@ -2368,94 +2368,52 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          size_t  minimum_width  = 0;           /* minimum output width */
 
          const char * ps = pf;
-         const char * pe;
+         const char * pe = ps;
          char e0;
 
-         if (IS_DIGIT(*ps))
+         if(!IS_PRINTF_FMT_END(*pe))
          {
-            /* size_t idx = (*ps - '0'); */
-
-            while(IS_DIGIT(*(++ps)))
+            if (IS_DIGIT(*ps))
             {
-               /* idx = (idx * 10) + (*ps - '0'); */
-            }
-
-            if (*ps == '$')
-            { /* we do not yet handle indexed arguments */
-               pCB(pUserData, ps, 0);
-               goto Exit;
-            }
-
-            ps = pf; /* may be a minimum width */
-         }
-
-         while(IS_PRINTF_FMT_FLAG(*ps))
-         {
-            if(*ps == '0')
-               blank_padding = 0;
-            else if(*ps == '-')
-               left_justified = 1;
-            else if(*ps == '#')
-               prefixing = 1;
-            else if(*ps == '+')
-               sign_char = '+';
-            else if(*ps == ' ')
-            {
-               if(sign_char != '+')
-                  sign_char = ' ';
-            }
-            ++ps;
-         }
-
-         if(IS_DIGIT(*ps))
-         {
-            minimum_width = *ps++ - '0';
-            while(IS_DIGIT(*ps))
-               minimum_width = (minimum_width * 10) + (*ps++ - '0');
-         }
-         else if(*ps == '*')
-         {
-            if(IS_DIGIT(*(++ps)))
-            { /* handle indexed arguments */
-               size_t idx = (*ps - '0');
+               /* size_t idx = (*ps - '0'); */
 
                while(IS_DIGIT(*(++ps)))
-                  idx = (idx * 10) + (*ps - '0');
+               {
+                  /* idx = (idx * 10) + (*ps - '0'); */
+               }
 
-               if (*ps != '$')
-               { /* invalid format */
+               if (*ps == '$')
+               { /* we do not yet handle indexed arguments */
                   pCB(pUserData, ps, 0);
                   goto Exit;
                }
 
-               /* we do not yet support this :o( */
-               pCB(pUserData, ps, 0);
-               goto Exit;
+               ps = pf; /* may be a minimum width */
             }
-            else
-            {
-               int i = va_arg(val, int);
 
-               if(i < 0)
-               {/* handle this according to the C standard */
+            while(IS_PRINTF_FMT_FLAG(*ps))
+            {
+               if(*ps == '0')
+                  blank_padding = 0;
+               else if(*ps == '-')
                   left_justified = 1;
-                  i = -i;
+               else if(*ps == '#')
+                  prefixing = 1;
+               else if(*ps == '+')
+                  sign_char = '+';
+               else if(*ps == ' ')
+               {
+                  if(sign_char != '+')
+                     sign_char = ' ';
                }
-
-               minimum_width = (size_t) i;
+               ++ps;
             }
-         }
 
-         if(left_justified)
-            blank_padding = 1;
-
-         if(*ps == '.')
-         {
-            if(IS_DIGIT(*(++ps)))
+            if(IS_DIGIT(*ps))
             {
-               precision = *ps++ - '0';
+               minimum_width = *ps++ - '0';
                while(IS_DIGIT(*ps))
-                  precision = (precision * 10) + (*ps++ - '0');
+                  minimum_width = (minimum_width * 10) + (*ps++ - '0');
             }
             else if(*ps == '*')
             {
@@ -2479,18 +2437,65 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else
                {
                   int i = va_arg(val, int);
-                  if(i >= 0)
-                     precision = (size_t) i;
+
+                  if(i < 0)
+                  {/* handle this according to the C standard */
+                     left_justified = 1;
+                     i = -i;
+                  }
+
+                  minimum_width = (size_t) i;
                }
             }
+
+            if(left_justified)
+               blank_padding = 1;
+
+            if(*ps == '.')
+            {
+               if(IS_DIGIT(*(++ps)))
+               {
+                  precision = *ps++ - '0';
+                  while(IS_DIGIT(*ps))
+                     precision = (precision * 10) + (*ps++ - '0');
+               }
+               else if(*ps == '*')
+               {
+                  if(IS_DIGIT(*(++ps)))
+                  { /* handle indexed arguments */
+                     size_t idx = (*ps - '0');
+
+                     while(IS_DIGIT(*(++ps)))
+                        idx = (idx * 10) + (*ps - '0');
+
+                     if (*ps != '$')
+                     { /* invalid format */
+                        pCB(pUserData, ps, 0);
+                        goto Exit;
+                     }
+
+                     /* we do not yet support this :o( */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
+                  else
+                  {
+                     int i = va_arg(val, int);
+                     if(i >= 0)
+                        precision = (size_t) i;
+                  }
+               }
+            }
+
+            /*  Let's find the end of the format specification. */
+            pe = ps;
+            while(!IS_PRINTF_FMT_END(*pe))
+               ++pe;
          }
 
-         /* ps should point to the type or it's prefix now. Let's find the end of the type string... */
-         pe = ps;
-         while(!IS_PRINTF_FMT_END(*pe))
-            ++pe;
-
+         /* pe points to the terminating format character now while ps points to the begin of type specification. */
          e0 = *pe;
+
          if(pe == ps)
          {
             if(e0 == 's')

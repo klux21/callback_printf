@@ -522,6 +522,12 @@ int run_tests()
     TEST_VSPRINTF( "%#Lg",      "0.00000",   (long double) 0.0l);
     TEST_VSPRINTF( "%g",        "0",         (double) 0.0);
     TEST_VSPRINTF( "%Lg",       "0",         (long double) 0.0l);
+    TEST_VSPRINTF( "%g",        "490000",    (double) 490000.0l);
+    TEST_VSPRINTF( "%Lg",       "490000",    (long double) 490000.0l);
+    TEST_VSPRINTF( "%G",        "4.9E+06",   (double) 4900000.0l);
+    TEST_VSPRINTF( "%LG",       "4.9E+06",   (long double) 4900000.0l);
+    TEST_VSPRINTF( "%.7G",      "4900000",   (double) 4900000.0l);
+    TEST_VSPRINTF( "%.7LG",     "4900000",   (long double) 4900000.0l);
 
 //    TEST_VSPRINTF("%+5.10r2E %+10.10r2e %+10.10r7e %+10.10r4e %+10.0e %+10.0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
 //                    (double) 3.9 ARG(7.89456123e-307) ARG(7.89456123e+307) ARG(789456123.0) ARG(0.789456123) ARG(DBL_MIN));

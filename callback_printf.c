@@ -1740,7 +1740,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          {
             length = print_long_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
-            if(!prefixing)
+            if(!prefixing && (minwidth > (E + 1)))
             { /* remove trailing zeros */
                while(length && (buf[length-1] == '0'))
                   --length;
@@ -2080,7 +2080,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          {
             length = print_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
-            if(!prefixing)
+            if(!prefixing && (minwidth > (E + 1)))
             { /* remove trailing zeros */
                while(length && (buf[length-1] == '0'))
                   --length;

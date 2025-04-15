@@ -185,7 +185,7 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
                  size_t * pDstSize,      /* remaining destination buffer size */
                  void **  pSrc,          /* source buffer */
                  size_t * pSrcSize,      /* remaining source data size */
-                 size_t   SrcCharWidth); /* width of destination characters */
+                 size_t   SrcCharWidth); /* width of source characters */
 
 /* ------------------------------------------------------------------------- *\
    svsnprintf, svsprintf, svsnprintf and ssprintf are system independent

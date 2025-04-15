@@ -413,7 +413,7 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
                  size_t * pDstSize,     /* remaining destination buffer size */
                  void **  pSrc,         /* source buffer */
                  size_t * pSrcSize,     /* remaining source data size */
-                 size_t   SrcCharWidth) /* width of destination characters */
+                 size_t   SrcCharWidth) /* width of source characters */
 {
    int err = 0; /* return value */
    size_t dz   = 0;
@@ -1740,7 +1740,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          {
             length = print_long_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
-            if(!prefixing && (minwidth > (E + 1)))
+            if(!prefixing && (minwidth > (size_t)(E + 1)))
             { /* remove trailing zeros */
                while(length && (buf[length-1] == '0'))
                   --length;
@@ -2080,7 +2080,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          {
             length = print_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
-            if(!prefixing && (minwidth > (E + 1)))
+            if(!prefixing && (minwidth > (size_t)(E + 1)))
             { /* remove trailing zeros */
                while(length && (buf[length-1] == '0'))
                   --length;

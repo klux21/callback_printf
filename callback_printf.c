@@ -800,6 +800,10 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     char *       pe       = buf + sizeof(buf);
     char *       ps       = pe;
     size_t       length   = 0;
+#if defined (_M_IX86) && defined ( _MSC_VER ) && ( _MSC_VER == 1943 )
+    /* prevent code crashes in case of Visual Studio 2022 version 17.13 because of defective compiler optimizations */
+    volatile
+#endif
     uint64_t     x        = value;
 
     if(base < 2)

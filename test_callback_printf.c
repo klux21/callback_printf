@@ -162,10 +162,20 @@ int test_ssprintf()
 {
    int bRet = 1;
 
-   static volatile uint32_t inf  = 0x7f800000;
-   static volatile uint32_t ninf = 0xff800000;
-   static volatile uint32_t nan  = 0x7fc00000;
-   static volatile uint32_t nnan = 0xffc00000;
+   uint32_t u_inf  = 0x7f800000;
+   uint32_t u_ninf = 0xff800000;
+   uint32_t u_nan  = 0x7fc00000;
+   uint32_t u_nnan = 0xffc00000;
+
+   float inf;
+   float ninf;
+   float nan;
+   float nnan;
+
+   memcpy(&inf,  &u_inf,  4);
+   memcpy(&ninf, &u_ninf, 4);
+   memcpy(&nan,  &u_nan,  4);
+   memcpy(&nnan, &u_nnan, 4);
 
 #define ARG(x)          ,x
 
@@ -422,23 +432,23 @@ int test_ssprintf()
     TEST_VSPRINTF( "%.3La", "-0x1.a37p-10",  (long double)  -1.6e-3 );
     TEST_VSPRINTF( "%.3LA", "-0X1.A37P-10",  (long double)  -1.6e-3 );
 
-    TEST_VSPRINTF( "%5.2e%.0f",  "  inf3",   (double) *(float*) &inf ARG(3.0));
-    TEST_VSPRINTF( "%5.2e%.0f",  " -inf3",   (double) *(float*) &ninf ARG(3.0));
-    TEST_VSPRINTF( "%5.2e%.0f",  "  nan3",   (double) *(float*) &nan ARG(3.0));
-    TEST_VSPRINTF( "%5.2e%.0f",  " -nan3",   (double) *(float*) &nnan ARG(3.0));
-    TEST_VSPRINTF( "%5.2E%.0f",  "  INF-3",  (double) *(float*) &inf ARG(-3.0));
-    TEST_VSPRINTF( "%5.2E%.0f",  " -INF-3",  (double) *(float*) &ninf ARG(-3.0));
-    TEST_VSPRINTF( "%5.2E%.0f",  "  NAN-3",  (double) *(float*) &nan ARG(-3.0));
-    TEST_VSPRINTF( "%5.2E%.0f",  " -NAN-3",  (double) *(float*) &nnan ARG(-3.0));
+    TEST_VSPRINTF( "%5.2e%.0f",  "  inf3",   (double) inf ARG(3.0));
+    TEST_VSPRINTF( "%5.2e%.0f",  " -inf3",   (double) ninf ARG(3.0));
+    TEST_VSPRINTF( "%5.2e%.0f",  "  nan3",   (double) nan ARG(3.0));
+    TEST_VSPRINTF( "%5.2e%.0f",  " -nan3",   (double) nnan ARG(3.0));
+    TEST_VSPRINTF( "%5.2E%.0f",  "  INF-3",  (double) inf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2E%.0f",  " -INF-3",  (double) ninf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2E%.0f",  "  NAN-3",  (double) nan ARG(-3.0));
+    TEST_VSPRINTF( "%5.2E%.0f",  " -NAN-3",  (double) nnan ARG(-3.0));
 
-    TEST_VSPRINTF( "%5.2Le%.0Lf", "  inf3",  (long double) *(float*) &inf ARG((long double) 3.0));
-    TEST_VSPRINTF( "%5.2Le%.0Lf", " -inf3",  (long double) *(float*) &ninf ARG((long double) 3.0));
-    TEST_VSPRINTF( "%5.2Le%.0Lf", "  nan3",  (long double) *(float*) &nan ARG((long double) 3.0));
-    TEST_VSPRINTF( "%5.2Le%.0Lf", " -nan3",  (long double) *(float*) &nnan ARG((long double) 3.0));
-    TEST_VSPRINTF( "%5.2LE%.0Lf", "  INF-3", (long double) *(float*) &inf ARG((long double) -3.0));
-    TEST_VSPRINTF( "%5.2LE%.0Lf", " -INF-3", (long double) *(float*) &ninf ARG((long double) -3.0));
-    TEST_VSPRINTF( "%5.2LE%.0Lf", "  NAN-3", (long double) *(float*) &nan ARG((long double) -3.0));
-    TEST_VSPRINTF( "%5.2LE%.0Lf", " -NAN-3", (long double) *(float*) &nnan ARG((long double) -3.0));
+    TEST_VSPRINTF( "%5.2Le%.0Lf", "  inf3",  (long double) inf ARG((long double) 3.0));
+    TEST_VSPRINTF( "%5.2Le%.0Lf", " -inf3",  (long double) ninf ARG((long double) 3.0));
+    TEST_VSPRINTF( "%5.2Le%.0Lf", "  nan3",  (long double) nan ARG((long double) 3.0));
+    TEST_VSPRINTF( "%5.2Le%.0Lf", " -nan3",  (long double) nnan ARG((long double) 3.0));
+    TEST_VSPRINTF( "%5.2LE%.0Lf", "  INF-3", (long double) inf ARG((long double) -3.0));
+    TEST_VSPRINTF( "%5.2LE%.0Lf", " -INF-3", (long double) ninf ARG((long double) -3.0));
+    TEST_VSPRINTF( "%5.2LE%.0Lf", "  NAN-3", (long double) nan ARG((long double) -3.0));
+    TEST_VSPRINTF( "%5.2LE%.0Lf", " -NAN-3", (long double) nnan ARG((long double) -3.0));
 
     TEST_VSPRINTF( "%# 01.1g",  " 1.e+01",   (double) 9.8);
     TEST_VSPRINTF( "%# 01.1Lg", " 1.e+01",   (long double) 9.8l);

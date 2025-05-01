@@ -793,19 +793,30 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
 {
     size_t zRet = 0;
     const char * padding  = (blank_padding || (precision != ~(size_t) 0)) ? pblanks : pzeros; /* padding characters in front of the output value */
+    size_t       minwidth = (precision == ~(size_t)0) ? 1 : precision;                        /* minimum width of value to print */
     const char * digit    = (format & 0x20) ? lower_digits : upper_digits;                    /* digits to use */
     uint8_t      base     = PrintfIntBase[(unsigned char) format];                            /* numeric base system for the output data */
-    size_t       minwidth = (precision == ~(size_t) 0) ? 1 : precision;                       /* minimum width of value to print */
     char         buf[80];                                                                     /* buffer for temporary output of value */
     char *       pe       = buf + sizeof(buf);
     char *       ps       = pe;
-    size_t       length   = 0;
     uint64_t     x        = value;
 
-    if(base < 2)
-       goto Exit;
+    if (base < 2)
+    {
+       if (!base)
+          base = 10;
+       else
+          base = 16;
+    }
 
-    if (base == 10)
+    if (!x)
+    {
+       prefixing = 0; /* no prefixing of 0x according to the C standard */
+
+       if (precision)  /* required by C and Posix standards :o( */
+          *--ps = '0';
+    }
+    else if (base == 10)
     {
        const char * pd;
 
@@ -831,26 +842,15 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     }
     else if (base == 16)
     {
-       if(!x)
-       {
-          prefixing = 0; /* no prefixing of 0x according to the C standard */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0xf];
           x >>= 4;
        } while (x);
-
     }
     else if (base == 8)
     {
-       if(!x)
-       {
-          prefixing = 0; /* because of 0 no prefixing required */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0x7];
           x >>= 3;
@@ -858,12 +858,7 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     }
     else if (base == 2)
     {
-       if(!x)
-       {
-          prefixing = 0; /* no prefixing of B according to the C standard */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0x1];
           x >>= 1;
@@ -871,11 +866,7 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     }
     else
     {
-       if(!x)
-       {
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           uint64_t tmp = x;
           x /= base;
@@ -883,14 +874,8 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
        }  while (x);
     }
 
-    length = (size_t) (pe - ps);
+    zRet = cbk_print_number(pUserData, pCB, ps, (size_t)(pe - ps), padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
 
-    if(!precision && !value)
-       length = 0; /* strange thing but required by C and Posix standards :o( */
-
-    zRet = cbk_print_number(pUserData, pCB, ps, length, padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
-
-    Exit:;
     return (zRet);
 } /* size_t cbk_print_u64(...) */
 
@@ -914,19 +899,30 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
 {
     size_t zRet = 0;
     const char * padding  = (blank_padding || (precision != ~(size_t) 0)) ? pblanks : pzeros; /* padding characters in front of the output value */
+    size_t       minwidth = (precision == ~(size_t)0) ? 1 : precision;                        /* minimum width of value to print */
     const char * digit    = (format & 0x20) ? lower_digits : upper_digits;                    /* digits to use */
     uint8_t      base     = PrintfIntBase[(unsigned char) format];                            /* numeric base system of for the output data */
-    size_t       minwidth = (precision == ~(size_t) 0) ? 1 : precision;                       /* minimum width of value to print */
     char         buf[80];                                                                     /* buffer for temporary output of value */
     char *       pe       = buf + sizeof(buf);
     char *       ps       = pe;
-    size_t       length   = 0;
     uint32_t     x        = value;
 
-    if(base < 2)
-       goto Exit;
+    if (base < 2)
+    {
+       if (!base)
+          base = 10;
+       else
+          base = 16;
+    }
 
-    if (base == 10)
+    if (!x)
+    {
+       prefixing = 0; /* no prefixing of 0x according to the C standard */
+
+       if (precision)  /* required by C and Posix standards :o( */
+          *--ps = '0';
+    }
+    else if (base == 10)
     {
        const char * pd;
 
@@ -952,26 +948,15 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     }
     else if (base == 16)
     {
-       if(!x)
-       {
-          prefixing = 0; /* no prefixing of 0x according to the C standard */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0xf];
           x >>= 4;
        } while (x);
-
     }
     else if (base == 8)
     {
-       if(!x)
-       {
-          prefixing = 0; /* because of 0 no prefixing required */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0x7];
           x >>= 3;
@@ -979,12 +964,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     }
     else if (base == 2)
     {
-       if(!x)
-       {
-          prefixing = 0; /* no prefixing of B according to the C standard */
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           *--ps = digit[x & 0x1];
           x >>= 1;
@@ -992,11 +972,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     }
     else
     {
-       if(!x)
-       {
-          *--ps = digit[x];
-       }
-       else do
+       do
        {
           uint32_t tmp = x;
           x /= base;
@@ -1004,14 +980,8 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
        }  while (x);
     }
 
-    length = (size_t) (pe - ps);
+    zRet = cbk_print_number(pUserData, pCB, ps, (size_t)(pe - ps), padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
 
-    if(!precision && !value)
-       length = 0; /* strange thing but required by C and Posix standards :o( */
-
-    zRet = cbk_print_number(pUserData, pCB, ps, length, padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
-
-    Exit:;
     return (zRet);
 } /* size_t cbk_print_u32(...) */
 

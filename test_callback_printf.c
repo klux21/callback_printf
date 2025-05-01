@@ -162,10 +162,10 @@ int test_ssprintf()
 {
    int bRet = 1;
 
-   static uint32_t inf  = 0x7f800000;
-   static uint32_t ninf = 0xff800000;
-   static uint32_t nan  = 0x7fc00000;
-   static uint32_t nnan = 0xffc00000;
+   static volatile uint32_t inf  = 0x7f800000;
+   static volatile uint32_t ninf = 0xff800000;
+   static volatile uint32_t nan  = 0x7fc00000;
+   static volatile uint32_t nnan = 0xffc00000;
 
 #define ARG(x)          ,x
 

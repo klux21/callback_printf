@@ -801,14 +801,6 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     char *       ps       = pe;
     uint64_t     x        = value;
 
-    if (base < 2)
-    {
-       if (!base)
-          base = 10;
-       else
-          base = 16;
-    }
-
     if (!x)
     {
        prefixing = 0; /* no prefixing of 0x according to the C standard */
@@ -906,14 +898,6 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     char *       pe       = buf + sizeof(buf);
     char *       ps       = pe;
     uint32_t     x        = value;
-
-    if (base < 2)
-    {
-       if (!base)
-          base = 10;
-       else
-          base = 16;
-    }
 
     if (!x)
     {

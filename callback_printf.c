@@ -800,10 +800,6 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     char *       pe       = buf + sizeof(buf);
     char *       ps       = pe;
     size_t       length   = 0;
-#if defined (_M_IX86) && defined ( _MSC_VER ) && ( _MSC_VER == 1943 )
-    /* prevent code crashes in case of Visual Studio 2022 version 17.13 because of defective compiler optimizations */
-    volatile
-#endif
     uint64_t     x        = value;
 
     if(base < 2)
@@ -836,52 +832,55 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     else if (base == 16)
     {
        if(!x)
+       {
           prefixing = 0; /* no prefixing of 0x according to the C standard */
-
-       while (x >= 16)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0xf];
           x >>= 4;
-       }
+       } while (x);
 
-       *--ps = digit[x];
     }
     else if (base == 8)
     {
        if(!x)
+       {
           prefixing = 0; /* because of 0 no prefixing required */
-
-       while (x >= 8)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0x7];
           x >>= 3;
-       }
-
-       *--ps = digit[x];
+       } while (x);
     }
     else if (base == 2)
     {
        if(!x)
+       {
           prefixing = 0; /* no prefixing of B according to the C standard */
-
-       while (x >= 2)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0x1];
           x >>= 1;
-       }
-
-       *--ps = digit[x];
+       } while (x);
     }
     else
     {
-       while (x >= base)
+       if(!x)
+       {
+          *--ps = digit[x];
+       }
+       else do
        {
           uint64_t tmp = x;
           x /= base;
           *--ps = digit[tmp - (x * base)];
-       }
-
-       *--ps = digit[x];
+       }  while (x);
     }
 
     length = (size_t) (pe - ps);
@@ -954,52 +953,55 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     else if (base == 16)
     {
        if(!x)
+       {
           prefixing = 0; /* no prefixing of 0x according to the C standard */
-
-       while (x >= 16)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0xf];
           x >>= 4;
-       }
+       } while (x);
 
-       *--ps = digit[x];
     }
     else if (base == 8)
     {
        if(!x)
+       {
           prefixing = 0; /* because of 0 no prefixing required */
-
-       while (x >= 8)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0x7];
           x >>= 3;
-       }
-
-       *--ps = digit[x];
+       } while (x);
     }
     else if (base == 2)
     {
        if(!x)
+       {
           prefixing = 0; /* no prefixing of B according to the C standard */
-
-       while (x >= 2)
+          *--ps = digit[x];
+       }
+       else do
        {
           *--ps = digit[x & 0x1];
           x >>= 1;
-       }
-
-       *--ps = digit[x];
+       } while (x);
     }
     else
     {
-       while (x >= base)
+       if(!x)
+       {
+          *--ps = digit[x];
+       }
+       else do
        {
           uint32_t tmp = x;
           x /= base;
           *--ps = digit[tmp - (x * base)];
-       }
-
-       *--ps = digit[x];
+       }  while (x);
     }
 
     length = (size_t) (pe - ps);

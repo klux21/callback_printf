@@ -801,6 +801,9 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     char *       ps       = pe;
     uint64_t     x        = value;
 
+    if(base < 2)
+       goto Exit;
+
     if (!x)
     {
        prefixing = 0; /* no prefixing of 0x according to the C standard */
@@ -868,6 +871,7 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
 
     zRet = cbk_print_number(pUserData, pCB, ps, (size_t)(pe - ps), padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
 
+    Exit:;
     return (zRet);
 } /* size_t cbk_print_u64(...) */
 
@@ -899,6 +903,9 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     char *       ps       = pe;
     uint32_t     x        = value;
 
+    if(base < 2)
+       goto Exit;
+
     if (!x)
     {
        prefixing = 0; /* no prefixing of 0x according to the C standard */
@@ -966,6 +973,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
 
     zRet = cbk_print_number(pUserData, pCB, ps, (size_t)(pe - ps), padding, sign_char, prefixing ? base : 0, digit == upper_digits, left_justified, minwidth, fieldwidth);
 
+    Exit:;
     return (zRet);
 } /* size_t cbk_print_u32(...) */
 

@@ -68,16 +68,11 @@ which can be a security issue in some special use cases where you need to
 prevent sniffing.
 
 Why that 'Civil Usage Public License'? The license is kind a mix of the
-conditions of BSD or Apache license but in opposite to the former it
-prohibits any usage for weapons, spyware and secret monitoring of other people
-without their knowledge and agreement or their health or life being endangered.
-That's fine for most commercial software but not for military devices, weapons
-or spyware. The software is pretty good traceable in the binaries of nearly all
-common compilers so skip any ideas. It's not a big deal except for the ones who
-make money out of wars, dead people and other things that are really nasty.
-There are millions of people who were killed and crippled with the help of open
-source software now so it would be a great thing if more projects would adapt
-this license as well.
+conditions of BSD or Apache license but in opposite to the former it prohibits
+any usage for weapons, spyware and secret monitoring of other people without
+their knowledge and agreement or their health or life being endangered. That's
+usually fine also for most use cases but not for military devices, weapons or
+spyware. It would be great if more projects would adapt this license.
 
 
 Kind regards,

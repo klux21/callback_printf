@@ -67,8 +67,8 @@ The callback_printf based wrappers are prefixed with an s for 'speed' and for
 which can be a security issue in some special use cases where you need to
 prevent sniffing.
 
-The license is kind of a mix of BSD or Apache conditions but in opposite to the
-former it prohibits a usage for weapons and spyware and a secret monitoring of
+The license is kind of a mix of BSD and Apache conditions but in opposite to
+those it prohibits a usage for weapons and spyware and a secret monitoring of
 other people without their agreement or their health or life being endangered.
 That's fine for most software but usually not for military devices, weapons or
 spyware. It would be great if more projects would adapt this license as well.

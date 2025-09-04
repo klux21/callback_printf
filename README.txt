@@ -67,12 +67,11 @@ The callback_printf based wrappers are prefixed with an s for 'speed' and for
 which can be a security issue in some special use cases where you need to
 prevent sniffing.
 
-Why that 'Civil Usage Public License'? The license is kind a mix of the
-conditions of BSD or Apache license but in opposite to the former it prohibits
-any usage for weapons, spyware and secret monitoring of other people without
-their knowledge and agreement or their health or life being endangered. That's
-usually fine also for most use cases but not for military devices, weapons or
-spyware. It would be great if more projects would adapt this license.
+The license is kind of a mix of BSD or Apache conditions but in opposite to the
+former it prohibits a usage for weapons and spyware and secret monitoring of
+other people without their agreement or their health or life being endangered.
+That's fine for most software but usually not for military devices, weapons or
+spyware. It would be great if more projects would adapt this license as well.
 
 
 Kind regards,

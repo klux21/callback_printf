@@ -5,16 +5,15 @@ portability of the format specifiers especially between Windows and Posix
 systems can be be very annoying. All the required workarounds and adjustments
 cost the programmers a lot of time.
 Who wants to mess around with different prefixes or format strings on every
-new platform? OK - there are a plenty of other sprintf implementations already
-but many of them don't really care the performance and the portability,
-or lack floating point and especially long double support, they don't convert
-Unicode strings to UTF-8 and don't care much about the conformance to the C
-standard formats or the printf parameter validation features of the gcc which
-are a great thing for preventing unexpected crashes within printf like
-function. This implementation also ignores the locale settings to prevent any
-kind of random output variations that depends on the environment setting.
-You don't want any internal locks, unnecessary allocations or strange
-implementations which may slow down your code even if every microsecond counts.
+new platform? OK - there are a plenty of other sprintf implementations but
+many of them don't really care the performance and the portability or lack
+floating point and especially long double support and they don't convert
+Unicode strings to UTF-8 if dealing with wide characters and don't care much
+about the conformance to the C standard formats.
+This implementation also ignores the locale settings to prevent any kind of
+random output variations that depends on the environment settings.
+You also don't want any internal locks, unnecessary allocations or strange
+implementations which may slow down your code where every microsecond counts.
 callback_printf uses only the stack of the calling thread and neither locks nor
 allocations. It allows you to debug and fix problems very easily if something
 doesn't work as expected.
@@ -26,7 +25,7 @@ If it comes to me it was always a wish of me to get rid of all this trouble
 and the portability issues that most programmers are struggling with.
 And I did want to add some extra length specifiers for using arguments of type
 int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
-inttypes.h and as well in stdint.h since C11 now.
+inttypes.h and as well in stdint.h since the C 11 standard.
 In the C 23 standard there will be be some different length specifiers for
 that then the l1, l2, l4 or l8 prefixes that callback_printf uses. It's not a
 big thing to update the code for supporting the new prefixes too of course.
@@ -53,16 +52,22 @@ specifier. The highest supported numeric base is 36.
 Floating point exponents for bases higher than 14 are prefixed by a tilde '~'
 istead of the letter 'e' which becomes a member of the regular digits of those
 bases.
-An interesting feature is the unintentional and very fast generic mantisse and
-exponent calculation for the different numeric base systems that enables the
-support of all of those numeric systems. Where else do you find a genereric
-solution for printing floating points in a lot of different numeric systems?
+
+The implementation also uses the great printf parameter validation features of
+the gcc which are a great thing for preventing program crashes within printf
+like functions. However that may trigger those warnings in case of the using
+any format enhancements and you may need to deactivate those checks by defining
+the macro PRINTF_LIKE_ARGS(f,a) as nothing then.
+
+An interesting internal feature is the fast generic mantisse and exponent
+calculation for the several numeric bases that enables the generic support of
+different numeric bases for the floating point output.
 
 The little benchmark vsprintf_bench.c is an easy way for checking the
 performance. Just execute that file in a shell of a Posix system and have a
 look on the outpout.
 
-The callback_printf based wrappers are prefixed with an s for 'speed' and for
+All callback_printf based wrappers are prefixed with an s for 'speed' and for
 'security' because you won't share your string data with compiler libraries
 which can be a security issue in some special use cases where you need to
 prevent sniffing.

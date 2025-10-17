@@ -153,11 +153,12 @@ static void sfprintf_write_callback(void * pUserData, const char * pSrc, size_t 
 } /* void  sfprintf_write_callback(void * pUserData, const char * pSrc, size_t Length) */
 
 
+
 /* ------------------------------------------------------------------------- *\
-   sfprintf is a wrapper for fprintf that bases on callback_printf.
+   svfprintf is a wrapper for vfprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
 
-size_t sfprintf(FILE * pf, const char * pFmt, ...)
+size_t svfprintf(FILE * pf, const char * pFmt, va_list val)
 {
    size_t sz_ret = 0;
 
@@ -174,12 +175,7 @@ size_t sfprintf(FILE * pf, const char * pFmt, ...)
          0
       };
 
-      va_list val;
-      va_start(val, pFmt);
-
       callback_printf(&wd, &sfprintf_write_callback, pFmt, val);
-
-      va_end(val);
 
       sz_ret = wd.Length;
 
@@ -188,7 +184,28 @@ size_t sfprintf(FILE * pf, const char * pFmt, ...)
    }
 
    return (sz_ret);
+} /* size_t svfprintf(FILE * pf, const char * pFmt, va_list val) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   sfprintf is a wrapper for fprintf that bases on callback_printf.
+\* ------------------------------------------------------------------------- */
+
+size_t sfprintf(FILE * pf, const char * pFmt, ...)
+{
+   size_t sz_ret = 0;
+
+   va_list val;
+   va_start(val, pFmt);
+
+   sz_ret =  svfprintf(pf, pFmt, val);
+
+   va_end(val);
+
+   return (sz_ret);
 } /* size_t sfprintf(FILE * pf, const char * pFmt, ...) */
+
 
 
 /* ========================================================================= *\
@@ -268,11 +285,11 @@ static void sfdprintf_write_callback(void * pUserData, const char * pSrc, size_t
 
 
 /* ------------------------------------------------------------------------- *\
-   sfdprintf is a printf like function that bases on callback_printf and
+   svfdprintf is a vfprintf like function that bases on callback_printf but
    writes to a file desciptor.
 \* ------------------------------------------------------------------------- */
 
-size_t sfdprintf(int fd, const char * pFmt, ...)
+size_t svfdprintf(int fd, const char * pFmt, va_list val)
 {
    size_t sz_ret = 0;
 
@@ -289,12 +306,7 @@ size_t sfdprintf(int fd, const char * pFmt, ...)
          0
       };
 
-      va_list val;
-      va_start(val, pFmt);
-
       callback_printf(&wd, &sfdprintf_write_callback, pFmt, val);
-
-      va_end(val);
 
       sz_ret = wd.Length;
 
@@ -303,9 +315,29 @@ size_t sfdprintf(int fd, const char * pFmt, ...)
    }
 
    return (sz_ret);
+} /* size_t svfdprintf(FILE * pf, const char * pFmt, va_list val) */
+
+
+/* ------------------------------------------------------------------------- *\
+   sfdprintf is a fprintf like function that bases on callback_printf but
+   writes to a file desciptor.
+\* ------------------------------------------------------------------------- */
+
+size_t sfdprintf(int fd, const char * pFmt, ...)
+{
+   size_t sz_ret = 0;
+
+   va_list val;
+   va_start(val, pFmt);
+
+   sz_ret = svfdprintf(fd, pFmt, val);
+
+   va_end(val);
+
+   return (sz_ret);
 } /* size_t sfdprintf(FILE * pf, const char * pFmt, ...) */
 
 
 /* ========================================================================= *\
-   END OF FILE
+   E N D   O F   F I L E
 \* ========================================================================= */

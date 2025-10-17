@@ -87,12 +87,22 @@ extern "C" {
 \* ------------------------------------------------------------------------- */
 size_t sfprintf(FILE * pf, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
 
+/* ------------------------------------------------------------------------- *\
+   svfprintf is a wrapper for vfprintf that bases on callback_printf.
+\* ------------------------------------------------------------------------- */
+size_t svfprintf(FILE * pf, const char * pFmt, va_list val);
 
 /* ------------------------------------------------------------------------- *\
-   sfdprintf is a printf like function that bases on callback_printf and
+   sfdprintf is a fprintf like function that bases on callback_printf but
    writes to a file desciptor.
 \* ------------------------------------------------------------------------- */
 size_t sfdprintf(int fd, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+
+/* ------------------------------------------------------------------------- *\
+   svfdprintf is a vfprintf like function that bases on callback_printf but
+   writes to a file desciptor.
+\* ------------------------------------------------------------------------- */
+size_t svfdprintf(int fd, const char * pFmt, va_list val);
 
 
 #ifdef __cplusplus
@@ -102,5 +112,5 @@ size_t sfdprintf(int fd, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* exp
 #endif /* CALLBACK_PRINTF_H */
 
 /* ========================================================================= *\
-   END OF FILE
+   E N D   O F   F I L E
 \* ========================================================================= */

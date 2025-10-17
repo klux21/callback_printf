@@ -44,11 +44,10 @@ For the floating point formats a, A, e, E, f, F, g and G the prefix L for
 long double arguments is supported.
 Additionally a special prefix for specifying a specific numeric base of integer
 or floating point numbers is supported. It's r0 for base 10, r1 for base 16 and
-r2 ... r9 for the bases 2 til 9. Instead of a numeric value an asterisk * can
-be specified as well.
-In that case the base needs to be specified by an additional argument of type
-int just before the integer or floating specifier or it's optional length
-specifier. The highest supported numeric base is 36.
+r2 ... r9 for the bases 2 til 9. For variable bases r* can be used. In that
+case the base needs to be specified by an additional argument of type int just
+before the integer or floating specifier or it's optional length specifier. The
+highest supported numeric base is 36.
 Floating point exponents for bases higher than 14 are prefixed by a tilde '~'
 istead of the letter 'e' which becomes a member of the regular digits of those
 bases.

@@ -2219,7 +2219,7 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
                                 size_t            minimum_width,  /* minimum output field width */
                                 uint8_t           left_justified) /* whether the output should be left justified */
 {
-   size_t zRet = 0;
+   size_t zRet;
    char   buf[2048];
    char * pb;
    size_t length = 0;
@@ -2242,7 +2242,7 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
    }
    else
    {
-      zRet += minimum_width;
+      zRet = minimum_width;
 
       minimum_width -= length;
       if(left_justified && length)

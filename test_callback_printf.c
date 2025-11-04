@@ -560,6 +560,25 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r0l8d",      "100",                       (int64_t) 100 );
     TEST_VSPRINTF( "%r1l8d",      "64",                        (int64_t) 100 );
     TEST_VSPRINTF( "%r*l8d",      "-1000",                     (int) 5 ARG((int64_t) -125));
+
+    if(sizeof(void *) == 4)
+    {
+        TEST_VSPRINTF( "%p",   "1234abcd",    (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%P",   "1234ABCD",    (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%#p",  "0x1234abcd",  (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%#P",  "0X1234ABCD",  (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%10p", "  1234abcd",    (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%10P", "  1234ABCD",    (void*) 0x1234abcd);
+    }
+    else if(sizeof(void *) == 8)
+    {
+        TEST_VSPRINTF( "%p",   "1234567890abcdef",   (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%P",   "1234567890ABCDEF",   (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%#p",  "0x1234567890abcdef", (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%#P",  "0X1234567890ABCDEF", (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%18p", "  1234567890abcdef",   (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%18P", "  1234567890ABCDEF",   (void*) 0x1234567890abcdef);
+    }
  
     return (bRet);
 } /* test_ssprintf() */

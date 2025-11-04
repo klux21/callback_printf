@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2025 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -139,7 +139,7 @@ const char * UpperDigit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /* array for e
    0x02 : Digits: 0 - 9
    0x04 : blanks and control characters
    0x08 : operators: \n \r ! " # $ % & ( ) * + , - . /  : ; < = > ? [ \ ] ^ @ { | } ~
-   0x10 : printf format termination characters bBdiouxXaAeEfFgGsScCpn% '\0'
+   0x10 : printf format termination characters bBdiouxXaAeEfFgGsScCpPn% '\0'
    0x20 : printf format flag characters -+# 0
    0x40 : printf integer format characters bBdiouxX */
 
@@ -153,7 +153,7 @@ const uint8_t CharType[256] = { 0x10,0x04,0x04,0x04, 0x04,0x04,0x04,0x04,   0x04
                              /*  @    A    B    C     D    E    F    G       H    I    J    K     L    M    N    O   */
                                 0x08,0x11,0x51,0x11, 0x01,0x91,0x91,0x91,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,
                              /*  P    Q    R    S     T    U    V    W       X    Y    Z    [     \    ]    ^    _   */
-                                0x01,0x01,0x01,0x11, 0x01,0x01,0x01,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x01,
+                                0x11,0x01,0x01,0x11, 0x01,0x01,0x01,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x01,
                              /*  `    a    b    c     d    e    f    g       h    i    j    k     l    m    n    o   */
                                 0x08,0x11,0x51,0x11, 0x51,0x91,0x91,0x91,   0x01,0x51,0x01,0x01, 0x01,0x01,0x11,0x51,
                              /*  p    q    r    s     t    u    v    w       x    y    z    {     |    }    ~        */
@@ -2516,14 +2516,14 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else
                    zRet += cbk_print_u64(pUserData, pCB, u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
             }
-            else if(fc == 'p')
+            else if((fc == 'p') || (fc == 'P'))
             {
                void * pv = va_arg(val, void *);
 
                if(sizeof(pv) <= 4)
-                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) (ptrdiff_t) pv, 'p', '\0' /*sign_char */, prefixing, left_justified, 1, 8, minimum_width);
+                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) (ptrdiff_t) pv, fc, '\0' /*sign_char */, prefixing, left_justified, 1, 8, minimum_width);
                else
-                  zRet += cbk_print_u64(pUserData, pCB, (uint64_t) (ptrdiff_t) pv, 'p', '\0' /*sign_char */, prefixing, left_justified, 1, 16, minimum_width);
+                  zRet += cbk_print_u64(pUserData, pCB, (uint64_t) (ptrdiff_t) pv, fc, '\0' /*sign_char */, prefixing, left_justified, 1, 16, minimum_width);
             }
             else if(IS_PRINTF_FMT_FLT(fc))
             {

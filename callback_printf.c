@@ -3398,6 +3398,20 @@ size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
 } /* size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) */
 
 
+/* ------------------------------------------------------------------------- *\
+   _ssnprintf is a wrapper for snprintf that bases on callback_printf.
+\* ------------------------------------------------------------------------- */
+
+size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintf(pDst, n, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...) */
+
 
 /* ------------------------------------------------------------------------- *\
    ssprintf is a wrapper for sprintf that bases on callback_printf.
@@ -3412,6 +3426,21 @@ size_t ssprintf(char * pDst, const char * pFmt, ...)
    va_end(VarArgs);
    return (zRet);
 } /* size_t  ssprintf(char * pDst, const char * pFmt, ...) */
+
+
+/* ------------------------------------------------------------------------- *\
+   _ssprintf is a wrapper for sprintf that bases on callback_printf.
+\* ------------------------------------------------------------------------- */
+
+size_t _ssprintf(char * pDst, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintf(pDst, ~(size_t) 0, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t  _ssprintf(char * pDst, const char * pFmt, ...) */
 
 
 /* ========================================================================= *\

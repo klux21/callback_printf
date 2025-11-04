@@ -55,8 +55,8 @@ bases.
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf
 like functions. However that may trigger those warnings in case of the using
-any format enhancements and you may need to deactivate those checks by defining
-the macro PRINTF_LIKE_ARGS(f,a) as nothing then.
+any format enhancements and you may need to silence those warnings by using the
+unchecked function versions which names are prefixed by an underscore '_'.
 
 An interesting internal feature is the fast generic mantisse and exponent
 calculation for the several numeric bases that enables the generic support of

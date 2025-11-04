@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2025 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -207,6 +207,25 @@ size_t sfprintf(FILE * pf, const char * pFmt, ...)
 } /* size_t sfprintf(FILE * pf, const char * pFmt, ...) */
 
 
+/* ------------------------------------------------------------------------- *\
+   _sfprintf is a wrapper for fprintf that bases on callback_printf.
+\* ------------------------------------------------------------------------- */
+
+size_t _sfprintf(FILE * pf, const char * pFmt, ...)
+{
+   size_t sz_ret = 0;
+
+   va_list val;
+   va_start(val, pFmt);
+
+   sz_ret =  svfprintf(pf, pFmt, val);
+
+   va_end(val);
+
+   return (sz_ret);
+} /* size_t _sfprintf(FILE * pf, const char * pFmt, ...) */
+
+
 
 /* ========================================================================= *\
    Implementation of sfdprintf 
@@ -336,6 +355,25 @@ size_t sfdprintf(int fd, const char * pFmt, ...)
 
    return (sz_ret);
 } /* size_t sfdprintf(FILE * pf, const char * pFmt, ...) */
+
+/* ------------------------------------------------------------------------- *\
+   _fdprintf is a fprintf like function that bases on callback_printf but
+   writes to a file desciptor.
+\* ------------------------------------------------------------------------- */
+
+size_t _fdprintf(int fd, const char * pFmt, ...)
+{
+   size_t sz_ret = 0;
+
+   va_list val;
+   va_start(val, pFmt);
+
+   sz_ret = svfdprintf(fd, pFmt, val);
+
+   va_end(val);
+
+   return (sz_ret);
+} /* size_t _fdprintf(FILE * pf, const char * pFmt, ...) */
 
 
 /* ========================================================================= *\

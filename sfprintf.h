@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2025 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -85,7 +85,8 @@ extern "C" {
 /* ------------------------------------------------------------------------- *\
    sfprintf is a wrapper for fprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
-size_t sfprintf(FILE * pf, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t  sfprintf(FILE * pf, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t _sfprintf(FILE * pf, const char * pFmt, ...);                         /* same as ssnprintf but without argument type check and possibly unsafe */
 
 /* ------------------------------------------------------------------------- *\
    svfprintf is a wrapper for vfprintf that bases on callback_printf.
@@ -96,7 +97,8 @@ size_t svfprintf(FILE * pf, const char * pFmt, va_list val);
    sfdprintf is a fprintf like function that bases on callback_printf but
    writes to a file desciptor.
 \* ------------------------------------------------------------------------- */
-size_t sfdprintf(int fd, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t  sfdprintf(int fd, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t _sfdprintf(int fd, const char * pFmt, ...);                         /* same as ssfprintf but without argument type check and possibly unsafe */
 
 /* ------------------------------------------------------------------------- *\
    svfdprintf is a vfprintf like function that bases on callback_printf but

@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2025 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -146,7 +146,7 @@ extern const uint8_t CharType[256];   /* array of character type flags */
 #define IS_BLANK(x) (CharType[(uint8_t) (x)] & (uint8_t) 0x04)  /* blanks and control characters */
 #define IS_OP(x)    (CharType[(uint8_t) (x)] & (uint8_t) 0x08)  /* operators: \n \r ! " # $ % & ( ) * + , - . /  : ; < = > ? [ \ ] ^ @ { | } ~  */
 
-#define IS_PRINTF_FMT_END(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x10)  /* termination character of a printf format sequence bBdiouxXaAeEfFgGsScCpn% '\0' */
+#define IS_PRINTF_FMT_END(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x10)  /* termination character of a printf format sequence bBdiouxXaAeEfFgGsScCpPn% '\0' */
 #define IS_PRINTF_FMT_FLAG(x) (CharType[(uint8_t) (x)] & (uint8_t) 0x20)  /* character is a printf format flag ( -+# 0 ) */
 #define IS_PRINTF_FMT_INT(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x40)  /* character terminates a printf integer format string ( bBdiouxX ) */
 #define IS_PRINTF_FMT_FLT(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x80)  /* character terminates the printf floating point formats strings ( eEfFgG ) */
@@ -196,7 +196,10 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
 size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list ap);
 size_t svsprintf(char * pDst, const char * pFmt, va_list ap);
 size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
-size_t ssprintf(char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3); /* expects a printf like format string and arguments */
+size_t ssprintf(char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3);            /* expects a printf like format string and arguments */
+
+size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...);                        /* same as ssnprintf but without argument type check and possibly unsafe */
+size_t _ssprintf(char * pDst, const char * pFmt, ...);                                   /* same as ssprintf but without argument type check and possibly unsafe */
 
 /* ------------------------------------------------------------------------- *\
   User defined callback function for callback_printf for writing the output

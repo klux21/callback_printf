@@ -2147,7 +2147,8 @@ static size_t cbk_print_char(void *            pUserData,      /* user specific 
          minimum_width -= 32;
       }
 
-      pCB(pUserData, pblanks, minimum_width);
+      if(minimum_width)
+         pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified)
          while (length--)
@@ -2196,7 +2197,8 @@ static size_t cbk_print_string(void *            pUserData,      /* user specifi
          minimum_width -= 32;
       }
 
-      pCB(pUserData, pblanks, minimum_width);
+      if(minimum_width)
+         pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified && length)
          pCB(pUserData, ps, length);
@@ -2208,7 +2210,7 @@ static size_t cbk_print_string(void *            pUserData,      /* user specifi
 
 
 /* ------------------------------------------------------------------------- *\
-   cbk_print_string prints a wide character string using a printf callback
+   cbk_print_wstring prints a wide character string using a printf callback
    function and returns the written string data length.
 \* ------------------------------------------------------------------------- */
 static size_t cbk_print_wstring(void *            pUserData,      /* user specific context for the callback */
@@ -2262,7 +2264,8 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
          minimum_width -= 32;
       }
 
-      pCB(pUserData, pblanks, minimum_width);
+      if(minimum_width)
+         pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified && length)
       {

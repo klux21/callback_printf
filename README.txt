@@ -52,6 +52,17 @@ Floating point exponents for bases higher than 14 are prefixed by a tilde '~'
 istead of the letter 'e' which becomes a member of the regular digits of those
 bases.
 
+Sometimes you need to print the same complex data types quite often e.g. IPv6
+addresses or times. The common way in C would be to write a function that
+writes them to a character buffer and returns a pointer to that buffer but you
+need an variable for a buffer wherever you need to print them. For things like
+that callback_printf supports the options %v and %V for variable argument types
+now. %v expects a function pointer and a data pointer as related arguments
+where the function generates the output for the random data pointer and calls
+the write callback. %V expects a single pointer to a struct that contains the
+mentioned function and a pointer pointer as argument and may be a member of
+other structs that need to be written in a special format.
+
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf
 like functions. However that may trigger those warnings in case of the using

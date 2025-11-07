@@ -146,7 +146,7 @@ extern const uint8_t CharType[256];   /* array of character type flags */
 #define IS_BLANK(x) (CharType[(uint8_t) (x)] & (uint8_t) 0x04)  /* blanks and control characters */
 #define IS_OP(x)    (CharType[(uint8_t) (x)] & (uint8_t) 0x08)  /* operators: \n \r ! " # $ % & ( ) * + , - . /  : ; < = > ? [ \ ] ^ @ { | } ~  */
 
-#define IS_PRINTF_FMT_END(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x10)  /* termination character of a printf format sequence bBdiouxXaAeEfFgGsScCpPn% '\0' */
+#define IS_PRINTF_FMT_END(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x10)  /* termination character of a printf format sequence bBdiouxXaAeEfFgGsScCpPnvV% '\0' */
 #define IS_PRINTF_FMT_FLAG(x) (CharType[(uint8_t) (x)] & (uint8_t) 0x20)  /* character is a printf format flag ( -+# 0 ) */
 #define IS_PRINTF_FMT_INT(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x40)  /* character terminates a printf integer format string ( bBdiouxX ) */
 #define IS_PRINTF_FMT_FLT(x)  (CharType[(uint8_t) (x)] & (uint8_t) 0x80)  /* character terminates the printf floating point formats strings ( eEfFgG ) */
@@ -193,13 +193,13 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
    callback_printf internally.
    They are using (v)sprintf like arguments and format strings.
 \* ------------------------------------------------------------------------- */
-size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list ap);
-size_t svsprintf(char * pDst, const char * pFmt, va_list ap);
-size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
-size_t ssprintf(char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3);            /* expects a printf like format string and arguments */
+size_t svsnprintf (char * pDst, size_t n, const char * pFmt, va_list ap);
+size_t svsprintf  (char * pDst, const char * pFmt, va_list ap);
+size_t ssnprintf  (char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
+size_t ssprintf   (char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3);           /* expects a printf like format string and arguments */
 
-size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...);                        /* same as ssnprintf but without argument type check and possibly unsafe */
-size_t _ssprintf(char * pDst, const char * pFmt, ...);                                   /* same as ssprintf but without argument type check and possibly unsafe */
+size_t _ssnprintf (char * pDst, size_t n, const char * pFmt, ...);                         /* same as ssnprintf but without argument type check and possibly unsafe */
+size_t _ssprintf  (char * pDst, const char * pFmt, ...);                                   /* same as ssprintf but without argument type check and possibly unsafe */
 
 /* ------------------------------------------------------------------------- *\
   User defined callback function for callback_printf for writing the output
@@ -215,7 +215,90 @@ typedef void (PRINTF_CALLBACK) (void * pUserData, const char * pSrc, size_t Leng
    terminate the written output data string.
    See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
-size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val);
+size_t callback_printf (void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val);
+
+
+/* ========================================================================= *\
+   User defined output function for %v or %V option
+\* ========================================================================= */
+
+/* ------------------------------------------------------------------------- *\
+   cbk_print_string prints a unterminated string of given length using the
+   related callback function and returns the written string data length.
+   It may simplify the implementation of a PRINTF_V_CALLBACK that creates
+   a user data related string of a random length.
+\* ------------------------------------------------------------------------- */
+size_t cbk_print_string (void *            pUserData,        /* user specific context for the callback */
+                         PRINTF_CALLBACK * pCB,              /* data write callback for printing the data */
+                         const char *      ps,               /* pointer to string data */
+                         size_t            length,           /* length of string data */
+                         size_t            minimum_width,    /* minimum width of output */
+                         uint8_t           left_justified);  /* whether the output should be right or left justified */
+
+/* ------------------------------------------------------------------------- *\
+   Callback function prototype for printing the data of a %v or %V option.
+\* ------------------------------------------------------------------------- */
+typedef size_t (PRINTF_V_CALLBACK)(void *            pUserData,      /* user specific context for the callback */
+                                   PRINTF_CALLBACK * pCB,            /* data write callback for printing the data */
+                                   void *            pvdata,         /* user data pointer in second argument for %v or pointer to PRINTF_CALLBACK_DATA in case of %V */
+                                   size_t            precision,      /* precision of output (if specified otherwise ~(size_t) 0) */
+                                   size_t            minimum_width,  /* minimum width of the output */
+                                   uint8_t           left_justified, /* whether the output needs to be left justified */
+                                   uint8_t           prefixing);     /* whether the prefixing flag # was specified */
+
+/* ------------------------------------------------------------------------- *\
+   PRINTF_V_DATA is a little struct that is required as argument in case of
+   a %V option in the format string.
+\* ------------------------------------------------------------------------- */
+typedef struct PRINTF_V_DATA_S PRINTF_V_DATA;
+struct PRINTF_V_DATA_S
+{
+   PRINTF_V_CALLBACK * pcb;   /* output function callback */
+   ptrdiff_t           size;  /* user defined integer e.g. data length or index */
+   void *              pdata; /* pointer to user defined data for output */
+};
+
+#if 0
+   /* Usage sample of user defined output using the %V and %v format options. */
+   #include <stdio.h>
+   #include <callback_printf.h>
+
+   /* ------------------------------------------------------------------------- *\
+      Write function for our own %V argument data that is just the output of
+      some string data in a PRINTF_V_DATA struct here. 
+   \* ------------------------------------------------------------------------- */
+
+   size_t cbfunc (void *            pUserData,
+                  PRINTF_CALLBACK * pCB,
+                  void *            pvdata,
+                  size_t            precision,
+                  size_t            minimum_width,
+                  uint8_t           left_justified,
+                  uint8_t           prefixing)
+   {
+      char   buffer[100];
+      PRINTF_V_DATA * pvd = (PRINTF_V_DATA *) pv_data;
+
+      size_t length = ssnprintf(buffer, sizeof(buffer), "%.*s", (int) (precision <= pvd->size ? precision : pvd->size), (char *) pvd->pdata);
+
+      return ( cbk_print_string( pUserData, pCB, buffer, length, minimum_width, left_justified));
+   } /* size_t cbfunc(...) */
+
+   int main()
+   {
+      PRINTF_V_DATA cbdata = { &cbfunc, 12, (void *) "Hello world!"}; /* output data for %v and %V samples */
+      char buf[100];
+
+      ssprintf("%%v: %v\n"   "%%#-12.5v: %#-12.5v\n"   "%%V: %V\n"  "%%*.*V: %*.*V\n",
+               &cbfunc, &cbdata,            // %v expects a callback function pointer and a void * pointer as arguments 
+               &cbfunc, &cbdata,
+               &cbdata,                     // %V expects a pointer to a struct PRINTF_V_DATA as argument
+               (int) 12, (int) 3, &cbdata);
+
+      printf("%s", buf);
+      return (0);
+   } /* int main() */
+#endif
 
 
 #ifdef __cplusplus

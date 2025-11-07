@@ -157,10 +157,32 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
     return (bRet);
 } /* int test_svsprintf(...) */
 
+/* ------------------------------------------------------------------------- *\
+   Write function for our own %V argument data that is just the output of
+   some string data in a PRINTF_V_DATA struct here. 
+\* ------------------------------------------------------------------------- */
+
+size_t cbfunc (void *            pUserData,
+               PRINTF_CALLBACK * pCB,
+               void *            pvdata,
+               size_t            precision,
+               size_t            minimum_width,
+               uint8_t           left_justified,
+               uint8_t           prefixing)
+{
+   char   buffer[100];
+   PRINTF_V_DATA * pvd = (PRINTF_V_DATA *) pvdata;
+
+   size_t length = ssnprintf(buffer, sizeof(buffer), "%.*s", (int) (precision <= pvd->size ? precision : pvd->size), (char *) pvd->pdata);
+
+   return ( cbk_print_string( pUserData, pCB, buffer, length, minimum_width, left_justified));
+} /* size_t cbfunc(...) */
 
 int test_ssprintf()
 {
    int bRet = 1;
+
+   PRINTF_V_DATA cbdata = { &cbfunc, 12, (void *) "Hello world!"}; /* output data for %v and %V samples */
 
    uint32_t u_inf  = 0x7f800000;
    uint32_t u_ninf = 0xff800000;
@@ -567,8 +589,8 @@ int test_ssprintf()
         TEST_VSPRINTF( "%P",   "1234ABCD",    (void*) 0x1234abcd);
         TEST_VSPRINTF( "%#p",  "0x1234abcd",  (void*) 0x1234abcd);
         TEST_VSPRINTF( "%#P",  "0X1234ABCD",  (void*) 0x1234abcd);
-        TEST_VSPRINTF( "%10p", "  1234abcd",    (void*) 0x1234abcd);
-        TEST_VSPRINTF( "%10P", "  1234ABCD",    (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%10p", "  1234abcd",  (void*) 0x1234abcd);
+        TEST_VSPRINTF( "%10P", "  1234ABCD",  (void*) 0x1234abcd);
     }
     else if(sizeof(void *) == 8)
     {
@@ -576,9 +598,23 @@ int test_ssprintf()
         TEST_VSPRINTF( "%P",   "1234567890ABCDEF",   (void*) 0x1234567890abcdef);
         TEST_VSPRINTF( "%#p",  "0x1234567890abcdef", (void*) 0x1234567890abcdef);
         TEST_VSPRINTF( "%#P",  "0X1234567890ABCDEF", (void*) 0x1234567890abcdef);
-        TEST_VSPRINTF( "%18p", "  1234567890abcdef",   (void*) 0x1234567890abcdef);
-        TEST_VSPRINTF( "%18P", "  1234567890ABCDEF",   (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%18p", "  1234567890abcdef", (void*) 0x1234567890abcdef);
+        TEST_VSPRINTF( "%18P", "  1234567890ABCDEF", (void*) 0x1234567890abcdef);
     }
+
+    TEST_VSPRINTF( "%%v: %v", "%v: Hello world!", &cbfunc ARG(&cbdata));
+    TEST_VSPRINTF( "#%%v: %v%s#", "#%v: Hello world!?#", &cbfunc ARG(&cbdata) ARG("?"));
+    TEST_VSPRINTF( "%%#-12.5v: %#-12.5v", "%#-12.5v: Hello       ", &cbfunc ARG(&cbdata));
+    TEST_VSPRINTF( "%%#12.5v: %#12.5v", "%#12.5v:        Hello", &cbfunc ARG(&cbdata));
+    TEST_VSPRINTF( "%%*.*v: %*.*v", "%*.*v:        Hello", (int)12 ARG((int)5) ARG(&cbfunc) ARG(&cbdata));
+    TEST_VSPRINTF( "%%*.*v: %*.*v", "%*.*v: Hello       ", (int)-12 ARG((int)5) ARG(&cbfunc) ARG(&cbdata));
+
+    TEST_VSPRINTF( "%%V: %V", "%V: Hello world!", &cbdata);
+    TEST_VSPRINTF( "#%%V: %V%s#", "#%V: Hello world!?#", &cbdata ARG("?"));
+    TEST_VSPRINTF( "%%#-12.5V: %#-12.5V", "%#-12.5V: Hello       ", &cbdata);
+    TEST_VSPRINTF( "%%#12.5V: %#12.5V", "%#12.5V:        Hello", &cbdata);
+    TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V:        Hello", (int)12 ARG((int)5) ARG(&cbdata));
+    TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V: Hello       ", (int)-12 ARG((int)5) ARG(&cbdata));
  
     return (bRet);
 } /* test_ssprintf() */

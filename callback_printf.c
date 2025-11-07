@@ -139,7 +139,7 @@ const char * UpperDigit = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /* array for e
    0x02 : Digits: 0 - 9
    0x04 : blanks and control characters
    0x08 : operators: \n \r ! " # $ % & ( ) * + , - . /  : ; < = > ? [ \ ] ^ @ { | } ~
-   0x10 : printf format termination characters bBdiouxXaAeEfFgGsScCpPn% '\0'
+   0x10 : printf format termination characters bBdiouxXaAeEfFgGsScCpPnvV% '\0'
    0x20 : printf format flag characters -+# 0
    0x40 : printf integer format characters bBdiouxX */
 
@@ -153,11 +153,11 @@ const uint8_t CharType[256] = { 0x10,0x04,0x04,0x04, 0x04,0x04,0x04,0x04,   0x04
                              /*  @    A    B    C     D    E    F    G       H    I    J    K     L    M    N    O   */
                                 0x08,0x11,0x51,0x11, 0x01,0x91,0x91,0x91,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,
                              /*  P    Q    R    S     T    U    V    W       X    Y    Z    [     \    ]    ^    _   */
-                                0x11,0x01,0x01,0x11, 0x01,0x01,0x01,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x01,
+                                0x11,0x01,0x01,0x11, 0x01,0x01,0x11,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x01,
                              /*  `    a    b    c     d    e    f    g       h    i    j    k     l    m    n    o   */
                                 0x08,0x11,0x51,0x11, 0x51,0x91,0x91,0x91,   0x01,0x51,0x01,0x01, 0x01,0x01,0x11,0x51,
                              /*  p    q    r    s     t    u    v    w       x    y    z    {     |    }    ~        */
-                                0x11,0x01,0x01,0x11, 0x01,0x51,0x01,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x04,
+                                0x11,0x01,0x01,0x11, 0x01,0x51,0x11,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x04,
 
                                 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,   0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
                                 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,   0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
@@ -2165,12 +2165,12 @@ static size_t cbk_print_char(void *            pUserData,      /* user specific 
    returns the written string data length.
 \* ------------------------------------------------------------------------- */
 
-static size_t cbk_print_string(void *            pUserData,      /* user specific context for the callback */
-                               PRINTF_CALLBACK * pCB,            /* data write callback */
-                               const char *      ps,
-                               size_t            length,
-                               size_t            minimum_width,
-                               uint8_t           left_justified)
+size_t cbk_print_string(void *            pUserData,      /* user specific context for the callback */
+                        PRINTF_CALLBACK * pCB,            /* data write callback */
+                        const char *      ps,
+                        size_t            length,
+                        size_t            minimum_width,
+                        uint8_t           left_justified)
 {
    size_t zRet;
 
@@ -2563,6 +2563,31 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             {
                int * pl = va_arg(val, int *);
                *pl = (int) zRet;
+            }
+            else if(fc == 'v')
+            {
+               PRINTF_V_CALLBACK * pcbk   = va_arg(val, PRINTF_V_CALLBACK *);
+               void *              pvdata = va_arg(val, void *);
+
+               if(!pcbk)
+               {
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
+               }
+
+               zRet += pcbk(pUserData, pCB, pvdata, precision, minimum_width, left_justified, prefixing);
+            }
+            else if(fc == 'V')
+            {
+               PRINTF_V_DATA * pcd = va_arg(val, PRINTF_V_DATA *);
+
+               if(!pcd || !pcd->pcb)
+               {
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
+               }
+
+               zRet += pcd->pcb(pUserData, pCB, pcd, precision, minimum_width, left_justified, prefixing);
             }
             else
             { /* unknown format */

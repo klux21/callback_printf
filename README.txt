@@ -61,7 +61,11 @@ now. %v expects a function pointer and a data pointer as related arguments
 where the function generates the output for the random data pointer and calls
 the write callback. %V expects a single pointer to a struct that contains the
 mentioned function and a pointer pointer as argument and may be a member of
-other structs that need to be written in a special format.
+other structs that need to be written in a special format. That way it's
+possible to print an unlimited number of types and data in special formats.
+However that's all still an early state an the function prototypes may still
+change a bit in future versions. Feel free to use the discussion site to share
+your oppinion and ideas regarding that.
 
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf

@@ -55,17 +55,18 @@ bases.
 Sometimes you need to print the same complex data types quite often e.g. IPv6
 addresses or times. The common way in C would be to write a function that
 writes them to a character buffer and returns a pointer to that buffer but you
-need an variable for a buffer wherever you need to print them. For things like
-that callback_printf supports the options %v and %V for variable argument types
-now. %v expects a function pointer and a data pointer as related arguments
-where the function generates the output for the random data pointer and calls
-the write callback. %V expects a single pointer to a struct that contains the
-mentioned function and a pointer pointer as argument and may be a member of
-other structs that need to be written in a special format. That way it's
-possible to print an unlimited number of types and data in special formats.
-However that's all still an early state an the function prototypes may still
-change a bit in future versions. Feel free to use the discussion site to share
-your oppinion and ideas regarding that.
+need an variable for a buffer wherever you need to print them. For improving
+things like that callback_printf supports the options %v and %V for variable
+argument types now. %v expects a function pointer and a data pointer as related
+arguments where the function generates the output for the random data pointer
+and calls the write callback. %V expects a single pointer to a struct that
+contains the mentioned function and a pointer pointer as argument and may be a
+member of other structs that need to be written in a special format. That way
+it's possible to print an unlimited number of data types and data in special
+formats and also mixed up in the same output if required. However that's all
+still an early state an the function prototypes may still change a bit in
+future versions. Feel free to use the discussion site to share your own opinion
+and ideas regarding that.
 
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf
@@ -75,7 +76,7 @@ unchecked function versions which names are prefixed by an underscore '_'.
 
 An interesting internal feature is the fast generic mantisse and exponent
 calculation for the several numeric bases that enables the generic support of
-different numeric bases for the floating point output.
+different numeric bases and the pretty fast floating point output.
 
 The little benchmark vsprintf_bench.c is an easy way for checking the
 performance. Just execute that file in a shell of a Posix system and have a

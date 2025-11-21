@@ -1745,7 +1745,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          }
 
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'a')
       {
@@ -1759,13 +1759,13 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
 
          length = print_long_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'f')
       {
          length = print_long_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
    }
 
@@ -2090,7 +2090,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          }
 
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'a')
       {
@@ -2104,13 +2104,13 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
 
          length = print_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'f')
       {
          length = print_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
          if(prefixing)
-            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
+            prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
    }
    zRet = cbk_print_number(pUserData, pCB, buf, length, padding, sign_char, prefixing, uppercase, left_justified, 0 /* minwidth */, fieldwidth);

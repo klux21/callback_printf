@@ -1743,7 +1743,9 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
                }
             }
          }
-         prefixing = 0;
+
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
       else if(format == 'a')
       {
@@ -1756,12 +1758,14 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
             minwidth = 34; /* ensure full size of the mantissa */
 
          length = print_long_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
-         prefixing = 0;
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
       else if(format == 'f')
       {
          length = print_long_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
-         prefixing = 0;
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
    }
 
@@ -2084,7 +2088,9 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
                }
             }
          }
-         prefixing = 0;
+
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
       else if(format == 'a')
       {
@@ -2097,12 +2103,14 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
             minwidth = 20; /* ensure full size of the mantissa */
 
          length = print_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
-         prefixing = 0;
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
       else if(format == 'f')
       {
          length = print_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
-         prefixing = 0;
+         if(prefixing)
+            prefixing = ((base == 16) ? (uint8_t) 16 : (uint8_t) 0);
       }
    }
    zRet = cbk_print_number(pUserData, pCB, buf, length, padding, sign_char, prefixing, uppercase, left_justified, 0 /* minwidth */, fieldwidth);

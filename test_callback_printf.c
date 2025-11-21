@@ -88,7 +88,7 @@ exit $?
 
 /* int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)  __PRINTF_LIKE_ARGS (3, 4); */
 
-int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
+int test_svsprintf(int line, const char * pout, const char * call, const char * pfmt, ...)
 {
     int bRet = 0;
     size_t sRet;
@@ -110,27 +110,27 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 
     if(sRet != snRet)
     {
-       printf("test_callback_printf: svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", sRet, buf, call, snRet);
+       printf("test_callback_printf.c:%d : svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", line, sRet, buf, call, snRet);
        goto Exit;
     }
 
     if(buf2[17] != '\xfe')
     {
        buf2[24] = '\0';
-       printf("test_callback_printf: svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", snRet, buf2, call);
+       printf("test_callback_printf.c:%d : svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", line, snRet, buf2, call);
        goto Exit;
     }
 
     if(buf[sRet+1] != '\xfe')
     {
        buf2[24] = '\0';
-       printf("test_callback_printf: svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", sRet, buf, call);
+       printf("test_callback_printf.c:%d : svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", line, sRet, buf, call);
        goto Exit;
     }
 
     if(strncmp(buf, buf2, 17))
     {
-       printf("test_callback_printf: written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", sRet, buf, snRet, buf2, call);
+       printf("test_callback_printf.c:%d : written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", line, sRet, buf, snRet, buf2, call);
        goto Exit;
     }
 
@@ -142,13 +142,13 @@ int test_svsprintf(const char * pout, const char * call, const char * pfmt, ...)
 
     if(sRet != strlen(buf))
     {
-       printf("test_callback_printf: output length %zd (%s) for '%s' does not match retval %zd !\n", strlen(buf), buf, call, sRet);
+       printf("test_callback_printf.c:%d : output length %zd (%s) for '%s' does not match retval %zd !\n", line, strlen(buf), buf, call, sRet);
        goto Exit;
     }
 
     if(strcmp(buf, pout))
     {
-       printf("test_callback_printf: output '%s' to '%s' doesn't match expected '%s' !\n", buf, call, pout);
+       printf("test_callback_printf.c:%d : output '%s' to '%s' doesn't match expected '%s' !\n", line, buf, call, pout);
        goto Exit;
     }
 
@@ -201,7 +201,7 @@ int test_ssprintf()
 
 #define ARG(x)          ,x
 
-#define TEST_VSPRINTF(pfmt, pout, arg) bRet &= test_svsprintf(pout, #pfmt "," #arg, pfmt, arg);
+#define TEST_VSPRINTF(pfmt, pout, arg) bRet &= test_svsprintf(__LINE__, pout, #pfmt "," #arg, pfmt, arg);
 
     TEST_VSPRINTF( "Hallo Welt!", "Hallo Welt!",  0);
     TEST_VSPRINTF( "%.10s!",      "Hallo Welt!",  "Hallo Welt");
@@ -472,24 +472,52 @@ int test_ssprintf()
     TEST_VSPRINTF( "%5.2LE%.0Lf", "  NAN-3", (long double) nan ARG((long double) -3.0));
     TEST_VSPRINTF( "%5.2LE%.0Lf", " -NAN-3", (long double) nnan ARG((long double) -3.0));
 
-    TEST_VSPRINTF( "%# 01.1g",  " 1.e+01",   (double) 9.8);
-    TEST_VSPRINTF( "%# 01.1Lg", " 1.e+01",   (long double) 9.8l);
-    TEST_VSPRINTF( "%#.1g",     "-4.e+04",   (double) -40661.5);
-    TEST_VSPRINTF( "%#.1Lg",    "-4.e+04",   (long double) -40661.5l);
-    TEST_VSPRINTF( "%#g",       "0.00000",   (double) 0.0);
-    TEST_VSPRINTF( "%#Lg",      "0.00000",   (long double) 0.0l);
-    TEST_VSPRINTF( "%g",        "0",         (double) 0.0);
-    TEST_VSPRINTF( "%Lg",       "0",         (long double) 0.0l);
-    TEST_VSPRINTF( "%g",        "490000",    (double) 490000.0l);
-    TEST_VSPRINTF( "%Lg",       "490000",    (long double) 490000.0l);
-    TEST_VSPRINTF( "%g",        "4.9e+06",    (double) 4900000.0l);
-    TEST_VSPRINTF( "%Lg",       "4.9e+06",    (long double) 4900000.0l);
-    TEST_VSPRINTF( "%.7g",       "4900000",   (double) 4900000.0l);
-    TEST_VSPRINTF( "%.7Lg",      "4900000",   (long double) 4900000.0l);
-    TEST_VSPRINTF( "%.7g",       "4.9e+07",   (double) 49000000.0l);
-    TEST_VSPRINTF( "%.7Lg",      "4.9e+07",   (long double) 49000000.0l);
-    TEST_VSPRINTF( "%.7G",       "4.9E+07",   (double) 49000000.0l);
-    TEST_VSPRINTF( "%.7LG",      "4.9E+07",   (long double) 49000000.0l);
+    TEST_VSPRINTF( "%# 01.1g",    " 1.e+01", (double) 9.8);
+    TEST_VSPRINTF( "%# 01.1Lg",   " 1.e+01", (long double) 9.8l);
+    TEST_VSPRINTF( "%#.1g",       "-4.e+04", (double) -40661.5);
+    TEST_VSPRINTF( "%#.1Lg",      "-4.e+04", (long double) -40661.5l);
+    TEST_VSPRINTF( "%#g",         "0.00000", (double) 0.0);
+    TEST_VSPRINTF( "%#Lg",        "0.00000", (long double) 0.0l);
+    TEST_VSPRINTF( "%g",          "0",       (double) 0.0);
+    TEST_VSPRINTF( "%Lg",         "0",       (long double) 0.0l);
+    TEST_VSPRINTF( "%g",          "490000",  (double) 490000.0l);
+    TEST_VSPRINTF( "%Lg",         "490000",  (long double) 490000.0l);
+    TEST_VSPRINTF( "%g",          "4.9e+06", (double) 4900000.0l);
+    TEST_VSPRINTF( "%Lg",         "4.9e+06", (long double) 4900000.0l);
+    TEST_VSPRINTF( "%.7g",        "4900000", (double) 4900000.0l);
+    TEST_VSPRINTF( "%.7Lg",       "4900000", (long double) 4900000.0l);
+    TEST_VSPRINTF( "%.7g",        "4.9e+07", (double) 49000000.0l);
+    TEST_VSPRINTF( "%.7Lg",       "4.9e+07", (long double) 49000000.0l);
+    TEST_VSPRINTF( "%.7G",        "4.9E+07", (double) 49000000.0l);
+    TEST_VSPRINTF( "%.7LG",       "4.9E+07", (long double) 49000000.0l);
+
+    TEST_VSPRINTF( "%.5A",        "-0X1.A36E3P-10",    (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#.5r1LE",    "-0X6.8DB8C~-03",    (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%.8r1LF",     "-0.0068DB8C",       (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%#.5r1E",     "-0X6.8DB8C~-03",    (double) -1.6e-3  );
+    TEST_VSPRINTF( "%.8r1F",      "-0.0068DB8C",       (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1F",  "-0X00000.0068DB8C", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.5r1E",  "-0X0006.8DB8C~-03", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1LF", "-0X00000.0068DB8C", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.5r1LE", "-0X0006.8DB8C~-03", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1f",  "-0x00000.0068db8c", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.5r1e",  "-0x0006.8db8c~-03", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1Lf", "-0x00000.0068db8c", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.5r1Le", "-0x0006.8db8c~-03", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.8r1f",   "-0000000.0068db8c", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.5r1e",   "-000006.8db8c~-03", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.8r1Lf",  "-0000000.0068db8c", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.5r1Le",  "-000006.8db8c~-03", (long double) -1.6e-3  );
+
+
+    TEST_VSPRINTF( "%#-17.8r1G",  "-0X0.0068DB8BAC  ", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%-17.8r1G",   "-0.0068DB8BAC    ", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#17.8r1G",   "  -0X0.0068DB8BAC", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%17.8r1G",    "    -0.0068DB8BAC", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1G",  "-0X000.0068DB8BAC", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.8r1G",   "-00000.0068DB8BAC", (double) -1.6e-3  );
+    TEST_VSPRINTF( "%#017.8r1Lg", "-0x000.0068db8bac", (long double) -1.6e-3  );
+    TEST_VSPRINTF( "%017.8r1Lg",  "-00000.0068db8bac", (long double) -1.6e-3  );
 
     TEST_VSPRINTF("%+5.10r2E %+10.10r2e %+10.10r7e %+10.10r4e %+10.0e %+10.0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
                    (double) 3.9 ARG(7.89456123e-307) ARG(7.89456123e+307) ARG(789456123.0) ARG(0.789456123) ARG(DBL_MIN));

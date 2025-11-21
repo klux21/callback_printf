@@ -516,6 +516,15 @@ int run_tests()
     TEST_VSPRINTF( "%5.2E%.0f",  "  NAN-3",  (double) nan ARG(-3.0));
     TEST_VSPRINTF( "%5.2E%.0f",  " -NAN-3",  (double) nnan ARG(-3.0));
 
+    TEST_VSPRINTF( "%5.2f%.0f",  "  inf3",   (double) inf ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  " -inf3",   (double) ninf ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  "  nan3",   (double) nan ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  " -nan3",   (double) nnan ARG(3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  "  INF-3",  (double) inf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  " -INF-3",  (double) ninf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  "  NAN-3",  (double) nan ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  " -NAN-3",  (double) nnan ARG(-3.0));
+
     TEST_VSPRINTF( "%5.2Le%.0Lf", "  inf3",  (long double) inf ARG((long double) 3.0));
     TEST_VSPRINTF( "%5.2Le%.0Lf", " -inf3",  (long double) ninf ARG((long double) 3.0));
     TEST_VSPRINTF( "%5.2Le%.0Lf", "  nan3",  (long double) nan ARG((long double) 3.0));
@@ -527,6 +536,14 @@ int run_tests()
 
     TEST_VSPRINTF( "%# 01.1g",  " 1.e+01",   (double) 9.8);
     TEST_VSPRINTF( "%# 01.1Lg", " 1.e+01",   (long double) 9.8l);
+
+    TEST_VSPRINTF( "%010.3g",  "0000003.33", (double) (10.0/3.0));
+    TEST_VSPRINTF( "%010.3Lg", "0000003.33", (long double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6g",   "   3.33333", (double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6Lg",  "   3.33333", (long double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6g",   " 0.0333333", (double) (0.1/3.0));
+    TEST_VSPRINTF( "%10.6Lg",  " 0.0333333", (long double) (0.1/3.0));
+
     TEST_VSPRINTF( "%#.1g",     "-4.e+04",   (double) -40661.5);
     TEST_VSPRINTF( "%#.1Lg",    "-4.e+04",   (long double) -40661.5l);
     TEST_VSPRINTF( "%#g",       "0.00000",   (double) 0.0);
@@ -540,10 +557,10 @@ int run_tests()
     TEST_VSPRINTF( "%.7G",      "4900000",   (double) 4900000.0l);
     TEST_VSPRINTF( "%.7LG",     "4900000",   (long double) 4900000.0l);
 
-//    TEST_VSPRINTF("%+5.10r2E %+10.10r2e %+10.10r7e %+10.10r4e %+10.0e %+10.0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
+//    TEST_VSPRINTF("%+5.10r2E %+10.10r2e %+10.10r7e %+10.10r4e %+10.0r0e %+10.0r0e ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
 //                    (double) 3.9 ARG(7.89456123e-307) ARG(7.89456123e+307) ARG(789456123.0) ARG(0.789456123) ARG(DBL_MIN));
 
-//    TEST_VSPRINTF("%+5.10r2LE %+10.10r2Le %+10.10r7Le %+10.10r4Le %+10.0Le %+10.0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
+//    TEST_VSPRINTF("%+5.10r2LE %+10.10r2Le %+10.10r7Le %+10.10r4Le %+10.0r0Le %+10.0r0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
 //                    (long double) 3.9 ARG((long double) 7.89456123e-307) ARG((long double) 7.89456123e+307) ARG((long double) 789456123.0) ARG((long double) 0.789456123) ARG((long double) DBL_MIN));
 
     return (bRet);

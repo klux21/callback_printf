@@ -1936,7 +1936,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
       while (minwidth && (iexpo < 0))
       {
          ++iexpo;
-          --minwidth;
+         --minwidth;
          *pb++ = '0';
       }
 

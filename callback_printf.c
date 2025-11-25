@@ -1024,7 +1024,7 @@ static void base10l(long double value, long double * mantissa, int32_t * exponen
 
       while(pb-- != basepow)
       {
-         if(10.0l > (pb->p * mant))
+         if(10.0l > (mant * pb->p))
          {
             mant *= pb->p;
             expo -= pb->e;
@@ -1075,7 +1075,7 @@ static void base10(double value, double * mantissa, int32_t * exponent)
 
       while(pb-- != basepow)
       {
-         if(10.0 > (pb->p * mant))
+         if(10.0 > (mant * pb->p))
          {
             mant *= pb->p;
             expo -= pb->e;
@@ -1194,7 +1194,7 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, in
          while(pb != basepow)
          {
             --pb;
-            if(p > (pb->p * mant))
+            if(p > (mant * pb->p))
             {
                mant *= pb->p;
                expo += pb->e;
@@ -1310,7 +1310,7 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
          while(pb != basepow)
          {
             --pb;
-            if(p > (pb->p * mant))
+            if(p > (mant * pb->p))
             {
                mant *= pb->p;
                expo += pb->e;

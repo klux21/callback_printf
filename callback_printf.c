@@ -1160,16 +1160,19 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, in
          }
 
          expo = 0;
+         p    = 1.0;
 
          while(pb != basepow)
          {
             --pb;
-            if(pb->p <= mant)
+            if((p * pb->p) <= mant)
             {
-               mant /= pb->p;
+               p *= pb->p;
                expo += pb->e;
             }
          }
+
+         mant /= p;
       }
       else if (mant < 1.0)
       {
@@ -1273,16 +1276,19 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
          }
 
          expo = 0;
+         p    = 1.0;
 
          while(pb != basepow)
          {
             --pb;
-            if(pb->p <= mant)
+            if((p * pb->p) <= mant)
             {
-               mant /= pb->p;
+               p *= pb->p;
                expo += pb->e;
             }
          }
+
+         mant /= p;
       }
       else if (mant < 1.0)
       {

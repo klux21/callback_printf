@@ -638,6 +638,21 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r1l8d",      "64",                        (int64_t) 100 );
     TEST_VSPRINTF( "%r*l8d",      "-1000",                     (int) 5 ARG((int64_t) -125));
 
+    TEST_VSPRINTF( "%r1hhd",      "-64",                        (int) -100 );
+    TEST_VSPRINTF( "%r1hd",       "-64",                        (int) -100 );
+    TEST_VSPRINTF( "%r1ld",       "-64",                        (long) -100 );
+    TEST_VSPRINTF( "%r1lld",      "-64",                        (long long) -100 );
+
+    TEST_VSPRINTF( "%r0hhd",      "-100",                        (int) -100 );
+    TEST_VSPRINTF( "%r0hd",       "-100",                        (int) -100 );
+    TEST_VSPRINTF( "%r0ld",       "-100",                        (long) -100 );
+    TEST_VSPRINTF( "%r0lld",      "-100",                        (long long) -100 );
+
+    TEST_VSPRINTF( "%r*hhd",      "-1000",                      (int) 5 ARG((int) -125));
+    TEST_VSPRINTF( "%r*hd",       "-1000",                      (int) 5 ARG((int) -125));
+    TEST_VSPRINTF( "%r*ld",       "-1000",                      (int) 5 ARG((long) -125));
+    TEST_VSPRINTF( "%r*lld",      "-1000",                      (int) 5 ARG((long long) -125));
+
     if(sizeof(void *) == 4)
     {
         TEST_VSPRINTF( "%p",   "1234abcd",    (void*) 0x1234abcd);

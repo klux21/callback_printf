@@ -2531,60 +2531,59 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   if(s1 == '4')
                   { /* character of 4 bytes width */
                      static uint32_t warn[] = {'<', 'N', 'U', 'L', 'L', '>', '\0'};
-                     uint32_t * pwc = va_arg(val, uint32_t *);
-                     uint32_t * pe = pwc;
+                     uint32_t * pa = va_arg(val, uint32_t *);
+                     uint32_t * pe = pa;
                      size_t length = precision; /* maximum length to be printed */
 
-                     if(!pwc)
+                     if(!pa)
                      {
-                        pwc = warn;
-                        pe = pwc;
+                        pa = warn;
+                        pe = pa;
                      }
 
                      while (length-- && *pe)
                         ++pe;
 
-                     length = (size_t) (pe - pwc); /* contains string len to be printed now */
-                     zRet += cbk_print_wstring(pUserData, pCB, pwc, 1, sizeof(uint32_t), minimum_width, left_justified);
+                     length = (size_t) (pe - pa); /* contains string len to be printed now */
+                     zRet += cbk_print_wstring(pUserData, pCB, pa, length, sizeof(uint32_t), minimum_width, left_justified);
                   }
                   else if(s1 == '2')
                   { /* character of 2 bytes width */
                      static uint16_t warn[] = {'<', 'N', 'U', 'L', 'L', '>', '\0'};
-                     uint16_t * pwc = va_arg(val, uint16_t *);
-                     uint16_t * pe = pwc;
+                     uint16_t * pa = va_arg(val, uint16_t *);
+                     uint16_t * pe = pa;
                      size_t length = precision; /* maximum length to be printed */
 
-                     if(!pwc)
+                     if(!pa)
                      {
-                        pwc = warn;
-                        pe = pwc;
+                        pa = warn;
+                        pe = pa;
                      }
 
                      while (length-- && *pe)
                         ++pe;
 
-                     length = (size_t) (pe - pwc); /* contains string len to be printed now */
-                     zRet += cbk_print_wstring(pUserData, pCB, pwc, 1, sizeof(uint16_t), minimum_width, left_justified);
+                     length = (size_t) (pe - pa); /* contains string len to be printed now */
+                     zRet += cbk_print_wstring(pUserData, pCB, pa, length, sizeof(uint16_t), minimum_width, left_justified);
                   }
                   else if(s1 == '1')
                   { /* character of 1 byte width */
                      static uint8_t warn[] = {'<', 'N', 'U', 'L', 'L', '>', '\0'};
-                     uint8_t * pwc = va_arg(val, uint8_t *);
-                     uint8_t * pe = pwc;
+                     uint8_t * pa = va_arg(val, uint8_t *);
+                     uint8_t * pe = pa;
                      size_t length = precision; /* maximum length to be printed */
 
-                     if(!pwc)
+                     if(!pa)
                      {
-                        pwc = warn;
-                        pe = pwc;
+                        pa = warn;
+                        pe = pa;
                      }
 
                      while (length-- && *pe)
                         ++pe;
 
-                     length = (size_t) (pe - pwc); /* contains string len to be printed now */
-
-                     zRet += cbk_print_wstring(pUserData, pCB, pwc, 1, sizeof(uint8_t), minimum_width, left_justified);
+                     length = (size_t) (pe - pa); /* contains string len to be printed now */
+                     zRet += cbk_print_wstring(pUserData, pCB, pa, length, sizeof(uint8_t), minimum_width, left_justified);
                   }
                   else
                   { /* unknown format */
@@ -3391,7 +3390,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
          }
          else
-         { /* unknown format */
+         { /* unknown format specification -> skip all remaining string data */
             pCB(pUserData, ps, 0);
             goto Exit;
          }

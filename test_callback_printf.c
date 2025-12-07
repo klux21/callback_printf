@@ -182,6 +182,10 @@ int test_ssprintf()
 {
    int bRet = 1;
 
+   uint8_t  s8[]  = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
+   uint16_t s16[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
+   uint32_t s32[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
+
    PRINTF_V_DATA cbdata = { &cbfunc, 12, (void *) "Hello world!"}; /* output data for %v and %V samples */
 
    uint32_t u_inf  = 0x7f800000;
@@ -291,7 +295,11 @@ int test_ssprintf()
     TEST_VSPRINTF( "% d",           " 1",  (int) 1 );
     TEST_VSPRINTF( "%+ d",          "+1",  (int) 1 );
     TEST_VSPRINTF( "%S",            "wide", (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%04c",          "   1", (int) '1' );
+    TEST_VSPRINTF( "%S",            "wide \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", (wchar_t *) L"wide \xc4\xd6\xdc\xdf\xe4\xf6\xfc" );
+    TEST_VSPRINTF( "%ls",           "wide \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", (wchar_t *) L"wide \xc4\xd6\xdc\xdf\xe4\xf6\xfc" );
+    TEST_VSPRINTF( "%l1s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s8 );
+    TEST_VSPRINTF( "%l2s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s16 );
+    TEST_VSPRINTF( "%l4s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s32 );
     TEST_VSPRINTF( "%-04c",         "1   ", (int) '1' );
     TEST_VSPRINTF( "%#012x",        "0x0000000001", (int) 1 );
     TEST_VSPRINTF( "%#012x",        "000000000000", (int) 0 );

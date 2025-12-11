@@ -1439,19 +1439,18 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
    }
 
    count = (uint32_t) mant;
-   mant = (mant - count) * dbase;
    *pb++ = digit[count];
 
    if(minwidth)
    {
       *pb++ = '.';
 
-      while (minwidth--)
+      do
       {
+         mant  = (mant - count) * dbase;
          count = (uint32_t) mant;
-         mant = (mant - count) * dbase;
          *pb++ = digit[count];
-      }
+      } while (--minwidth);
    }
    else
    {
@@ -1809,19 +1808,18 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
    }
 
    count = (uint32_t) mant;
-   mant = (mant - count) * dbase;
    *pb++ = digit[count];
 
    if(minwidth)
    {
       *pb++ = '.';
 
-      while (minwidth--)
+      do
       {
+         mant  = (mant - count) * dbase;
          count = (uint32_t) mant;
-         mant = (mant - count) * dbase;
          *pb++ = digit[count];
-      }
+      }  while (--minwidth);
    }
    else
    {

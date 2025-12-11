@@ -1490,12 +1490,13 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
       if(!base)
          base = 10;
 
-      while(count >= base)
+      do
       {
          uint32_t tmp = count;
          count /= base;
          *pb++ = digit[tmp - (count * base)];
-      }
+      } while(count >= base);
+
       *pb++ = digit[count];
 
       count = (uint32_t) (pb - pBuf);
@@ -1538,14 +1539,6 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
       mant /= dbase;
    }
 
-   while(iexpo > 0)
-   {
-      --iexpo;
-      count = (uint32_t) mant;
-      mant  = (mant - count) * dbase;
-      *pb++ = digit[count];
-   }
-
    if(iexpo < 0)
    {
       ++iexpo;
@@ -1553,6 +1546,14 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    }
    else
    {
+      while(iexpo > 0)
+      {
+         --iexpo;
+         count = (uint32_t) mant;
+         mant  = (mant - count) * dbase;
+         *pb++ = digit[count];
+      }
+
       count = (uint32_t) mant;
       mant  = (mant - count) * dbase;
       *pb++ = digit[count];
@@ -1857,14 +1858,15 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
       char * ps = pb;
 
       if(!base)
-          base = 10;
+         base = 10;
 
-      while(count >= base)
+      do
       {
          uint32_t tmp = count;
          count /= base;
          *pb++ = digit[tmp - (count * base)];
-      }
+      } while(count >= base);
+
       *pb++ = digit[count];
 
       count = (uint32_t) (pb - pBuf);
@@ -1907,14 +1909,6 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
       mant /= dbase;
    }
 
-   while(iexpo > 0)
-   {
-      --iexpo;
-      count = (uint32_t) mant;
-      mant  = (mant - count) * dbase;
-      *pb++ = digit[count];
-   }
-
    if(iexpo < 0)
    {
       ++iexpo;
@@ -1922,6 +1916,14 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    }
    else
    {
+      while(iexpo > 0)
+      {
+         --iexpo;
+         count = (uint32_t) mant;
+         mant  = (mant - count) * dbase;
+         *pb++ = digit[count];
+      }
+
       count = (uint32_t) mant;
       mant  = (mant - count) * dbase;
       *pb++ = digit[count];

@@ -1490,12 +1490,12 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
       if(!base)
          base = 10;
 
-      do
+      while(count >= base)
       {
          uint32_t tmp = count;
          count /= base;
          *pb++ = digit[tmp - (count * base)];
-      } while(count >= base);
+      }
 
       *pb++ = digit[count];
 
@@ -1860,12 +1860,12 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
       if(!base)
          base = 10;
 
-      do
+      while(count >= base)
       {
          uint32_t tmp = count;
          count /= base;
          *pb++ = digit[tmp - (count * base)];
-      } while(count >= base);
+      }
 
       *pb++ = digit[count];
 

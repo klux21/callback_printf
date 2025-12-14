@@ -1365,7 +1365,7 @@ static long double powil (long double base, int32_t iexpo)
    }
 
    return ( sign ? (1.0 / p) : p);
-} /* double powil (long double base, int32_t iexpo) */
+} /* long double powil (long double base, int32_t iexpo) */
 
 
 /* ------------------------------------------------------------------------- *\
@@ -1546,17 +1546,14 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    }
    else
    {
-      while(iexpo > 0)
-      {
-         --iexpo;
-         count = (uint32_t) mant;
-         mant  = (mant - count) * dbase;
-         *pb++ = digit[count];
-      }
+      ++iexpo;
 
-      count = (uint32_t) mant;
-      mant  = (mant - count) * dbase;
-      *pb++ = digit[count];
+      do
+      {
+         count = (uint32_t) mant;
+         *pb++ = digit[count];
+         mant  = (mant - count) * dbase;
+      } while(--iexpo);
    }
 
    if(minwidth)
@@ -1565,9 +1562,9 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
       while (minwidth && (iexpo < 0))
       {
+         *pb++ = '0';
          ++iexpo;
          --minwidth;
-         *pb++ = '0';
       }
 
       while (minwidth--)
@@ -1707,7 +1704,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          if(!minwidth)
             minwidth = 1;
 
-         if(10.0 <= (mant + 0.5 * powil(base, -(int32_t) (minwidth - 1))))
+         if(base <= (mant + 0.5 * powil(base, -(int32_t) (minwidth - 1))))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
          if(((int32_t) minwidth > E) && (E >= -4))
@@ -1820,7 +1817,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
          mant  = (mant - count) * dbase;
          count = (uint32_t) mant;
          *pb++ = digit[count];
-      }  while (--minwidth);
+      } while (--minwidth);
    }
    else
    {
@@ -1916,17 +1913,14 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    }
    else
    {
-      while(iexpo > 0)
-      {
-         --iexpo;
-         count = (uint32_t) mant;
-         mant  = (mant - count) * dbase;
-         *pb++ = digit[count];
-      }
+      ++iexpo;
 
-      count = (uint32_t) mant;
-      mant  = (mant - count) * dbase;
-      *pb++ = digit[count];
+      do
+      {
+         count = (uint32_t) mant;
+         *pb++ = digit[count];
+         mant  = (mant - count) * dbase;
+      } while(--iexpo);
    }
 
    if(minwidth)
@@ -1935,15 +1929,15 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 
       while (minwidth && (iexpo < 0))
       {
+         *pb++ = '0';
          ++iexpo;
          --minwidth;
-         *pb++ = '0';
       }
 
       while (minwidth--)
       {
          count = (uint32_t) mant;
-         mant = (mant - count) * dbase;
+         mant  = (mant - count) * dbase;
          *pb++ = digit[count];
       }
    }
@@ -2051,7 +2045,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          if(!minwidth)
              minwidth = 1;
 
-         if(10.0 <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
+         if(base <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
             ++E; /* The exponent increases because of rounding. So we need to agjust the value that we compare width for being conform to the C standard */
 
          if(((int32_t) minwidth > E) && (E >= -4))

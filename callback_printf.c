@@ -1441,21 +1441,21 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
 #if 1
    if(minwidth)
    {
-      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
-      uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+      uint64_t m1 = (uint64_t) (mant * 0x400000000000000ll);                              /* upper part of mantissa */
+      uint64_t m2 = (uint64_t) ((mant * 0x400000000000000ll - m1) * 0x400000000000000ll); /* lower part of mantissa */
       uint8_t b = base ? base : 16;
 
-      *pb++ = digit[(size_t) (m1 >> 56)];
+      *pb++ = digit[(size_t) (m1 >> 58)];
       *pb++ = '.';
 
       do
       {
-         m1    &= 0xffffffffffffffll;;
+         m1    &= 0x3ffffffffffffffll;;
          m2    *= b;
          m1    *= b;
-         m1    += m2 >> 56;
-         m2    &= 0xffffffffffffffll;
-         *pb++ = digit[(size_t) (m1 >> 56)];
+         m1    += m2 >> 58;
+         m2    &= 0x3ffffffffffffffll;
+         *pb++ = digit[(size_t) (m1 >> 58)];
       }
       while(--minwidth);
    }
@@ -1576,8 +1576,8 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
       if(minwidth)
       {
-         uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
-         uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+         uint64_t m1 = (uint64_t) (mant * 0x400000000000000ll);                              /* upper part of mantissa */
+         uint64_t m2 = (uint64_t) ((mant * 0x400000000000000ll - m1) * 0x400000000000000ll); /* lower part of mantissa */
 
          *pb++ = '.';
 
@@ -1589,16 +1589,16 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
             ++iexpo;
          }
 
-         *pb++ = digit[(size_t) (m1 >> 56)];
+         *pb++ = digit[(size_t) (m1 >> 58)];
 
          while(--minwidth)
          {
-            m1    &= 0xffffffffffffffll;
+            m1    &= 0x3ffffffffffffffll;
             m2    *= base;
             m1    *= base;
-            m1    += m2 >> 56;
-            m2    &= 0xffffffffffffffll;
-            *pb++ = digit[(size_t) (m1 >> 56)];
+            m1    += m2 >> 58;
+            m2    &= 0x3ffffffffffffffll;
+            *pb++ = digit[(size_t) (m1 >> 58)];
          }
       }
       else
@@ -1609,22 +1609,22 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    }
    else
    {
-      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
-      uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+      uint64_t m1 = (uint64_t) (mant * 0x400000000000000ll);                              /* upper part of mantissa */
+      uint64_t m2 = (uint64_t) ((mant * 0x400000000000000ll - m1) * 0x400000000000000ll); /* lower part of mantissa */
 
       ++iexpo;
 
-      *pb++ = digit[(size_t) (m1 >> 56)];
+      *pb++ = digit[(size_t) (m1 >> 58)];
 
       while(--iexpo)
       {
-         m1    &= 0xffffffffffffffll;
+         m1    &= 0x3ffffffffffffffll;
          m2    *= base;
          m1    *= base;
-         m1    += m2 >> 56;
-         m2    &= 0xffffffffffffffll;
+         m1    += m2 >> 58;
+         m2    &= 0x3ffffffffffffffll;
 
-         *pb++ = digit[(size_t) (m1 >> 56)];
+         *pb++ = digit[(size_t) (m1 >> 58)];
       }
 
       if(minwidth)
@@ -1633,12 +1633,12 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
          do
          {
-            m1    &= 0xffffffffffffffll;
+            m1    &= 0x3ffffffffffffffll;
             m1    *= base;
             m2    *= base;
-            m1    += m2 >> 56;
-            m2    &= 0xffffffffffffffll;
-            *pb++ = digit[(size_t) (m1 >> 56)];
+            m1    += m2 >> 58;
+            m2    &= 0x3ffffffffffffffll;
+            *pb++ = digit[(size_t) (m1 >> 58)];
          } while(--minwidth);
       }
       else
@@ -1919,16 +1919,16 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
    if(minwidth)
    {
       uint8_t  b = base ? base : 16;
-      uint64_t m = (uint64_t) (mant * 0x100000000000000ll);
+      uint64_t m = (uint64_t) (mant * 0x400000000000000ll);
 
-      *pb++ = digit[(size_t) (m >> 56)];
+      *pb++ = digit[(size_t) (m >> 58)];
       *pb++ = '.';
 
       do
       {
-         m &= 0xffffffffffffffll;
+         m &= 0x3ffffffffffffffll;
          m *= b;
-         *pb++ = digit[(size_t) (m >> 56)];
+         *pb++ = digit[(size_t) (m >> 58)];
       }
       while(--minwidth);
    }
@@ -2049,7 +2049,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 
       if(minwidth)
       {
-         uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);  /* mantissa */
+         uint64_t m1 = (uint64_t) (mant * 0x400000000000000ll);  /* mantissa */
          *pb++ = '.';
 
          while (iexpo < 0)
@@ -2060,13 +2060,13 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
             ++iexpo;
          }
 
-         *pb++ = digit[(size_t) (m1 >> 56)];
+         *pb++ = digit[(size_t) (m1 >> 58)];
 
          while(--minwidth)
          {
-            m1    &= 0xffffffffffffffll;
+            m1    &= 0x3ffffffffffffffll;
             m1    *= base;
-            *pb++ = digit[(size_t) (m1 >> 56)];
+            *pb++ = digit[(size_t) (m1 >> 58)];
          }
       }
       else
@@ -2077,17 +2077,17 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    }
    else
    {
-      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);    /* mantissa */
+      uint64_t m1 = (uint64_t) (mant * 0x400000000000000ll);    /* mantissa */
 
       ++iexpo;
 
-      *pb++ = digit[(size_t) (m1 >> 56)];
+      *pb++ = digit[(size_t) (m1 >> 58)];
 
       while(--iexpo)
       {
-         m1    &= 0xffffffffffffffll;
+         m1    &= 0x3ffffffffffffffll;
          m1    *= base;
-         *pb++ = digit[(size_t) (m1 >> 56)];
+         *pb++ = digit[(size_t) (m1 >> 58)];
       }
 
       if(minwidth)
@@ -2096,9 +2096,9 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 
          do
          {
-            m1    &= 0xffffffffffffffll;
+            m1    &= 0x3ffffffffffffffll;
             m1    *= base;
-            *pb++ = digit[(size_t) (m1 >> 56)];
+            *pb++ = digit[(size_t) (m1 >> 58)];
          } while(--minwidth);
       }
       else

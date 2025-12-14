@@ -1411,7 +1411,6 @@ static double powi (double base, int32_t iexpo)
 } /* double powi (double base, int32_t iexpo) */
 
 
-
 /* ------------------------------------------------------------------------- *\
    print_long_double_e prints an unsigned long double in '%Le' format to a
    buffer and returns the written string data length.
@@ -1438,6 +1437,36 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
       ++iexpo;
    }
 
+
+#if 1
+   if(minwidth)
+   {
+      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
+      uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+      uint8_t b = base ? base : 16;
+
+      *pb++ = digit[(size_t) (m1 >> 56)];
+      *pb++ = '.';
+
+      do
+      {
+         m1    &= 0xffffffffffffffll;;
+         m2    *= b;
+         m1    *= b;
+         m1    += m2 >> 56;
+         m2    &= 0xffffffffffffffll;
+         *pb++ = digit[(size_t) (m1 >> 56)];
+      }
+      while(--minwidth);
+   }
+   else
+   {
+      *pb++ = digit[(size_t) mant];
+
+      if(prefixing)
+         *pb++ = '.';
+   }
+#else
    count = (uint32_t) mant;
    *pb++ = digit[count];
 
@@ -1457,6 +1486,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
       if(prefixing)
          *pb++ = '.';
    }
+#endif
 
    /* write the exponent */
    if (!base)
@@ -1529,7 +1559,6 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 {
    char * pb = pBuf;
    long double dbase = base;
-   uint32_t count;
 
    mant += 0.5 * powil(dbase, -iexpo - (int32_t) minwidth);
 
@@ -1539,6 +1568,87 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
       mant /= dbase;
    }
 
+#if 1
+   if(iexpo < 0)
+   {
+      ++iexpo;
+      *pb++ = '0';
+
+      if(minwidth)
+      {
+         uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
+         uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+
+         *pb++ = '.';
+
+         while (iexpo < 0)
+         {
+            *pb++ = '0';
+            if(!--minwidth)
+               goto Exit;
+            ++iexpo;
+         }
+
+         *pb++ = digit[(size_t) (m1 >> 56)];
+
+         while(--minwidth)
+         {
+            m1    &= 0xffffffffffffffll;
+            m2    *= base;
+            m1    *= base;
+            m1    += m2 >> 56;
+            m2    &= 0xffffffffffffffll;
+            *pb++ = digit[(size_t) (m1 >> 56)];
+         }
+      }
+      else
+      {
+         if(prefixing)
+            *pb++ = '.';
+      }
+   }
+   else
+   {
+      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);                              /* upper part of mantissa */
+      uint64_t m2 = (uint64_t) ((mant * 0x100000000000000ll - m1) * 0x100000000000000ll); /* lower part of mantissa */
+
+      ++iexpo;
+
+      *pb++ = digit[(size_t) (m1 >> 56)];
+
+      while(--iexpo)
+      {
+         m1    &= 0xffffffffffffffll;
+         m2    *= base;
+         m1    *= base;
+         m1    += m2 >> 56;
+         m2    &= 0xffffffffffffffll;
+
+         *pb++ = digit[(size_t) (m1 >> 56)];
+      }
+
+      if(minwidth)
+      {
+         *pb++ = '.';
+
+         do
+         {
+            m1    &= 0xffffffffffffffll;
+            m1    *= base;
+            m2    *= base;
+            m1    += m2 >> 56;
+            m2    &= 0xffffffffffffffll;
+            *pb++ = digit[(size_t) (m1 >> 56)];
+         } while(--minwidth);
+      }
+      else
+      {
+        if(prefixing)
+           *pb++ = '.';
+      }
+   }
+   Exit:;
+#else
    if(iexpo < 0)
    {
       ++iexpo;
@@ -1547,10 +1657,9 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    else
    {
       ++iexpo;
-
       do
       {
-         count = (uint32_t) mant;
+         uint32_t count = (uint32_t) mant;
          *pb++ = digit[count];
          mant  = (mant - count) * dbase;
       } while(--iexpo);
@@ -1569,7 +1678,7 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
 
       while (minwidth--)
       {
-         count = (uint32_t) mant;
+         uint32_t count = (uint32_t) mant;
          mant  = (mant - count) * dbase;
          *pb++ = digit[count];
       }
@@ -1579,6 +1688,7 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
       if(prefixing)
          *pb++ = '.';
    }
+#endif
 
    return (pb - pBuf);
 } /* size_t print_long_double_f (...) */
@@ -1805,6 +1915,31 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
       ++iexpo;
    }
 
+#if 1
+   if(minwidth)
+   {
+      uint8_t  b = base ? base : 16;
+      uint64_t m = (uint64_t) (mant * 0x100000000000000ll);
+
+      *pb++ = digit[(size_t) (m >> 56)];
+      *pb++ = '.';
+
+      do
+      {
+         m &= 0xffffffffffffffll;
+         m *= b;
+         *pb++ = digit[(size_t) (m >> 56)];
+      }
+      while(--minwidth);
+   }
+   else
+   {
+      *pb++ = digit[(size_t) mant];
+
+      if(prefixing)
+         *pb++ = '.';
+   }
+#else
    count = (uint32_t) mant;
    *pb++ = digit[count];
 
@@ -1824,6 +1959,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
       if(prefixing)
          *pb++ = '.';
    }
+#endif
 
    /* write the exponent */
    if (!base)
@@ -1896,7 +2032,6 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 {
    char * pb = pBuf;
    double dbase = base;
-   uint32_t count;
 
    mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth);
 
@@ -1906,6 +2041,74 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
       mant /= dbase;
    }
 
+#if 1
+   if(iexpo < 0)
+   {
+      ++iexpo;
+      *pb++ = '0';
+
+      if(minwidth)
+      {
+         uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);  /* mantissa */
+         *pb++ = '.';
+
+         while (iexpo < 0)
+         {
+            *pb++ = '0';
+            if(!--minwidth)
+               goto Exit;
+            ++iexpo;
+         }
+
+         *pb++ = digit[(size_t) (m1 >> 56)];
+
+         while(--minwidth)
+         {
+            m1    &= 0xffffffffffffffll;
+            m1    *= base;
+            *pb++ = digit[(size_t) (m1 >> 56)];
+         }
+      }
+      else
+      {
+         if(prefixing)
+            *pb++ = '.';
+      }
+   }
+   else
+   {
+      uint64_t m1 = (uint64_t) (mant * 0x100000000000000ll);    /* mantissa */
+
+      ++iexpo;
+
+      *pb++ = digit[(size_t) (m1 >> 56)];
+
+      while(--iexpo)
+      {
+         m1    &= 0xffffffffffffffll;
+         m1    *= base;
+         *pb++ = digit[(size_t) (m1 >> 56)];
+      }
+
+      if(minwidth)
+      {
+         *pb++ = '.';
+
+         do
+         {
+            m1    &= 0xffffffffffffffll;
+            m1    *= base;
+            *pb++ = digit[(size_t) (m1 >> 56)];
+         } while(--minwidth);
+      }
+      else
+      {
+        if(prefixing)
+           *pb++ = '.';
+      }
+   }
+   Exit:;
+#else
    if(iexpo < 0)
    {
       ++iexpo;
@@ -1914,10 +2117,9 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    else
    {
       ++iexpo;
-
       do
       {
-         count = (uint32_t) mant;
+         uint32_t count = (uint32_t) mant;
          *pb++ = digit[count];
          mant  = (mant - count) * dbase;
       } while(--iexpo);
@@ -1936,7 +2138,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
 
       while (minwidth--)
       {
-         count = (uint32_t) mant;
+         uint32_t count = (uint32_t) mant;
          mant  = (mant - count) * dbase;
          *pb++ = digit[count];
       }
@@ -1946,6 +2148,7 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
       if(prefixing)
          *pb++ = '.';
    }
+#endif
 
    return (pb - pBuf);
 } /* size_t print_double_f (...) */

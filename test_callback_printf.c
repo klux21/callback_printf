@@ -231,6 +231,10 @@ int test_ssprintf()
     TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
     TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );
 #else
+    TEST_VSPRINTF( "%+#22.18Lf",  " +1.333333333333333333", (long double) 4.0 / 3.0 );
+    TEST_VSPRINTF( "%+#22.18Lf",  " +2.222222222222222222", (long double) 20.0 / 9.0 );
+    TEST_VSPRINTF( "%+#26.18Le",  " +1.333333333333333333e+00", (long double) 4.0 / 3.0 );
+    TEST_VSPRINTF( "%+#26.18Le",  " +2.222222222222222222e+00", (long double) 20.0 / 9.0 );
     TEST_VSPRINTF( "%+#24.14Le",  " +7.89456123000000e-4307", (long double) 7.89456123e-4307l );
     TEST_VSPRINTF( "%+#24.14Le",  " +7.89456123000000e+4307", (long double) 7.89456123e+4307l );
 #endif

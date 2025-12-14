@@ -261,7 +261,7 @@ int test_vsprintf(const char * pout, const char * call, const char * pfmt, ...)
        int     failed = (outlen != pr->ret) || strcmp(pout, pr->pb);
        sfprintf(stdout, "%10s:  %3ld.%.4ldus %s \"%s\"\n", pr->name, (long) (tm / loops), (long) ((tm % loops + (div / 2)) / div), failed ? "!NOK!" : "  OK ", pr->pb);
        if(failed)
-       bRet = 0;
+          bRet = 0;
        ++pr;
     }
 
@@ -316,8 +316,8 @@ int run_tests()
     TEST_VSPRINTF( "%+#27.6e",    "             +1.594561e-317", (double) 1.59456123e-317 );
     TEST_VSPRINTF( "%+#27.16e",    "   +1.5945612300000000e+308", (double) 1.59456123e+308 );
 #ifdef _WIN32
-    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
-    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );
+    TEST_VSPRINTF( "%+#27.15Le",    "    +9.894561230000000e-307",(long double) 9.89456123e-307l );
+    TEST_VSPRINTF( "%+#27.15Le",    "    +9.894561230000000e+307",(long double) 9.89456123e+307l );
 #else
     TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e-4307",(long double) 7.89456123e-4307l );
     TEST_VSPRINTF( "%+#27.17Le",    " +7.89456123000000000e+4307",(long double) 7.89456123e+4307l );

@@ -1,6 +1,6 @@
 /* Copyright string in product ressource information */
 #define COPYRIGHT_HOLDER "Dipl.-Ing. Klaus Lux (Aachen, Germany)"
-#define COPYRIGHT_STRING "\xA9 2024 " COPYRIGHT_HOLDER
+#define COPYRIGHT_STRING "\xA9 2025 " COPYRIGHT_HOLDER
 
 /* Generic version number stuff */
 

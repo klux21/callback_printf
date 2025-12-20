@@ -48,13 +48,13 @@ r2 ... r9 for the bases 2 til 9. For variable bases r* can be used. In that
 case the base needs to be specified by an additional argument of type int just
 before the integer or floating specifier or it's optional length specifier. The
 highest supported numeric base is 36.
-Floating point exponents for bases higher than 14 are prefixed by a tilde '~'
-istead of the letter 'e' which becomes a member of the regular digits of those
-bases.
+The floating point exponents of numeric bases higher than 14 are prefixed by a
+tilde '~' istead of the letter 'e' which becomes a member of the regular digits
+of those bases.
 
 Sometimes you need to print the same complex data types quite often e.g. IPv6
 addresses or times. The common way in C would be to write a function that
-writes them to a character buffer and returns a pointer to that buffer but you
+writes that to a character buffer and returns a pointer to that buffer but you
 need an variable for a buffer wherever you need to print them. For improving
 things like that callback_printf supports the options %v and %V for variable
 argument types now. %v expects a function pointer and a data pointer as related

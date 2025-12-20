@@ -1331,7 +1331,7 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
    See comments of rebase() for understanding the mechanism.
 \* ------------------------------------------------------------------------- */
 
-static long double powil (long double base, int32_t iexpo)
+static long double powil (uint8_t base, int32_t iexpo)
 {
    struct basepows_s {long double p; int32_t e; } basepow [32];
    struct basepows_s * pb = basepow;
@@ -1365,7 +1365,7 @@ static long double powil (long double base, int32_t iexpo)
    }
 
    return ( sign ? (1.0 / p) : p);
-} /* long double powil (long double base, int32_t iexpo) */
+} /* long double powil (uint8_t base, int32_t iexpo) */
 
 
 /* ------------------------------------------------------------------------- *\
@@ -1374,7 +1374,7 @@ static long double powil (long double base, int32_t iexpo)
    See comments of rebase() for understanding the mechanism.
 \* ------------------------------------------------------------------------- */
 
-static double powi (double base, int32_t iexpo)
+static double powi (uint8_t base, int32_t iexpo)
 {
    struct basepows_s {  double p; int32_t e; } basepow [20];
    struct basepows_s * pb = basepow;
@@ -1408,7 +1408,7 @@ static double powi (double base, int32_t iexpo)
    }
 
    return ( sign ? (1.0 / p) : p);
-} /* double powi (double base, int32_t iexpo) */
+} /* double powi (uint8_t base, int32_t iexpo) */
 
 
 /* ------------------------------------------------------------------------- *\
@@ -1425,18 +1425,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
                                   const char * digit)      /* array of digits to use */
 {
    char * pb = pBuf;
-   long double dbase = base ? base : 16;
    uint32_t count;
-
-   /* ensure right rounding according to the required length of the mantissa */
-   mant += 0.5 * powil(dbase, -(int32_t) minwidth);
-
-   while(mant >= dbase)
-   {/* ensure that */
-      mant /= dbase;
-      ++iexpo;
-   }
-
 
 #if 1
    if(minwidth)
@@ -1467,6 +1456,8 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
          *pb++ = '.';
    }
 #else
+   long double dbase = base ? base : 16;
+
    count = (uint32_t) mant;
    *pb++ = digit[count];
 
@@ -1490,7 +1481,7 @@ static size_t print_long_double_e(char *       pBuf,       /* pointer to buffer 
 
    /* write the exponent */
    if (!base)
-      *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
+      *pb++ = digit[25]; /* use digit p or P instead of e or E */
    else if (base > 0xe)
       *pb++ = '~';
    else
@@ -1558,15 +1549,6 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
                                   const char * digit)      /* array of digits to use */
 {
    char * pb = pBuf;
-   long double dbase = base;
-
-   mant += 0.5 * powil(dbase, -iexpo - (int32_t) minwidth);
-
-   while(mant >= dbase)
-   {/* ensure that */
-      ++iexpo;
-      mant /= dbase;
-   }
 
 #if 1
    if(iexpo < 0)
@@ -1634,8 +1616,8 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
          do
          {
             m1    &= 0x3ffffffffffffffll;
-            m1    *= base;
             m2    *= base;
+            m1    *= base;
             m1    += m2 >> 58;
             m2    &= 0x3ffffffffffffffll;
             *pb++ = digit[(size_t) (m1 >> 58)];
@@ -1649,6 +1631,8 @@ static size_t print_long_double_f(char *       pBuf,       /* pointer to buffer 
    }
    Exit:;
 #else
+   long double dbase = base;
+
    if(iexpo < 0)
    {
       ++iexpo;
@@ -1745,7 +1729,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
    size_t length = 0;
 
    /*  test for NAN and INF first */
-   if (value != value)
+   if (!(value == value))
    {  /* NAN */
       char * pb = buf;
       float   f = (float) value;
@@ -1782,7 +1766,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
    }
    else
    {
-      long double  mant;
+      long double mant;
       int32_t iexpo;
 
       if (value == 0.0)
@@ -1797,8 +1781,8 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
 
          if(mant < 0.0)
          {
-             mant = -mant;
-             sign_char = '-';
+            mant = -mant;
+            sign_char = '-';
          }
       }
 
@@ -1809,16 +1793,30 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
 
       if(format == 'g')
       {
+         long double round;
          int32_t E = iexpo;
 
          if(!minwidth)
             minwidth = 1;
 
-         if(base <= (mant + 0.5 * powil(base, -(int32_t) (minwidth - 1))))
+         /* we have to care about rounding according to the required length of the mantissa */
+         round = 0.5 * powil(base, -(int32_t) (minwidth - 1));
+         if(base <= (mant + round))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
          if(((int32_t) minwidth > E) && (E >= -4))
          {
+            if (E == iexpo)
+               mant += round;
+            else
+               mant += round * base;
+
+            if(mant >= base)
+            {/* ensure that */
+               mant /= base;
+               ++iexpo;
+            }
+
             length = print_long_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
             if(!prefixing && (minwidth > (size_t)(E + 1)))
@@ -1832,6 +1830,15 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          }
          else
          {
+            /* ensure right rounding according to the required length of the mantissa */
+            mant += round;
+
+            if(mant >= base)
+            {/* ensure that */
+               mant /= base;
+               ++iexpo;
+            }
+
             length = print_long_double_e(buf, mant, iexpo, base, minwidth - 1, prefixing, digit); /* print floating point number with adjusted precision */
 
             if(!prefixing)
@@ -1845,13 +1852,14 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
                      break; /* stop at begin of the exponent */
 
                   if(*pe++ != '0')
-                      ps = pe;
+                     ps = pe;
                }
 
                if (ps != pe)
                { /* copy exponent to the position that ps points to and remove the unused zeros */
                   while((size_t) (pe - buf) < length)
                      *ps++ = *pe++;
+
                   length = ps - buf;
                }
             }
@@ -1862,6 +1870,15 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       }
       else if(format == 'a')
       {
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powil(16, -(int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_long_double_e(buf, mant, iexpo, 0, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          prefixing = 16;
       }
@@ -1870,12 +1887,30 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          if((format == 'f') && (minwidth < 34))
             minwidth = 34; /* ensure full size of the mantissa */
 
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powil(base, -(int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_long_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          if(prefixing)
             prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'f')
       {
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powil(base, -iexpo - (int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_long_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
          if(prefixing)
             prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
@@ -1903,17 +1938,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
                              const char * digit)      /* array of digits to use */
 {
    char * pb    = pBuf;
-   double dbase = base ? base : 16;
    uint32_t count;
-
-   /* ensure right rounding according to the required length of the mantissa */
-   mant += 0.5 * powi(dbase, -(int32_t) minwidth);
-
-   while(mant >= dbase)
-   { /* ensure that */
-      mant /= dbase;
-      ++iexpo;
-   }
 
 #if 1
    if(minwidth)
@@ -1940,6 +1965,8 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
          *pb++ = '.';
    }
 #else
+   double dbase = base ? base : 16;
+
    count = (uint32_t) mant;
    *pb++ = digit[count];
 
@@ -1963,7 +1990,7 @@ static size_t print_double_e(char *       pBuf,       /* pointer to buffer */
 
    /* write the exponent */
    if (!base)
-      *pb++ = digit[0xe] == 'e' ? 'p' : 'P'; /* use digit p or P instead of e or E */
+      *pb++ = digit[25]; /* use digit p or P instead of e or E */
    else if (base > 0xe)
       *pb++ = '~';
    else
@@ -2031,15 +2058,6 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
                              const char * digit)      /* array of digits to use */
 {
    char * pb = pBuf;
-   double dbase = base;
-
-   mant += 0.5 * powi(dbase, -iexpo - (int32_t) minwidth);
-
-   while(mant >= dbase)
-   {/* ensure that */
-      ++iexpo;
-      mant /= dbase;
-   }
 
 #if 1
    if(iexpo < 0)
@@ -2109,6 +2127,8 @@ static size_t print_double_f(char *       pBuf,       /* pointer to buffer */
    }
    Exit:;
 #else
+   double dbase = base;
+
    if(iexpo < 0)
    {
       ++iexpo;
@@ -2180,7 +2200,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
    size_t length = 0;
 
    /*  test for NAN and INF first */
-   if (value != value)
+   if (!(value == value))
    {  /* NAN */
       char * pb = buf;
       float   f = (float) value;
@@ -2241,18 +2261,33 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          minwidth = 64; /* limit precision to 64 digits and prevent a buffer overrun */
 
       format |= 0x20; /* compare lower case letters only */
+
       if(format == 'g')
       {
+         double round;
          int32_t E = iexpo;
 
          if(!minwidth)
-             minwidth = 1;
+            minwidth = 1;
 
-         if(base <= (mant + 0.5 * powi(base, -(int32_t) (minwidth - 1))))
-            ++E; /* The exponent increases because of rounding. So we need to agjust the value that we compare width for being conform to the C standard */
+         /* we have to ensure right rounding according to the required length of the mantissa */
+         round = 0.5 * powi(base, -(int32_t) (minwidth - 1));
+         if(base <= (mant + round))
+            ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
          if(((int32_t) minwidth > E) && (E >= -4))
          {
+            if (E == iexpo)
+               mant += round;
+            else
+               mant += round * base;
+
+            if(mant >= base)
+            {/* ensure that */
+               mant /= base;
+               ++iexpo;
+            }
+
             length = print_double_f(buf, mant, iexpo, base, minwidth - 1 - E, prefixing, digit);  /* print floating point numbers without an exponent and adjusted precision */
 
             if(!prefixing && (minwidth > (size_t)(E + 1)))
@@ -2266,6 +2301,15 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          }
          else
          {
+            /* ensure right rounding according to the required length of the mantissa */
+            mant += round;
+
+            if(mant >= base)
+            {/* ensure that */
+               mant /= base;
+               ++iexpo;
+            }
+
             length = print_double_e(buf, mant, iexpo, base, minwidth - 1, prefixing, digit); /* print floating point number with adjusted precision */
 
             if(!prefixing)
@@ -2279,7 +2323,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
                      break; /* stop at begin of the exponent */
 
                   if(*pe++ != '0')
-                      ps = pe;
+                     ps = pe;
                }
 
                if (ps != pe)
@@ -2297,6 +2341,15 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       }
       else if(format == 'a')
       {
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powi(16, -(int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_double_e(buf, mant, iexpo, 0, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          prefixing = 16;
       }
@@ -2305,12 +2358,30 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
          if((format == 'f') && (minwidth < 20))
             minwidth = 20; /* ensure full size of the mantissa */
 
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powi(base, -(int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_double_e(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point number with an exponent */
          if(prefixing)
             prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);
       }
       else if(format == 'f')
       {
+         /* ensure right rounding according to the required length of the mantissa */
+         mant += 0.5 * powi(base, -iexpo - (int32_t) minwidth);
+
+         if(mant >= base)
+         {/* ensure that */
+            mant /= base;
+            ++iexpo;
+         }
+
          length = print_double_f(buf, mant, iexpo, base, minwidth, prefixing, digit);  /* print floating point numbers without an exponent */
          if(prefixing)
             prefixing = (((base == 16) || (base == 2)) ? base : (uint8_t) 0);

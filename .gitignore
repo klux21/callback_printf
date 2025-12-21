@@ -2,6 +2,9 @@ _*
 *.aps
 *.ncb
 *.suo
+*.sdf
+*.opensdf
 *.user
-VS2008/x64
-VS2008/Win32
+VS*/x64
+VS*/Win32
+VS*/.vs

@@ -818,7 +818,7 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
        while (x >= 100)
        {
           uint64_t tmp = x;
-          x = tmp / 100;
+          x /= 100;
           pd = d00 + ((tmp - x * 100) * 2);
           ps -= 2;
           ps[0] = pd[0];
@@ -920,7 +920,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
        while (x >= 100)
        {
           uint32_t tmp = x;
-          x = tmp / 100;
+          x /= 100;
           pd = d00 + ((tmp - x * 100) * 2);
           ps -= 2;
           ps[0] = pd[0];

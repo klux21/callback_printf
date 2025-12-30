@@ -1327,87 +1327,64 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
 
 /* ------------------------------------------------------------------------- *\
    powil calculates a power of the base and returns it as a long double.
-   It is for rounding the value of the mantissa only without error handling!
-   See comments of rebase() for understanding the mechanism.
+   See comments of rebase() for details.
 \* ------------------------------------------------------------------------- */
 
 static long double powil (uint8_t base, int32_t iexpo)
 {
-   struct basepows_s {long double p; int32_t e; } basepow [32];
-   struct basepows_s * pb = basepow;
-   long double p = base;
-   int32_t expo = 1;
-   int32_t sign = iexpo < 0;
+   long double val  = 1.0;
+   long double p    = base;
+   uint32_t    expo = iexpo >= 0 ? iexpo : -iexpo;
 
-   if (sign)
-      iexpo = -iexpo;
-
-   while (expo <= iexpo)
+   if (expo)
    {
-      pb->e = expo;
-      pb->p = p;
-      expo += expo;
-      p *= p;
-      ++pb;
-   }
+      if (expo & 1)
+          val = p;
 
-   expo = 0;
-   p = 1.0;
-
-   while (pb != basepow)
-   {
-      --pb;
-      if((expo + pb->e) <= iexpo)
+      expo >>= 1;
+      while (expo)
       {
-         p *= pb->p;
-         expo += pb->e;
+         p *= p;
+
+         if (expo & 1)
+            val *= p;
+
+         expo >>= 1;
       }
    }
-
-   return ( sign ? (1.0 / p) : p);
+   return (iexpo < 0 ? (1.0 / val) : val);
 } /* long double powil (uint8_t base, int32_t iexpo) */
 
 
 /* ------------------------------------------------------------------------- *\
    powi calculates a power of the base and returns it as a double.
-   It is for rounding the value of the mantissa only without error handling!
-   See comments of rebase() for understanding the mechanism.
+   See comments of rebase() for details.
 \* ------------------------------------------------------------------------- */
 
 static double powi (uint8_t base, int32_t iexpo)
 {
-   struct basepows_s {  double p; int32_t e; } basepow [20];
-   struct basepows_s * pb = basepow;
-   double p = base;
-   int32_t expo = 1;
-   int32_t sign = iexpo < 0;
+   double   val  = 1.0;
+   double   p    = base;
+   uint32_t expo = iexpo >= 0 ? iexpo : -iexpo;
 
-   if (sign)
-      iexpo = -iexpo;
-
-   while (expo <= iexpo)
+   if (expo)
    {
-      pb->e = expo;
-      pb->p = p;
-      expo += expo;
-      p *= p;
-      ++pb;
-   }
+      if (expo & 1)
+          val = p;
 
-   expo = 0;
-   p = 1.0;
-
-   while (pb != basepow)
-   {
-      --pb;
-      if((expo + pb->e) <= iexpo)
+      expo >>= 1;
+      while (expo)
       {
-         p *= pb->p;
-         expo += pb->e;
+         p *= p;
+
+         if (expo & 1)
+            val *= p;
+
+         expo >>= 1;
       }
    }
 
-   return ( sign ? (1.0 / p) : p);
+   return (iexpo < 0 ? (1.0 / val) : val);
 } /* double powi (uint8_t base, int32_t iexpo) */
 
 

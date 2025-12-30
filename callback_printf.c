@@ -1777,7 +1777,8 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
             minwidth = 1;
 
          /* we have to care about rounding according to the required length of the mantissa */
-         round = 0.5 * powil(base, -(int32_t) (minwidth - 1));
+         round = 0.5 / powil(base, (int32_t) (minwidth - 1));
+
          if(base <= (mant + round))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
@@ -1848,7 +1849,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       else if(format == 'a')
       {
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powil(16, -(int32_t) minwidth);
+         mant += 0.5 / powil(16, (int32_t) minwidth);
 
          if(mant >= base)
          {/* ensure that */
@@ -1865,7 +1866,7 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
             minwidth = 34; /* ensure full size of the mantissa */
 
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powil(base, -(int32_t) minwidth);
+         mant += 0.5 / powil(base, (int32_t) minwidth);
 
          if(mant >= base)
          {/* ensure that */
@@ -1880,7 +1881,13 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
       else if(format == 'f')
       {
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powil(base, -iexpo - (int32_t) minwidth);
+         int32_t p = -(iexpo + (int32_t) minwidth);
+
+         if(p >= 0)
+            mant += 0.5 * powi(base, p);
+         else
+            mant += 0.5 / powi(base, -p);
+
 
          if(mant >= base)
          {/* ensure that */
@@ -2248,7 +2255,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
             minwidth = 1;
 
          /* we have to ensure right rounding according to the required length of the mantissa */
-         round = 0.5 * powi(base, -(int32_t) (minwidth - 1));
+         round = 0.5 / powi(base, (int32_t) (minwidth - 1));
          if(base <= (mant + round))
             ++E; /* If exponent increases because of rounding then we need to agjust the value that we compare width */
 
@@ -2319,7 +2326,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       else if(format == 'a')
       {
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powi(16, -(int32_t) minwidth);
+         mant += 0.5 / powi(16, (int32_t) minwidth);
 
          if(mant >= base)
          {/* ensure that */
@@ -2336,7 +2343,7 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
             minwidth = 20; /* ensure full size of the mantissa */
 
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powi(base, -(int32_t) minwidth);
+         mant += 0.5 / powi(base, (int32_t) minwidth);
 
          if(mant >= base)
          {/* ensure that */
@@ -2351,7 +2358,12 @@ static size_t cbk_print_double(void *            pUserData,      /* user specifi
       else if(format == 'f')
       {
          /* ensure right rounding according to the required length of the mantissa */
-         mant += 0.5 * powi(base, -iexpo - (int32_t) minwidth);
+         int32_t p = -(iexpo + (int32_t) minwidth);
+
+         if(p >= 0)
+            mant += 0.5 * powi(base, p);
+         else
+            mant += 0.5 / powi(base, -p);
 
          if(mant >= base)
          {/* ensure that */

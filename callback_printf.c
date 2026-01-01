@@ -1332,27 +1332,29 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
 
 static long double powil (uint8_t base, int32_t iexpo)
 {
-   long double val  = 1.0;
-   long double p    = base;
-   uint32_t    expo = iexpo >= 0 ? iexpo : -iexpo;
+   long double val = 1.0;
 
-   if (expo)
+   if (iexpo)
    {
+      uint32_t    expo = iexpo >= 0 ? iexpo : -iexpo;
+      long double p = base;
+
       if (expo & 1)
           val = p;
 
-      expo >>= 1;
-      while (expo)
+      while (expo >>= 1)
       {
          p *= p;
 
          if (expo & 1)
             val *= p;
-
-         expo >>= 1;
       }
+
+      if(iexpo < 0)
+          val = (1.0 / val);
    }
-   return (iexpo < 0 ? (1.0 / val) : val);
+
+   return (val);
 } /* long double powil (uint8_t base, int32_t iexpo) */
 
 
@@ -1363,28 +1365,29 @@ static long double powil (uint8_t base, int32_t iexpo)
 
 static double powi (uint8_t base, int32_t iexpo)
 {
-   double   val  = 1.0;
-   double   p    = base;
-   uint32_t expo = iexpo >= 0 ? iexpo : -iexpo;
+   double val = 1.0;
 
-   if (expo)
+   if (iexpo)
    {
+      uint32_t expo = iexpo >= 0 ? iexpo : -iexpo;
+      double   p    = base;
+
       if (expo & 1)
           val = p;
 
-      expo >>= 1;
-      while (expo)
+      while (expo >>= 1)
       {
          p *= p;
 
          if (expo & 1)
             val *= p;
-
-         expo >>= 1;
       }
+
+      if(iexpo < 0)
+          val = (1.0 / val);
    }
 
-   return (iexpo < 0 ? (1.0 / val) : val);
+   return (val);
 } /* double powi (uint8_t base, int32_t iexpo) */
 
 

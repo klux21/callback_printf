@@ -996,10 +996,10 @@ static void base10l(long double value, long double * mantissa, int32_t * exponen
 {
    static struct basepows_s {  long double p; long double rp; int32_t e; } basepow [16] = {{1e+1l, 1e-1l, 1}, {1e+2l, 1e-2l, 2}, {1e+4l, 1e-4l, 4}, {1e+8l, 1e-8l, 8}, {1e+16l, 1e-16l, 16}, {1e+32l, 1e-32l, 32}, {1e+64l, 1e-64l, 64}, {1e+128l, 1e-128l, 128},
                                                                                           {1e+256l, 1e-256l, 256}, {1e+512l, 1e-512l, 512}, {1e+1024l, 1e-1024l, 1024}, {1e+1024l, 1e-1024l, 1024}, {1e+2048l, 1e-2048l, 2048}, {1e+4096l, 1e-4096l, 4096}, {0.0, 0.0, 0}};
-   struct basepows_s * pb = basepow;
-   int32_t expo = 0;
-   int     sign = value < 0;
-   long double  mant = sign ? -value : value;
+   struct basepows_s * pb   = basepow;
+   int32_t             expo = 0;
+   int                 sign = value < 0.0;
+   long double         mant = sign ? -value : value;
 
    if (mant >= 10.0l)
    {
@@ -1047,10 +1047,10 @@ static void base10l(long double value, long double * mantissa, int32_t * exponen
 static void base10(double value, double * mantissa, int32_t * exponent)
 {
    static struct basepows_s {  double p; double rp; int32_t e; } basepow [16] = {{1e+1, 1e-1, 1}, {1e+2, 1e-2, 2}, {1e+4, 1e-4, 4}, {1e+8, 1e-8, 8}, {1e+16, 1e-16, 16}, {1e+32, 1e-32, 32}, {1e+64, 1e-64, 64}, {1e+128, 1e-128, 128}, {1e+256, 1e-256, 256}, {0.0, 0.0, 0}};
-   struct basepows_s * pb = basepow;
-   int32_t expo = 0;
-   int     sign = value < 0;
-   double  mant = sign ? -value : value;
+   struct basepows_s * pb   = basepow;
+   int32_t             expo = 0;
+   int                 sign = value < 0.0;
+   double              mant = sign ? -value : value;
 
    if (mant >= 10.0)
    {
@@ -1141,7 +1141,7 @@ static void rebasel(long double value, uint32_t base, long double * mantissa, in
       struct basepows_s {long double p; int32_t e; } basepow [32];
       struct basepows_s * pb = basepow;
       int32_t      expo = 0;
-      int          sign = value < 0;
+      int          sign = value < 0.0;
       long double  mant = sign ? -value : value;
       long double  p    = base; /* holds powers of the base */
 
@@ -1256,8 +1256,8 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
    {
       struct basepows_s {  double p; int32_t e; } basepow [20];
       struct basepows_s * pb = basepow;
-      int32_t expo = 0;
-      int     sign = value < 0;
+      int32_t expo = 0.0;
+      int     sign = value < 0.0;
       double  mant = sign ? -value : value;
       double  p    = base; /* holds powers of the base */
 
@@ -3748,14 +3748,21 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
       pDst,
 #endif
       pDst,
-      pDst ? n : 0,
+      pDst && n ? (n-1) : (size_t) 0,
       0
    };
 
    size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
 
-   if(swd.DstSize)
-      pDst[zRet] = '\0'; /* add the string terminating character */
+   if(n <= zRet)
+   {
+      if (n)
+         pDst[n-1] = '\0'; /* add a string terminating character if n is nonzero */
+   }
+   else
+   {
+       pDst[zRet] = '\0'; /* add the string terminating character */
+   }
 
    if(swd.Err)
       errno = swd.Err;
@@ -3771,7 +3778,19 @@ size_t svsnprintf(char * pDst, size_t n, const char * pFmt, va_list val)
 
 size_t svsprintf(char * pDst, const char * pFmt, va_list val)
 {
-   return (svsnprintf(pDst, ~(size_t) 0, pFmt, val));
+   STRING_WRITE_DATA swd =
+   {
+#ifdef _DEBUG
+      pDst,
+#endif
+      pDst,
+      ~(size_t) 0,
+      0
+   };
+
+   size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
+   pDst[zRet] = '\0';
+   return (zRet);
 } /* size_t svsprintf(char * pDst, const char * pFmt, va_list val) */
 
 

@@ -1256,7 +1256,7 @@ static void rebase(double value, uint32_t base, double * mantissa, int32_t * exp
    {
       struct basepows_s {  double p; int32_t e; } basepow [20];
       struct basepows_s * pb = basepow;
-      int32_t expo = 0.0;
+      int32_t expo = 0;
       int     sign = value < 0.0;
       double  mant = sign ? -value : value;
       double  p    = base; /* holds powers of the base */

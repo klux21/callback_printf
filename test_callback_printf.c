@@ -105,7 +105,7 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
     va_end(VarArgs);
 
     va_start(VarArgs, pfmt);
-    snRet = svsnprintf(buf2, 17, pfmt, VarArgs);
+    snRet = svsnprintf(buf2, 18, pfmt, VarArgs);
     va_end(VarArgs);
 
     if(sRet != snRet)
@@ -114,7 +114,7 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
        goto Exit;
     }
 
-    if(buf2[17] != '\xfe')
+    if(buf2[18] != '\xfe')
     {
        buf2[24] = '\0';
        printf("test_callback_printf.c:%d : svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", line, snRet, buf2, call);
@@ -135,9 +135,18 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
     }
 
 #if DEBUG
-    va_start(VarArgs, pfmt);
-    vsprintf(buf2, pfmt, VarArgs); /* for comparison of data with vsprintf in a debugger */
-    va_end(VarArgs);
+    {
+       char buf1[2048];
+       size_t snRet1;
+       va_start(VarArgs, pfmt);
+       snRet1 = vsnprintf(buf1, 18, pfmt, VarArgs); /* for comparison of data with vsprintf in a debugger */
+       va_end(VarArgs);
+       if(0) /* strncmp(buf1, buf2, 19)) */
+       {
+          printf("test_callback_printf.c:%d : written data of vsnprintf (%zd bytes: '%.18s') and svsnprintf (%zd bytes: '%.18s')) differ for '%s'!\n", line, snRet1, buf1, snRet, buf2, call);
+          goto Exit;
+       }
+    }
 #endif
 
     if(sRet != strlen(buf))
@@ -285,6 +294,9 @@ int test_ssprintf()
     TEST_VSPRINTF( "%.80I64d",      "00000000000000000000000000000000000000000000000000000000000000000000000000000001",  (unsigned long long) 1 );
     TEST_VSPRINTF( "% .80I64d",     " 00000000000000000000000000000000000000000000000000000000000000000000000000000001", (unsigned long long) 1 );
     TEST_VSPRINTF( "% .80d",        " 00000000000000000000000000000000000000000000000000000000000000000000000000000001", (int) 1 );
+
+    TEST_VSPRINTF( "%0.80x",         "00000000000000000000000000000000000000000000000000000000000000000000000000000001", (int) 1 );
+
     TEST_VSPRINTF( "%I",            "" , (int) 1 );
     TEST_VSPRINTF( "%Iq",           "" , (int) 1 );
     TEST_VSPRINTF( "%Ihd",          "" , (int) 1 );

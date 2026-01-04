@@ -195,11 +195,29 @@ int iUtf8Encode (void **  pDst,          /* destination buffer */
 \* ------------------------------------------------------------------------- */
 size_t svsnprintf (char * pDst, size_t n, const char * pFmt, va_list ap);
 size_t svsprintf  (char * pDst, const char * pFmt, va_list ap);
+
 size_t ssnprintf  (char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
 size_t ssprintf   (char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3);           /* expects a printf like format string and arguments */
 
 size_t _ssnprintf (char * pDst, size_t n, const char * pFmt, ...);                         /* same as ssnprintf but without argument type check and possibly unsafe */
 size_t _ssprintf  (char * pDst, const char * pFmt, ...);                                   /* same as ssprintf but without argument type check and possibly unsafe */
+
+/* ------------------------------------------------------------------------- *\
+   svsnprintfu, svsprintfu, svsnprintfu and ssprintfu are system independent
+   wrappers for vsnprintf, vsprintf, snprintf and sprintf which are using
+   callback_printf internally but are writing unterminated strings.
+   This allows rewriting of partial string or memory data without inserting a
+   string terminating '\0'.
+   The functions are using (v)sprintf like arguments and format strings.
+\* ------------------------------------------------------------------------- */
+size_t svsnprintfu (char * pDst, size_t n, const char * pFmt, va_list ap);
+size_t svsprintfu  (char * pDst, const char * pFmt, va_list ap);
+
+size_t ssnprintfu  (char * pDst, size_t n, const char * pFmt, ...) PRINTF_LIKE_ARGS (3, 4); /* expects a printf like format string and arguments */
+size_t ssprintfu   (char * pDst, const char * pFmt, ...) PRINTF_LIKE_ARGS (2, 3);           /* expects a printf like format string and arguments */
+
+size_t _ssnprintfu (char * pDst, size_t n, const char * pFmt, ...);                         /* same as ssnprintfu but without argument type checking */
+size_t _ssprintfu  (char * pDst, const char * pFmt, ...);                                   /* same as ssprintfu but without argument type checking */
 
 /* ------------------------------------------------------------------------- *\
   User defined callback function for callback_printf for writing the output

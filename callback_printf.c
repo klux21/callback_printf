@@ -3697,6 +3697,7 @@ struct STRING_WRITE_DATA_S
 };
 
 
+
 /* ------------------------------------------------------------------------- *\
    vsnprintf_write_callback is our callback for callback_printf that is used
    by the svsnprintf function
@@ -3734,6 +3735,7 @@ static void vsnprintf_write_callback(void * pUserData, const char * pSrc, size_t
       pwd->pDst = pd;
    }
 } /* void  vsnprintf_write_callback(void * pUserData, const char * pSrc, size_t Length) */
+
 
 
 /* ------------------------------------------------------------------------- *\
@@ -3790,6 +3792,10 @@ size_t svsprintf(char * pDst, const char * pFmt, va_list val)
 
    size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
    pDst[zRet] = '\0';
+
+   if(swd.Err)
+      errno = swd.Err;
+
    return (zRet);
 } /* size_t svsprintf(char * pDst, const char * pFmt, va_list val) */
 
@@ -3810,6 +3816,7 @@ size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
 } /* size_t ssnprintf(char * pDst, size_t n, const char * pFmt, ...) */
 
 
+
 /* ------------------------------------------------------------------------- *\
    _ssnprintf is a wrapper for snprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
@@ -3823,6 +3830,7 @@ size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...)
    va_end(VarArgs);
    return (zRet);
 } /* size_t _ssnprintf(char * pDst, size_t n, const char * pFmt, ...) */
+
 
 
 /* ------------------------------------------------------------------------- *\
@@ -3840,6 +3848,7 @@ size_t ssprintf(char * pDst, const char * pFmt, ...)
 } /* size_t  ssprintf(char * pDst, const char * pFmt, ...) */
 
 
+
 /* ------------------------------------------------------------------------- *\
    _ssprintf is a wrapper for sprintf that bases on callback_printf.
 \* ------------------------------------------------------------------------- */
@@ -3853,6 +3862,128 @@ size_t _ssprintf(char * pDst, const char * pFmt, ...)
    va_end(VarArgs);
    return (zRet);
 } /* size_t  _ssprintf(char * pDst, const char * pFmt, ...) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   svsprintfu is a wrapper for vsprintf that bases on callback_printf but it
+   writes the strings unterminated.
+\* ------------------------------------------------------------------------- */
+
+size_t svsnprintfu(char * pDst, size_t n, const char * pFmt, va_list val)
+{
+   STRING_WRITE_DATA swd =
+   {
+#ifdef _DEBUG
+      pDst,
+#endif
+      pDst,
+      pDst && n ? (n-1) : (size_t) 0,
+      0
+   };
+
+   size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
+
+   if(swd.Err)
+      errno = swd.Err;
+
+   return (zRet);
+} /* size_t svsnprintfu(char * pDst, size_t n, const char * pFmt, va_list ap) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   svsprintfu is a wrapper for vsprintf that bases on callback_printf but it
+   writes the strings unterminated.
+\* ------------------------------------------------------------------------- */
+
+size_t svsprintfu(char * pDst, const char * pFmt, va_list val)
+{
+   STRING_WRITE_DATA swd =
+   {
+#ifdef _DEBUG
+      pDst,
+#endif
+      pDst,
+      ~(size_t) 0,
+      0
+   };
+
+   size_t zRet = callback_printf(&swd, &vsnprintf_write_callback, pFmt, val);
+
+   if(swd.Err)
+      errno = swd.Err;
+
+   return (zRet);
+} /* size_t svsprintfu(char * pDst, const char * pFmt, va_list val) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   ssnprintfu is a wrapper for snprintf that bases on callback_printf but it
+   writes the strings unterminated.
+\* ------------------------------------------------------------------------- */
+
+size_t ssnprintfu(char * pDst, size_t n, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintfu(pDst, n, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t ssnprintfu(char * pDst, size_t n, const char * pFmt, ...) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   _ssnprintf is a wrapper for snprintf that bases on callback_printf but it
+    but writes the strings unterminated.  .
+\* ------------------------------------------------------------------------- */
+
+size_t _ssnprintfu(char * pDst, size_t n, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintfu(pDst, n, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t _ssnprintfu(char * pDst, size_t n, const char * pFmt, ...) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   ssprintfu is a wrapper for sprintf that bases on callback_printf but it
+   writes the strings unterminated.
+\* ------------------------------------------------------------------------- */
+
+size_t ssprintfu(char * pDst, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintfu(pDst, ~(size_t) 0, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t  ssprintfu(char * pDst, const char * pFmt, ...) */
+
+
+
+/* ------------------------------------------------------------------------- *\
+   _ssprintfu is a wrapper for sprintf that bases on callback_printf but it
+    but writes the strings unterminated..
+\* ------------------------------------------------------------------------- */
+
+size_t _ssprintfu(char * pDst, const char * pFmt, ...)
+{
+   size_t zRet;
+   va_list VarArgs;
+   va_start(VarArgs, pFmt);
+   zRet = svsnprintfu(pDst, ~(size_t) 0, pFmt, VarArgs);
+   va_end(VarArgs);
+   return (zRet);
+} /* size_t  _ssprintfu(char * pDst, const char * pFmt, ...) */
 
 
 /* ========================================================================= *\

@@ -3878,7 +3878,7 @@ size_t svsnprintfu(char * pDst, size_t n, const char * pFmt, va_list val)
       pDst,
 #endif
       pDst,
-      pDst && n ? (n-1) : (size_t) 0,
+      pDst ? n : (size_t) 0,
       0
    };
 

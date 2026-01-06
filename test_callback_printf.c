@@ -93,20 +93,40 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
     int bRet = 0;
     size_t sRet;
     size_t snRet;
+    size_t suRet;
+    size_t snuRet;
     va_list VarArgs;
     char buf[2048];
-    char buf2[2048];
-
-    memset(buf, 0xfefefefe,  sizeof(buf));
-    memset(buf2, 0xfefefefe, sizeof(buf));
+    char bufn[2048];
+    char bufu[2048];
+    char bufnu[2048];
+    size_t limit = 18; /* limit for snprint flike functions */
+    memset(buf,   0xfefefefe, sizeof(buf));
+    memset(bufn,  0xfefefefe, sizeof(bufn));
+    memset(bufu,  0xfefefefe, sizeof(bufu));
+    memset(bufnu, 0xfefefefe, sizeof(bufnu));
+    buf   [sizeof(buf)   - 1] = '\0';
+    bufn  [sizeof(bufn)  - 1] = '\0';
+    bufu  [sizeof(bufu)  - 1] = '\0';
+    bufnu [sizeof(bufnu) - 1] = '\0';
 
     va_start(VarArgs, pfmt);
     sRet = svsprintf(buf, pfmt, VarArgs);
     va_end(VarArgs);
 
     va_start(VarArgs, pfmt);
-    snRet = svsnprintf(buf2, 18, pfmt, VarArgs);
+    snRet = svsnprintf(bufn, limit, pfmt, VarArgs);
     va_end(VarArgs);
+
+    va_start(VarArgs, pfmt);
+    suRet = svsprintfu(bufu, pfmt, VarArgs);
+    va_end(VarArgs);
+
+    va_start(VarArgs, pfmt);
+    snuRet = svsnprintfu(bufnu, limit, pfmt, VarArgs);
+    va_end(VarArgs);
+
+    /********************************************************/
 
     if(sRet != snRet)
     {
@@ -114,36 +134,49 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
        goto Exit;
     }
 
-    if(buf2[18] != '\xfe')
+    if(sRet != snRet)
     {
-       buf2[24] = '\0';
-       printf("test_callback_printf.c:%d : svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", line, snRet, buf2, call);
+       printf("test_callback_printf.c:%d : svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsnprintf!\n", line, sRet, buf, call, snRet);
+       goto Exit;
+    }
+
+    if(bufn[limit] != '\xfe')
+    {
+       bufn[limit+6] = '\0';
+       printf("test_callback_printf.c:%d : svsnprintf returned %zd (%s) for '%s' but touched data behind the provided buffer!\n", line, snRet, bufn, call);
+       goto Exit;
+    }
+
+    if((limit <= snRet) && bufn[limit-1])
+    {
+       bufn[limit+6] = '\0';
+       printf("test_callback_printf.c:%d : svsnprintf returned %zd (%s) for '%s' and didn't terminate the string as it should!\n", line, snRet, bufn, call);
        goto Exit;
     }
 
     if(buf[sRet+1] != '\xfe')
     {
-       buf2[24] = '\0';
+       buf[limit+6] = '\0'; /* limit the length */
        printf("test_callback_printf.c:%d : svsprintf returned %zd (%s) for '%s' but touched data behind the string end!\n", line, sRet, buf, call);
        goto Exit;
     }
 
-    if(strncmp(buf, buf2, 17))
+    if(strncmp(buf, bufn, 17))
     {
-       printf("test_callback_printf.c:%d : written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", line, sRet, buf, snRet, buf2, call);
+       printf("test_callback_printf.c:%d : written data of svsprintf (%zd bytes: '%.17s') and svsnprintf (%zd bytes: '%.17s')) differ for '%s'!\n", line, sRet, buf, snRet, bufn, call);
        goto Exit;
     }
 
 #if DEBUG
     {
-       char buf1[2048];
+       char bufc[2048];
        size_t snRet1;
        va_start(VarArgs, pfmt);
-       snRet1 = vsnprintf(buf1, 18, pfmt, VarArgs); /* for comparison of data with vsprintf in a debugger */
+       snRet1 = vsnprintf(bufc, limit, pfmt, VarArgs); /* for comparison of data with vsprintf in a debugger */
        va_end(VarArgs);
-       if(0) /* strncmp(buf1, buf2, 19)) */
+       if(0) /* strncmp(bufc, bufn, 19)) */
        {
-          printf("test_callback_printf.c:%d : written data of vsnprintf (%zd bytes: '%.18s') and svsnprintf (%zd bytes: '%.18s')) differ for '%s'!\n", line, snRet1, buf1, snRet, buf2, call);
+          printf("test_callback_printf.c:%d : written data of vsnprintf (%zd bytes: '%.*s') and svsnprintf (%zd bytes: '%.*s')) differ for '%s'!\n", line, snRet1, (int) limit, bufc, snRet, (int) limit, bufn, call);
           goto Exit;
        }
     }
@@ -160,6 +193,42 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
        printf("test_callback_printf.c:%d : output '%s' to '%s' doesn't match expected '%s' !\n", line, buf, call, pout);
        goto Exit;
     }
+
+    /********************************************************/
+
+    if(sRet != suRet)
+    {
+       printf("test_callback_printf.c:%d : svsprintf output length %zd (%s) for '%s' does not match retval %zd of svsprintfu!\n", line, sRet, bufu, call, suRet);
+       goto Exit;
+    }
+
+    if(snRet != snuRet)
+    {
+       printf("test_callback_printf.c:%d : svsnprintfu output length %zd (%s) for '%s' does not match retval %zd of svnsprintfu!\n", line, snRet, bufu, call, snuRet);
+       goto Exit;
+    }
+
+    if((suRet && ((bufu[suRet-1] == '\xfe') || !bufu[suRet-1])) || (bufu[suRet] != '\xfe'))
+    {
+       bufu[limit+6] = '\0';
+       printf("test_callback_printf.c:%d : svsprintfu returned %zd (%s) for '%s' but touched data behind the string end!\n", line, suRet, bufu, call);
+       goto Exit;
+    }
+
+    if((limit <= snuRet) && (!bufnu[limit-1] || (bufnu[limit-1] == '\xfe') || (bufnu[limit] != '\xfe')))
+    {
+       bufnu[limit+6] = '\0';
+       printf("test_callback_printf.c:%d : svsnprintfu returned %zd (%s) for '%s' but didn't skip the string termination as it should!\n", line, snuRet, bufnu, call);
+       goto Exit;
+    }
+
+    if((limit > snuRet) && ((snuRet && ((bufnu[snuRet-1] == '\xfe') || !bufnu[snuRet-1])) || (bufnu[snuRet] != '\xfe')))
+    {
+       bufnu[limit+6] = '\0';
+       printf("test_callback_printf.c:%d : svsnprintfu returned %zd (%s) for '%s' but touched data behind the string end!\n", line, snuRet, bufnu, call);
+       goto Exit;
+    }
+
 
     bRet = 1;
     Exit:;

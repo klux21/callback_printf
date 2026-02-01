@@ -3606,6 +3606,46 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   char * pl = va_arg(val, char *);
                   *pl = (char) zRet;
                }
+               else if ((s0 == 'w') && (s1 == '8'))
+               { /* integer of 1 byte width */
+                  int8_t * pl = va_arg(val, int8_t *);
+                  *pl = (int8_t) zRet;
+               }
+               else
+               { /* unknown format */
+                  pCB(pUserData, ps, 0);
+                  goto Exit;
+               }
+            }
+            else if (pe == (ps + 3))
+            {
+               char s0 = *ps;
+               char s1 = *(ps + 1);
+               char s2 = *(ps + 3);
+
+               if ((s0 == 'w') || (s0 == 'I'))
+               {
+                  if ((s1 == '6') && (s2 == '4'))
+                  { /* integer of 8 bytes width */
+                     int64_t * pl = va_arg(val, int64_t *);
+                     *pl = (int64_t) zRet;
+                  }
+                  else if ((s1 == '3') && (s2 == '2'))
+                  { /* integer of 4 bytes width */
+                     int32_t * pl = va_arg(val, int32_t *);
+                     *pl = (int32_t)zRet;
+                  }
+                  else if ((s1 == '1') && (s2 == '6'))
+                  { /* integer of 2 bytes width */
+                     int16_t * pl = va_arg(val, int16_t *);
+                     *pl = (int16_t)zRet;
+                  }
+                  else
+                  { /* unknown format */
+                     pCB(pUserData, ps, 0);
+                     goto Exit;
+                  }
+               }
                else
                { /* unknown format */
                   pCB(pUserData, ps, 0);

@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2025 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2026 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -3035,7 +3035,12 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else if((s0 == 'h') && (s1 == 'h'))
                {
                   CHECK_SIGN (signed char, unsigned char, int, unsigned int);
-                  zRet += cbk_print_u32(pUserData, pCB, u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+               }
+               else if(((s0 == 'w') || (s0 == 'I')) && (s1 == '8'))
+               {
+                  CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
+                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if (s0 == 'r')
                {
@@ -3077,7 +3082,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                char s1 = *(ps+1);
                char s2 = *(ps+2);
 
-               if (s0 =='I')
+               if ((s0 =='I') || (s0 == 'w'))
                {
                   if((s1 == '6') && (s2 == '4'))
                   { /* integer of 8 bytes width */
@@ -3231,6 +3236,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      CHECK_SIGN (signed char, unsigned char, int, unsigned int);
                      zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
+                  else if(((s2 == 'w') || (s2 == 'I')) && (s3 == '8'))
+                  {
+                     CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
+                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
+                  }
                   else
                   { /* unknown format */
                      pCB(pUserData, ps, 0);
@@ -3274,7 +3284,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      goto Exit;
                   }
 
-                  if (s2 == 'I')
+                  if ((s2 == 'I') || (s2 == 'w'))
                   {
                      if((s3 == '6') && (s4 == '4'))
                      { /* integer of 8 bytes width */

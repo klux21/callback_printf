@@ -14,7 +14,7 @@ exit $?
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2026 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -651,6 +651,10 @@ int test_ssprintf()
     TEST_VSPRINTF("%+5.10r*LE %+10.10r*Le %+10.10r*Le %+10.10r*Le %+10.0Le %+10.0Le ", "+1.1111001101E+01 +1.0001101111e-1111111001 +1.6250223006e+1030 +2.3300320211e+32     +8e-01    +2e-308 ",
                    (int) 2 ARG((long double) 3.9) ARG((int) 2) ARG((long double) 7.89456123e-307) ARG((int) 7) ARG((long double) 7.89456123e+307) ARG((int) 4) ARG((long double) 789456123.0) ARG((long double) 0.789456123) ARG((long double) DBL_MIN));
 
+    TEST_VSPRINTF( "%r0I8d",      "100",                       (int8_t) 100 );
+    TEST_VSPRINTF( "%r1I8d",      "64",                        (int8_t) 100 );
+    TEST_VSPRINTF( "%r*I8d",      "-1000",                     (int) 5 ARG((int8_t) -125));
+
     TEST_VSPRINTF( "%r0I16d",     "100",                       (int16_t) 100 );
     TEST_VSPRINTF( "%r1I16d",     "64",                        (int16_t) 100 );
     TEST_VSPRINTF( "%r*I16d",     "-1000",                     (int) 5 ARG((int16_t) -125));
@@ -662,6 +666,10 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r0I64d",     "100",                       (int64_t) 100 );
     TEST_VSPRINTF( "%r1I64d",     "64",                        (int64_t) 100 );
     TEST_VSPRINTF( "%r*I64d",     "-1000",                     (int) 5 ARG((int64_t) -125));
+
+    TEST_VSPRINTF( "%r0I8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%r1I8u",      "64",                        (uint8_t) 100 );
+    TEST_VSPRINTF( "%r*I8u",      "1000",                      (int) 5 ARG((uint8_t) 125));
 
     TEST_VSPRINTF( "%r0I16u",     "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%r1I16u",     "64",                        (uint16_t) 100 );
@@ -707,6 +715,14 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r1l1d",      "64",                        (int8_t) 100 );
     TEST_VSPRINTF( "%r*l1d",      "-1000",                     (int) 5 ARG((int8_t) -125));
 
+    TEST_VSPRINTF( "%r0w8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%r1w8u",      "64",                        (uint8_t) 100 );
+    TEST_VSPRINTF( "%r*w8u",      "1000",                      (int) 5 ARG((uint8_t) 125));
+
+    TEST_VSPRINTF( "%r0w8d",      "100",                       (int8_t) 100 );
+    TEST_VSPRINTF( "%r1w8d",      "64",                        (int8_t) 100 );
+    TEST_VSPRINTF( "%r*w8d",      "-1000",                     (int) 5 ARG((int8_t) -125));
+
     TEST_VSPRINTF( "%r0l2u",      "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%r1l2u",      "64",                        (uint16_t) 100 );
     TEST_VSPRINTF( "%r*l2u",      "1000",                      (int) 5 ARG((uint16_t) 125));
@@ -714,6 +730,14 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r0l2d",      "100",                       (int16_t) 100 );
     TEST_VSPRINTF( "%r1l2d",      "64",                        (int16_t) 100 );
     TEST_VSPRINTF( "%r*l2d",      "-1000",                     (int) 5 ARG((int16_t) -125));
+
+    TEST_VSPRINTF( "%r0w16u",      "100",                      (uint16_t) 100 );
+    TEST_VSPRINTF( "%r1w16u",      "64",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%r*w16u",      "1000",                     (int) 5 ARG((uint16_t) 125));
+
+    TEST_VSPRINTF( "%r0w16d",      "100",                       (int16_t) 100 );
+    TEST_VSPRINTF( "%r1w16d",      "64",                        (int16_t) 100 );
+    TEST_VSPRINTF( "%r*w16d",      "-1000",                     (int) 5 ARG((int16_t) -125));
 
     TEST_VSPRINTF( "%r0l4u",      "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%r1l4u",      "64",                        (uint32_t) 100 );
@@ -723,6 +747,14 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r1l4d",      "64",                        (int32_t) 100 );
     TEST_VSPRINTF( "%r*l4d",      "-1000",                     (int) 5 ARG((int32_t) -125));
 
+    TEST_VSPRINTF( "%r0w32u",      "100",                      (uint32_t) 100 );
+    TEST_VSPRINTF( "%r1w32u",      "64",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%r*w32u",      "1000",                     (int) 5 ARG((uint32_t) 125));
+
+    TEST_VSPRINTF( "%r0w32d",      "100",                      (int32_t) 100 );
+    TEST_VSPRINTF( "%r1w32d",      "64",                       (int32_t) 100 );
+    TEST_VSPRINTF( "%r*w32d",      "-1000",                    (int) 5 ARG((int32_t) -125));
+
     TEST_VSPRINTF( "%r0l8u",      "100",                       (uint64_t) 100 );
     TEST_VSPRINTF( "%r1l8u",      "64",                        (uint64_t) 100 );
     TEST_VSPRINTF( "%r*l8u",      "1000",                      (int) 5 ARG((uint64_t) 125));
@@ -731,20 +763,164 @@ int test_ssprintf()
     TEST_VSPRINTF( "%r1l8d",      "64",                        (int64_t) 100 );
     TEST_VSPRINTF( "%r*l8d",      "-1000",                     (int) 5 ARG((int64_t) -125));
 
-    TEST_VSPRINTF( "%r1hhd",      "-64",                        (int) -100 );
-    TEST_VSPRINTF( "%r1hd",       "-64",                        (int) -100 );
-    TEST_VSPRINTF( "%r1ld",       "-64",                        (long) -100 );
-    TEST_VSPRINTF( "%r1lld",      "-64",                        (long long) -100 );
+    TEST_VSPRINTF( "%r0w64u",      "100",                      (uint64_t) 100 );
+    TEST_VSPRINTF( "%r1w64u",      "64",                       (uint64_t) 100 );
+    TEST_VSPRINTF( "%r*w64u",      "1000",                     (int) 5 ARG((uint64_t) 125));
 
-    TEST_VSPRINTF( "%r0hhd",      "-100",                        (int) -100 );
-    TEST_VSPRINTF( "%r0hd",       "-100",                        (int) -100 );
-    TEST_VSPRINTF( "%r0ld",       "-100",                        (long) -100 );
-    TEST_VSPRINTF( "%r0lld",      "-100",                        (long long) -100 );
+    TEST_VSPRINTF( "%r0w64d",      "100",                      (int64_t) 100 );
+    TEST_VSPRINTF( "%r1w64d",      "64",                       (int64_t) 100 );
+    TEST_VSPRINTF( "%r*w64d",      "-1000",                    (int) 5 ARG((int64_t) -125));
 
-    TEST_VSPRINTF( "%r*hhd",      "-1000",                      (int) 5 ARG((int) -125));
-    TEST_VSPRINTF( "%r*hd",       "-1000",                      (int) 5 ARG((int) -125));
-    TEST_VSPRINTF( "%r*ld",       "-1000",                      (int) 5 ARG((long) -125));
-    TEST_VSPRINTF( "%r*lld",      "-1000",                      (int) 5 ARG((long long) -125));
+    TEST_VSPRINTF( "%r1hhd",      "-64",                       (int) -100 );
+    TEST_VSPRINTF( "%r1hd",       "-64",                       (int) -100 );
+    TEST_VSPRINTF( "%r1ld",       "-64",                       (long) -100 );
+    TEST_VSPRINTF( "%r1lld",      "-64",                       (long long) -100 );
+
+    TEST_VSPRINTF( "%r0hhd",      "-100",                      (int) -100 );
+    TEST_VSPRINTF( "%r0hd",       "-100",                      (int) -100 );
+    TEST_VSPRINTF( "%r0ld",       "-100",                      (long) -100 );
+    TEST_VSPRINTF( "%r0lld",      "-100",                      (long long) -100 );
+
+    TEST_VSPRINTF( "%r*hhd",      "-1000",                     (int) 5 ARG((int) -125));
+    TEST_VSPRINTF( "%r*hd",       "-1000",                     (int) 5 ARG((int) -125));
+    TEST_VSPRINTF( "%r*ld",       "-1000",                     (int) 5 ARG((long) -125));
+    TEST_VSPRINTF( "%r*lld",      "-1000",                     (int) 5 ARG((long long) -125));
+
+    TEST_VSPRINTF( "%I8d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%I8d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%I8d",      "-125",                      (int8_t) -125 );
+                    
+    TEST_VSPRINTF( "%I16d",     "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%I16d",     "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%I16d",     "-125",                      (int16_t) -125 );
+                    
+    TEST_VSPRINTF( "%I32d",     "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%I32d",     "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%I32d",     "-125",                      (int32_t) -125 );
+                    
+    TEST_VSPRINTF( "%I64d",     "100",                       (int64_t)  100 );
+    TEST_VSPRINTF( "%I64d",     "100",                       (int64_t)  100 );
+    TEST_VSPRINTF( "%I64d",     "-125",                      (int64_t) -125 );
+                    
+    TEST_VSPRINTF( "%I8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%I8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%I8u",      "125",                       (uint8_t) 125 );
+                               
+    TEST_VSPRINTF( "%I16u",     "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%I16u",     "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%I16u",     "125",                       (uint16_t) 125 );
+                    
+    TEST_VSPRINTF( "%I32u",     "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%I32u",     "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%I32u",     "125",                       (uint32_t) 125 );
+                    
+    TEST_VSPRINTF( "%I64u",     "100",                       (int64_t)  100 );
+    TEST_VSPRINTF( "%I64u",     "100",                       (int64_t)  100 );
+    TEST_VSPRINTF( "%I64u",     "125",                       (uint64_t) 125 );
+                               
+    TEST_VSPRINTF( "%d",        "100",                       (int)  100 );
+    TEST_VSPRINTF( "%d",        "100",                       (int)  100 );
+    TEST_VSPRINTF( "%d",        "-125",                      (int) -125 );
+                    
+    TEST_VSPRINTF( "%u",        "100",                       (unsigned int) 100 );
+    TEST_VSPRINTF( "%u",        "100",                       (unsigned int) 100 );
+    TEST_VSPRINTF( "%u"   ,     "125",                       (unsigned int) 125 );
+                               
+    TEST_VSPRINTF( "%ld",       "100",                       (long)  100 );
+    TEST_VSPRINTF( "%ld",       "100",                       (long)  100 );
+    TEST_VSPRINTF( "%ld",       "-125",                      (long) -125 );
+                    
+    TEST_VSPRINTF( "%lu",       "100",                       (unsigned long) 100 );
+    TEST_VSPRINTF( "%lu",       "100",                       (unsigned long) 100 );
+    TEST_VSPRINTF( "%lu",       "125",                       (unsigned long) 125 );
+                               
+    TEST_VSPRINTF( "%lld",      "100",                       (long long)  100 );
+    TEST_VSPRINTF( "%lld",      "100",                       (long long)  100 );
+    TEST_VSPRINTF( "%lld",      "-125",                      (long long) -125 );
+                    
+    TEST_VSPRINTF( "%llu",      "100",                       (unsigned long long) 100 );
+    TEST_VSPRINTF( "%llu",      "100",                       (unsigned long long) 100 );
+    TEST_VSPRINTF( "%llu",      "125",                       (unsigned long long) 125 );
+                    
+    TEST_VSPRINTF( "%l1u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%l1u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%l1u",      "125",                       (uint8_t) 125 );
+                               
+    TEST_VSPRINTF( "%l1d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%l1d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%l1d",      "-125",                      (int8_t) -125 );
+                    
+    TEST_VSPRINTF( "%w8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%w8u",      "100",                       (uint8_t) 100 );
+    TEST_VSPRINTF( "%w8u",      "125",                       (uint8_t) 125 );
+                               
+    TEST_VSPRINTF( "%w8d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%w8d",      "100",                       (int8_t)  100 );
+    TEST_VSPRINTF( "%w8d",      "-125",                      (int8_t) -125 );
+                    
+    TEST_VSPRINTF( "%l2u",      "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%l2u",      "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%l2u",      "125",                       (uint16_t) 125 );
+                               
+    TEST_VSPRINTF( "%l2d",      "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%l2d",      "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%l2d",      "-125",                      (int16_t) -125 );
+                    
+    TEST_VSPRINTF( "%w16u",     "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%w16u",     "100",                       (uint16_t) 100 );
+    TEST_VSPRINTF( "%w16u",     "125",                       (uint16_t) 125 );
+                               
+    TEST_VSPRINTF( "%w16d",     "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%w16d",     "100",                       (int16_t)  100 );
+    TEST_VSPRINTF( "%w16d",     "-125",                      (int16_t) -125 );
+                    
+    TEST_VSPRINTF( "%l4u",      "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%l4u",      "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%l4u",      "125",                       (uint32_t) 125 );
+                              
+    TEST_VSPRINTF( "%l4d",      "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%l4d",      "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%l4d",      "-125",                      (int32_t) -125 );
+                    
+    TEST_VSPRINTF( "%w32u",     "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%w32u",     "100",                       (uint32_t) 100 );
+    TEST_VSPRINTF( "%w32u",     "125",                       (uint32_t) 125 );
+                                
+    TEST_VSPRINTF( "%w32d",     "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%w32d",     "100",                       (int32_t)  100 );
+    TEST_VSPRINTF( "%w32d",     "-125",                      (int32_t) -125 );
+                    
+    TEST_VSPRINTF( "%l8u",      "100",                       (uint64_t) 100 );
+    TEST_VSPRINTF( "%l8u",      "100",                       (uint64_t) 100 );
+    TEST_VSPRINTF( "%l8u",      "125",                       (uint64_t) 125 );
+                    
+    TEST_VSPRINTF( "%l8d",      "100",                       (int64_t) 100 );
+    TEST_VSPRINTF( "%l8d",      "100",                       (int64_t) 100 );
+    TEST_VSPRINTF( "%l8d",      "-125",                      (int64_t) -125);
+                    
+    TEST_VSPRINTF( "%w64u",      "100",                      (uint64_t) 100 );
+    TEST_VSPRINTF( "%w64u",      "100",                      (uint64_t) 100 );
+    TEST_VSPRINTF( "%w64u",      "125",                      (uint64_t) 125 );
+                    
+    TEST_VSPRINTF( "%w64d",      "100",                      (int64_t)  100 );
+    TEST_VSPRINTF( "%w64d",      "100",                      (int64_t)  100 );
+    TEST_VSPRINTF( "%w64d",      "-125",                     (int64_t) -125 );
+                    
+    TEST_VSPRINTF( "%hhu",      "123",                       (int)  123 );
+    TEST_VSPRINTF( "%hu",       "123",                       (int)  123 );
+    TEST_VSPRINTF( "%lu",       "123",                       (long) 123 );
+    TEST_VSPRINTF( "%llu",      "123",                       (long long) 123 );
+                    
+    TEST_VSPRINTF( "%hhd",      "-100",                      (int)  -100 );
+    TEST_VSPRINTF( "%hd",       "-100",                      (int)  -100 );
+    TEST_VSPRINTF( "%ld",       "-100",                      (long) -100 );
+    TEST_VSPRINTF( "%lld",      "-100",                      (long long) -100 );
+                    
+    TEST_VSPRINTF( "%hhd",      "-125",                      (int) -125);
+    TEST_VSPRINTF( "%hd",       "-125",                      (int) -125);
+    TEST_VSPRINTF( "%ld",       "-125",                      (long) -125);
+    TEST_VSPRINTF( "%lld",      "-125",                      (long long) -125);
+
 
     if(sizeof(void *) == 4)
     {

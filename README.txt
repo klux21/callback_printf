@@ -26,17 +26,15 @@ and the portability issues that most programmers are struggling with.
 And I did want to add some extra length specifiers for using arguments of type
 int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
 inttypes.h and as well in stdint.h since the C 11 standard.
-In the C 23 standard there will be be some different length specifiers for
-that then the l1, l2, l4 or l8 prefixes that callback_printf uses. It's not a
-big thing to update the code for supporting the new prefixes too of course.
 The supported format specifiers are b, B, d, i, o, u, x, X, a, A, e, E, f, F,
 g, G, s, c, p, n and % for a percent character and the Microsoft specific
 specifiers C and S.
 The supported size prefixes for the integer formats b, B, d, i, o, u, x and X
 are currently hh, h, l, ll, t, z and j according to the C standard as well as
-the Microsoft specific I, I16, I32 and I64. Additionally some own prefixes
+the Microsoft specific I, I8, I16, I32 and I64. Additionally some own prefixes
 l1, l2, l4 and l8 are supported which specify the byte width of the provided
-integer arguments.
+integer arguments. The length modifiers w8, w16, w32 and w64 of the new C 23
+standard are supported now too.
 The supported lenght modifiers for the formats s and c are l for wchar_t
 arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.
@@ -88,7 +86,7 @@ which can be a security issue in some special use cases where you need to
 prevent sniffing.
 
 The license is kind of a mix of BSD and Apache conditions but in opposite to
-those it prohibits a usage for weapons and spyware and a secret monitoring of
+those it prohibits a usage for weapons and spyware and any secret monitoring of
 other people without their agreement or their health or life being endangered.
 That's fine for most software but usually not for military devices, weapons or
 spyware. It would be great if more projects would adapt this license as well.

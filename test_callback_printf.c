@@ -237,7 +237,7 @@ int test_svsprintf(int line, const char * pout, const char * call, const char * 
 
 /* ------------------------------------------------------------------------- *\
    Write function for our own %V argument data that is just the output of
-   some string data in a PRINTF_V_DATA struct here. 
+   some string data in a PRINTF_V_DATA struct here.
 \* ------------------------------------------------------------------------- */
 
 size_t cbfunc (void *            pUserData,
@@ -260,9 +260,9 @@ int test_ssprintf()
 {
    int bRet = 1;
 
-   uint8_t  s8[]  = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
-   uint16_t s16[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
-   uint32_t s32[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0}; 
+   uint8_t  s8[]  = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
+   uint16_t s16[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
+   uint32_t s32[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
 
    PRINTF_V_DATA cbdata = { &cbfunc, 12, (void *) "Hello world!"}; /* output data for %v and %V samples */
 
@@ -789,133 +789,133 @@ int test_ssprintf()
     TEST_VSPRINTF( "%I8d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%I8d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%I8d",      "-125",                      (int8_t) -125 );
-                    
+
     TEST_VSPRINTF( "%I16d",     "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%I16d",     "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%I16d",     "-125",                      (int16_t) -125 );
-                    
+
     TEST_VSPRINTF( "%I32d",     "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%I32d",     "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%I32d",     "-125",                      (int32_t) -125 );
-                    
+
     TEST_VSPRINTF( "%I64d",     "100",                       (int64_t)  100 );
     TEST_VSPRINTF( "%I64d",     "100",                       (int64_t)  100 );
     TEST_VSPRINTF( "%I64d",     "-125",                      (int64_t) -125 );
-                    
+
     TEST_VSPRINTF( "%I8u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%I8u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%I8u",      "125",                       (uint8_t) 125 );
-                               
+
     TEST_VSPRINTF( "%I16u",     "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%I16u",     "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%I16u",     "125",                       (uint16_t) 125 );
-                    
+
     TEST_VSPRINTF( "%I32u",     "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%I32u",     "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%I32u",     "125",                       (uint32_t) 125 );
-                    
+
     TEST_VSPRINTF( "%I64u",     "100",                       (int64_t)  100 );
     TEST_VSPRINTF( "%I64u",     "100",                       (int64_t)  100 );
     TEST_VSPRINTF( "%I64u",     "125",                       (uint64_t) 125 );
-                               
+
     TEST_VSPRINTF( "%d",        "100",                       (int)  100 );
     TEST_VSPRINTF( "%d",        "100",                       (int)  100 );
     TEST_VSPRINTF( "%d",        "-125",                      (int) -125 );
-                    
+
     TEST_VSPRINTF( "%u",        "100",                       (unsigned int) 100 );
     TEST_VSPRINTF( "%u",        "100",                       (unsigned int) 100 );
     TEST_VSPRINTF( "%u"   ,     "125",                       (unsigned int) 125 );
-                               
+
     TEST_VSPRINTF( "%ld",       "100",                       (long)  100 );
     TEST_VSPRINTF( "%ld",       "100",                       (long)  100 );
     TEST_VSPRINTF( "%ld",       "-125",                      (long) -125 );
-                    
+
     TEST_VSPRINTF( "%lu",       "100",                       (unsigned long) 100 );
     TEST_VSPRINTF( "%lu",       "100",                       (unsigned long) 100 );
     TEST_VSPRINTF( "%lu",       "125",                       (unsigned long) 125 );
-                               
+
     TEST_VSPRINTF( "%lld",      "100",                       (long long)  100 );
     TEST_VSPRINTF( "%lld",      "100",                       (long long)  100 );
     TEST_VSPRINTF( "%lld",      "-125",                      (long long) -125 );
-                    
+
     TEST_VSPRINTF( "%llu",      "100",                       (unsigned long long) 100 );
     TEST_VSPRINTF( "%llu",      "100",                       (unsigned long long) 100 );
     TEST_VSPRINTF( "%llu",      "125",                       (unsigned long long) 125 );
-                    
+
     TEST_VSPRINTF( "%l1u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%l1u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%l1u",      "125",                       (uint8_t) 125 );
-                               
+
     TEST_VSPRINTF( "%l1d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%l1d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%l1d",      "-125",                      (int8_t) -125 );
-                    
+
     TEST_VSPRINTF( "%w8u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%w8u",      "100",                       (uint8_t) 100 );
     TEST_VSPRINTF( "%w8u",      "125",                       (uint8_t) 125 );
-                               
+
     TEST_VSPRINTF( "%w8d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%w8d",      "100",                       (int8_t)  100 );
     TEST_VSPRINTF( "%w8d",      "-125",                      (int8_t) -125 );
-                    
+
     TEST_VSPRINTF( "%l2u",      "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%l2u",      "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%l2u",      "125",                       (uint16_t) 125 );
-                               
+
     TEST_VSPRINTF( "%l2d",      "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%l2d",      "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%l2d",      "-125",                      (int16_t) -125 );
-                    
+
     TEST_VSPRINTF( "%w16u",     "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%w16u",     "100",                       (uint16_t) 100 );
     TEST_VSPRINTF( "%w16u",     "125",                       (uint16_t) 125 );
-                               
+
     TEST_VSPRINTF( "%w16d",     "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%w16d",     "100",                       (int16_t)  100 );
     TEST_VSPRINTF( "%w16d",     "-125",                      (int16_t) -125 );
-                    
+
     TEST_VSPRINTF( "%l4u",      "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%l4u",      "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%l4u",      "125",                       (uint32_t) 125 );
-                              
+
     TEST_VSPRINTF( "%l4d",      "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%l4d",      "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%l4d",      "-125",                      (int32_t) -125 );
-                    
+
     TEST_VSPRINTF( "%w32u",     "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%w32u",     "100",                       (uint32_t) 100 );
     TEST_VSPRINTF( "%w32u",     "125",                       (uint32_t) 125 );
-                                
+
     TEST_VSPRINTF( "%w32d",     "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%w32d",     "100",                       (int32_t)  100 );
     TEST_VSPRINTF( "%w32d",     "-125",                      (int32_t) -125 );
-                    
+
     TEST_VSPRINTF( "%l8u",      "100",                       (uint64_t) 100 );
     TEST_VSPRINTF( "%l8u",      "100",                       (uint64_t) 100 );
     TEST_VSPRINTF( "%l8u",      "125",                       (uint64_t) 125 );
-                    
+
     TEST_VSPRINTF( "%l8d",      "100",                       (int64_t) 100 );
     TEST_VSPRINTF( "%l8d",      "100",                       (int64_t) 100 );
     TEST_VSPRINTF( "%l8d",      "-125",                      (int64_t) -125);
-                    
+
     TEST_VSPRINTF( "%w64u",      "100",                      (uint64_t) 100 );
     TEST_VSPRINTF( "%w64u",      "100",                      (uint64_t) 100 );
     TEST_VSPRINTF( "%w64u",      "125",                      (uint64_t) 125 );
-                    
+
     TEST_VSPRINTF( "%w64d",      "100",                      (int64_t)  100 );
     TEST_VSPRINTF( "%w64d",      "100",                      (int64_t)  100 );
     TEST_VSPRINTF( "%w64d",      "-125",                     (int64_t) -125 );
-                    
+
     TEST_VSPRINTF( "%hhu",      "123",                       (int)  123 );
     TEST_VSPRINTF( "%hu",       "123",                       (int)  123 );
     TEST_VSPRINTF( "%lu",       "123",                       (long) 123 );
     TEST_VSPRINTF( "%llu",      "123",                       (long long) 123 );
-                    
+
     TEST_VSPRINTF( "%hhd",      "-100",                      (int)  -100 );
     TEST_VSPRINTF( "%hd",       "-100",                      (int)  -100 );
     TEST_VSPRINTF( "%ld",       "-100",                      (long) -100 );
     TEST_VSPRINTF( "%lld",      "-100",                      (long long) -100 );
-                    
+
     TEST_VSPRINTF( "%hhd",      "-125",                      (int) -125);
     TEST_VSPRINTF( "%hd",       "-125",                      (int) -125);
     TEST_VSPRINTF( "%ld",       "-125",                      (long) -125);
@@ -954,7 +954,7 @@ int test_ssprintf()
     TEST_VSPRINTF( "%%#12.5V: %#12.5V", "%#12.5V:        Hello", &cbdata);
     TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V:        Hello", (int)12 ARG((int)5) ARG(&cbdata));
     TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V: Hello       ", (int)-12 ARG((int)5) ARG(&cbdata));
- 
+
     return (bRet);
 } /* test_ssprintf() */
 

@@ -3606,7 +3606,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   char * pl = va_arg(val, char *);
                   *pl = (char) zRet;
                }
-               else if ((s0 == 'w') && (s1 == '8'))
+               else if (((s0 == 'w') || (s0 == 'I')) && (s1 == '8'))
                { /* integer of 1 byte width */
                   int8_t * pl = va_arg(val, int8_t *);
                   *pl = (int8_t) zRet;

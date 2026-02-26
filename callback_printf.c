@@ -2421,8 +2421,7 @@ static size_t cbk_print_char(void *            pUserData,      /* user specific 
          minimum_width -= 32;
       }
 
-      if(minimum_width)
-         pCB(pUserData, pblanks, minimum_width);
+      pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified)
          while (length--)
@@ -2471,8 +2470,7 @@ size_t cbk_print_string(void *            pUserData,      /* user specific conte
          minimum_width -= 32;
       }
 
-      if(minimum_width)
-         pCB(pUserData, pblanks, minimum_width);
+      pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified && length)
          pCB(pUserData, ps, length);
@@ -2538,8 +2536,7 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
          minimum_width -= 32;
       }
 
-      if(minimum_width)
-         pCB(pUserData, pblanks, minimum_width);
+      pCB(pUserData, pblanks, minimum_width);
 
       if(!left_justified && length)
       {
@@ -2926,6 +2923,8 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          }
          else if (IS_PRINTF_FMT_INT(fc))
          {
+            uint8_t  base = fc;
+
 /* ------------------------------------------------------------------------- */
 #define CHECK_SIGN(itype, utype, va_itype, va_utype) \
                    utype u;\
@@ -2946,16 +2945,15 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                    {\
                       u = (utype) va_arg(val, va_utype);\
                       sign_char = '\0'; /* do not print any sign character */\
-                   }
+                   }\
+                   if(sizeof(u) <= 4)\
+                      zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);\
+                   else\
+                      zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
 /* ------------------------------------------------------------------------- */
             if(pe == ps)
             {
                CHECK_SIGN (int, unsigned int, int, unsigned int);
-
-               if(sizeof(u) <= 4)
-                   zRet += cbk_print_u32(pUserData, pCB, u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-               else
-                   zRet += cbk_print_u64(pUserData, pCB, u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
             }
             else if(pe == (ps + 1))
             {
@@ -2963,30 +2961,18 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                if(s0 == 'l')
                {
                   CHECK_SIGN (long, unsigned long, long, unsigned long);
-
-                  if(sizeof(u) <= 4)
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-                  else
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if((s0 == 'z') || (s0 == 't') || (s0 == 'I'))
                {
                   CHECK_SIGN (ptrdiff_t, size_t, ptrdiff_t, size_t);
-
-                  if(sizeof(u) <= 4)
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-                  else
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if(s0 == 'h')
                {
                   CHECK_SIGN (short, unsigned short, int, unsigned int);
-                  zRet += cbk_print_u32(pUserData, pCB, u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if(s0 == 'j')
                {
                   CHECK_SIGN (intmax_t, uintmax_t, intmax_t, uintmax_t);
-                  zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else
                { /* unknown format */
@@ -3004,27 +2990,22 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   if(s1 == '8')
                   { /* integer of 8 bytes width */
                      CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s1 == '4')
                   { /* integer of 4 bytes width */
                      CHECK_SIGN (int32_t, uint32_t, int32_t, uint32_t);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s1 == '2')
                   { /* integer of 2 bytes width */
                      CHECK_SIGN (int16_t, uint16_t, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s1 == '1')
                   { /* integer of 1 byte width */
                      CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s1 == 'l')
                   { /* argument of type long long */
                      CHECK_SIGN (long long, unsigned long long, long long, unsigned long long);
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else
                   { /* unknown format */
@@ -3035,16 +3016,13 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                else if((s0 == 'h') && (s1 == 'h'))
                {
                   CHECK_SIGN (signed char, unsigned char, int, unsigned int);
-                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if(((s0 == 'w') || (s0 == 'I')) && (s1 == '8'))
                {
                   CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
-                  zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                }
                else if (s0 == 'r')
                {
-                  uint8_t base;
                   if(s1 == '*')
                   {
                      base = (uint8_t) va_arg(val, int);
@@ -3067,7 +3045,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
                   {
                      CHECK_SIGN (int, unsigned int, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                }
                else
@@ -3087,17 +3064,14 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   if((s1 == '6') && (s2 == '4'))
                   { /* integer of 8 bytes width */
                      CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if((s1 == '3') && (s2 == '2'))
                   { /* integer of 4 bytes width */
                      CHECK_SIGN (int32_t, uint32_t, int32_t, uint32_t);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if((s1 == '1') && (s2 == '6'))
                   { /* integer of 2 bytes width */
                      CHECK_SIGN (int16_t, uint16_t, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, fc, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else
                   { /* unknown format */
@@ -3107,8 +3081,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                }
                else if (s0 == 'r')
                {
-                  uint8_t base;
-
                   if(s1 == '*')
                   {
                      base = (uint8_t) va_arg(val, int);
@@ -3132,30 +3104,18 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   if(s2 == 'l')
                   {
                      CHECK_SIGN (long, unsigned long, long, unsigned long);
-
-                     if(sizeof(u) <= 4)
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-                     else
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if((s2 == 'z') || (s2 == 't') || (s2 == 'I'))
                   {
                      CHECK_SIGN (ptrdiff_t, size_t, ptrdiff_t, size_t);
-
-                     if(sizeof(u) <= 4)
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
-                     else
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s2 == 'h')
                   {
                      CHECK_SIGN (short, unsigned short, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(s2 == 'j')
                   {
                      CHECK_SIGN (intmax_t, uintmax_t, intmax_t, uintmax_t);
-                     zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else
                   { /* unknown format */
@@ -3176,7 +3136,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   char s1 = *(ps+1);
                   char s2 = *(ps+2);
                   char s3 = *(ps+3);
-                  uint8_t base;
 
                   if(s1 == '*')
                   {
@@ -3203,27 +3162,22 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      if(s3 == '8')
                      { /* integer of 8 bytes width */
                         CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if(s3 == '4')
                      { /* integer of 4 bytes width */
                         CHECK_SIGN (int32_t, uint32_t, int32_t, uint32_t);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if(s3 == '2')
                      { /* integer of 2 bytes width */
                         CHECK_SIGN (int16_t, uint16_t, int, unsigned int);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if(s3 == '1')
                      { /* integer of 1 byte width */
                         CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if(s3 == 'l')
                      { /* argument of type long long */
                         CHECK_SIGN (long long, unsigned long long, long long, unsigned long long);
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else
                      { /* unknown format */
@@ -3234,12 +3188,10 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                   else if((s2 == 'h') && (s3 == 'h'))
                   {
                      CHECK_SIGN (signed char, unsigned char, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else if(((s2 == 'w') || (s2 == 'I')) && (s3 == '8'))
                   {
                      CHECK_SIGN (int8_t, uint8_t, int, unsigned int);
-                     zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                   }
                   else
                   { /* unknown format */
@@ -3255,7 +3207,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             }
             else if(pe == (ps + 5))
             {
-               uint8_t base;
                char s0 = *ps;
                char s1 = *(ps+1);
                char s2 = *(ps+2);
@@ -3289,17 +3240,14 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                      if((s3 == '6') && (s4 == '4'))
                      { /* integer of 8 bytes width */
                         CHECK_SIGN (int64_t, uint64_t, int64_t, uint64_t);
-                        zRet += cbk_print_u64(pUserData, pCB, (uint64_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if((s3 == '3') && (s4 == '2'))
                      { /* integer of 4 bytes width */
                         CHECK_SIGN (int32_t, uint32_t, int32_t, uint32_t);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else if((s3 == '1') && (s4 == '6'))
                      { /* integer of 2 bytes width */
                         CHECK_SIGN (int16_t, uint16_t, int, unsigned int);
-                        zRet += cbk_print_u32(pUserData, pCB, (uint32_t) u, base, sign_char, prefixing, left_justified, blank_padding, precision, minimum_width);
                      }
                      else
                      { /* unknown format */
@@ -3699,6 +3647,38 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
                goto Exit;
             }
          }
+         else if(fc == '@')
+         {
+            if(pe == ps)
+            {
+               const char * pf2   = va_arg(val, const char *);
+
+               size_t       width = callback_printf(pUserData, pCB, pf2, va_arg(val, va_list));
+
+               if(width >= minimum_width)
+               {
+                  zRet += width;
+               }
+               else
+               { /* add the missing blanks */
+                  zRet += minimum_width;
+                  minimum_width -= width;
+
+                  while (minimum_width > 32)
+                  {
+                     pCB(pUserData, pblanks, 32);
+                     minimum_width -= 32;
+                  }
+
+                  pCB(pUserData, pblanks, minimum_width);
+               }
+            }
+            else
+            { /* unknown format */
+               pCB(pUserData, ps, 0);
+               goto Exit;
+            }
+         }
          else
          { /* unknown format specification -> skip all remaining string data */
             pCB(pUserData, ps, 0);
@@ -3721,7 +3701,7 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
 
    Exit:;
    return (zRet);
-} /* size_t cbk_printf(void * pUserData, PRINT_CALL_BACK * pCB, const char * pFmt, va_list val) */
+} /* size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val) */
 
 
 

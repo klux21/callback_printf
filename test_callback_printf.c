@@ -458,8 +458,8 @@ int test_ssprintf(const char * pfmt, ...)
     TEST_VSPRINTF( "%N",            "",               (int) -1 );
     TEST_VSPRINTF( "%H",            "",               (int) -1 );
     TEST_VSPRINTF( "x%cx",          "xXx",            (int) 0x100+'X' );
-    TEST_VSPRINTF( "%%0",           "%0",              0 );
-    TEST_VSPRINTF( "%%%%%%%%",      "%%%%",            0 );
+    TEST_VSPRINTF( "%%0",           "%0",             0 );
+    TEST_VSPRINTF( "%%%%%%%%",      "%%%%",           0 );
     TEST_VSPRINTF( "%%%%%d%%%%",    "%%42%%",         (int) 42 );
     TEST_VSPRINTF( "%hx",           "2345",           (int) 0x12345 );
     TEST_VSPRINTF( "%hhx",          "23",             (int) 0x123 );

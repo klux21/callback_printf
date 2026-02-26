@@ -126,6 +126,12 @@
 
 #ifdef _WIN32
 #pragma warning(disable : 4100 4127 4706 4710)
+
+#if defined (_MSC_VER) && (_MSC_VER < 1800)
+/* Visula Studio compilers before VS 2013 didn't provide any va_copy() :o( */
+#define va_copy(dst, src) { dst = src; }
+#endif
+
 #endif
 
 /* ========================================================================= *\
@@ -151,7 +157,7 @@ const uint8_t CharType[256] = { 0x10,0x04,0x04,0x04, 0x04,0x04,0x04,0x04,   0x04
                              /*  0    1    2    3     4    5    6    7       8    9    :    ;     <    =    >    ?   */
                                 0x22,0x02,0x02,0x02, 0x02,0x02,0x02,0x02,   0x02,0x02,0x08,0x08, 0x08,0x08,0x08,0x08,
                              /*  @    A    B    C     D    E    F    G       H    I    J    K     L    M    N    O   */
-                                0x08,0x11,0x51,0x11, 0x01,0x91,0x91,0x91,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,
+                                0x18,0x11,0x51,0x11, 0x01,0x91,0x91,0x91,   0x01,0x01,0x01,0x01, 0x01,0x01,0x01,0x01,
                              /*  P    Q    R    S     T    U    V    W       X    Y    Z    [     \    ]    ^    _   */
                                 0x11,0x01,0x01,0x11, 0x01,0x01,0x11,0x01,   0x51,0x01,0x01,0x08, 0x08,0x08,0x08,0x01,
                              /*  `    a    b    c     d    e    f    g       h    i    j    k     l    m    n    o   */
@@ -3651,9 +3657,40 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          {
             if(pe == ps)
             {
-               const char * pf2   = va_arg(val, const char *);
+               const char * pf2 = va_arg(val, const char *);
+               va_list      va2;
+               size_t       width;
 
-               size_t       width = callback_printf(pUserData, pCB, pf2, va_arg(val, va_list));
+               va_copy(va2, va_arg(val, va_list)); /* va_copy() keeps the argument unchanged */
+
+               if(minimum_width && !left_justified)
+               {
+                  va_list  va3;
+                  va_copy(va3, va2);
+
+                  width = svsnprintf(NULL, 0, pf2, va3); /* we need to detect the output length first */
+
+                  va_end(va3);
+
+                  if (width < minimum_width)
+                  {
+                     minimum_width -= width;
+                     zRet += minimum_width;
+
+                     while (minimum_width > 32)
+                     {
+                        pCB(pUserData, pblanks, 32);
+                        minimum_width -= 32;
+                     }
+
+                     pCB(pUserData, pblanks, minimum_width);
+                     minimum_width = 0;
+                  }
+               }
+
+               width = callback_printf(pUserData, pCB, pf2, va2);
+
+               va_end(va2);
 
                if(width >= minimum_width)
                {
@@ -3686,16 +3723,15 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
          }
 
          /* find begin of next format string */
-         ps = ++pe;
-         while(*pe && (*pe != '%'))
-            ++pe;
+         pf = ++pe;
+         while(*pf && (*pf != '%'))
+            ++pf;
 
-         if(ps != pe)
-         {/* print the intermediate text */
-            pCB(pUserData, ps, pe - ps);
-            zRet += (size_t)(pe - ps);
+         if(pf != pe)
+         {/* print the intermediate text until end of format string or the next percent character */
+            pCB(pUserData, pe, pf - pe);
+            zRet += (size_t)(pf - pe);
          }
-         pf = pe; /* end of string or next format string */
       }
    }
 

@@ -62,9 +62,13 @@ contains the mentioned function and a pointer pointer as argument and may be a
 member of other structs that need to be written in a special format. That way
 it's possible to print an unlimited number of data types and data in special
 formats and also mixed up in the same output if required. However that's all
-still an early state an the function prototypes may still change a bit in
-future versions. Feel free to use the discussion site to share your own opinion
-and ideas regarding that.
+still an early state an the function prototypes may still change a bit.
+
+Another common problem is that you need to prepend or append additional
+information like a date or the time to data within a logging function. I did
+add an additional option %@ now that expects a format string and a va_list
+within the arguments to be printed at the position of the %@ within the
+output. A minimum width can be specified for the %@ output as well.
 
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf

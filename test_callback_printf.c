@@ -251,12 +251,14 @@ size_t cbfunc (void *            pUserData,
    char   buffer[100];
    PRINTF_V_DATA * pvd = (PRINTF_V_DATA *) pvdata;
 
-   size_t length = ssnprintf(buffer, sizeof(buffer), "%.*s", (int) (precision <= pvd->size ? precision : pvd->size), (char *) pvd->pdata);
+   size_t length = ssnprintf(buffer, sizeof(buffer), "%.*s", (int) (precision <= (size_t) pvd->size ? precision : pvd->size), (char *) pvd->pdata);
 
    return ( cbk_print_string( pUserData, pCB, buffer, length, minimum_width, left_justified));
 } /* size_t cbfunc(...) */
 
-int test_ssprintf()
+
+
+int test_ssprintf(const char * pfmt, ...)
 {
    int bRet = 1;
 
@@ -285,29 +287,30 @@ int test_ssprintf()
 
 #define TEST_VSPRINTF(pfmt, pout, arg) bRet &= test_svsprintf(__LINE__, pout, #pfmt "," #arg, pfmt, arg);
 
-    TEST_VSPRINTF( "Hallo Welt!", "Hallo Welt!",  0);
-    TEST_VSPRINTF( "%.10s!",      "Hallo Welt!",  "Hallo Welt");
-    TEST_VSPRINTF( "%.*s!",       "Hallo Welt!", (int) 10 ARG("Hallo Welt"));
-    TEST_VSPRINTF( "%.5s %.5s",   "Hallo Welt!",  "Hallo" ARG("Welt!"));
-    TEST_VSPRINTF( "%-6.5s%4.5s!","Hallo Welt!",  "Hallo" ARG("Welt"));
+    TEST_VSPRINTF( "Hallo Welt!",   "Hallo Welt!",               0);
+    TEST_VSPRINTF( "%s",            "Hallo Welt!",              "Hallo Welt!");
+    TEST_VSPRINTF( "%.10s!",        "Hallo Welt!",               "Hallo Welt");
+    TEST_VSPRINTF( "%.*s!",         "Hallo Welt!",               (int) 10 ARG("Hallo Welt"));
+    TEST_VSPRINTF( "%.5s %.5s",     "Hallo Welt!",               "Hallo" ARG("Welt!"));
+    TEST_VSPRINTF( "%-6.5s%4.5s!",  "Hallo Welt!",               "Hallo" ARG("Welt"));
     TEST_VSPRINTF( "%c%c%c%c%c %c%c%c%c!", "Hallo Welt!", 'H' ARG('a') ARG('l') ARG('l') ARG('o') ARG('W') ARG('e') ARG('l') ARG('t'));
     TEST_VSPRINTF( "%02d/%02d/%04d %02d:%02d:%02d", "01/01/1970 23:59:59", 1 ARG(1) ARG(1970) ARG(23) ARG(59) ARG(59));
     TEST_VSPRINTF( "%.2d/%.2d/%.4d %.2d:%.2d:%.2d", "01/01/1970 23:59:59", 1 ARG(1) ARG(1970) ARG(23) ARG(59) ARG(59));
-    TEST_VSPRINTF( "%+#23.15e",   " +1.000000000000000e-01", (double) 1.0e-1 );
-    TEST_VSPRINTF( "%+#23.15e",   " +3.900000000000000e+00", (double) 3.9 );
-    TEST_VSPRINTF( "%+#23.14e",   " +7.89456123000000e-307", (double) 7.89456123e-307 );
-    TEST_VSPRINTF( "%+#23.14e",   " +7.89456123000000e+307", (double) 7.89456123e+307 );
-    TEST_VSPRINTF( "%+#23.15e",   " +7.894561230000000e+08", (double) 789456123.0 );
-    TEST_VSPRINTF( "%-#23.15e",   "7.894561230000000e+08  ", (double) 789456123.0 );
-    TEST_VSPRINTF( "%#23.15e",    "  7.894561230000000e+08", (double)789456123.0 );
-    TEST_VSPRINTF( "%#1.1g",      "8.e+08", (double) 789456123.0 );
-    TEST_VSPRINTF( "%+#23.15Le",  " +1.000000000000000e-01", (long double) 1.0e-1l );
-    TEST_VSPRINTF( "%+#23.15Le",  " +3.900000000000000e+00", (long double) 3.9l );
+    TEST_VSPRINTF( "%+#23.15e",     " +1.000000000000000e-01",   (double) 1.0e-1 );
+    TEST_VSPRINTF( "%+#23.15e",     " +3.900000000000000e+00",   (double) 3.9 );
+    TEST_VSPRINTF( "%+#23.14e",     " +7.89456123000000e-307",   (double) 7.89456123e-307 );
+    TEST_VSPRINTF( "%+#23.14e",     " +7.89456123000000e+307",   (double) 7.89456123e+307 );
+    TEST_VSPRINTF( "%+#23.15e",     " +7.894561230000000e+08",   (double) 789456123.0 );
+    TEST_VSPRINTF( "%-#23.15e",     "7.894561230000000e+08  ",   (double) 789456123.0 );
+    TEST_VSPRINTF( "%#23.15e",      "  7.894561230000000e+08",   (double)789456123.0 );
+    TEST_VSPRINTF( "%#1.1g",        "8.e+08",                    (double) 789456123.0 );
+    TEST_VSPRINTF( "%+#23.15Le",    " +1.000000000000000e-01",   (long double) 1.0e-1l );
+    TEST_VSPRINTF( "%+#23.15Le",    " +3.900000000000000e+00",   (long double) 3.9l );
     TEST_VSPRINTF( "%+#27.6e",    "             +1.594561e-317", (double) 1.59456123e-317 );
     TEST_VSPRINTF( "%+#27.16e",    "   +1.5945612300000000e+308", (double) 1.59456123e+308 );
 #ifdef _WIN32
-    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e-307",(long double) 9.89456123e-307l );
-    TEST_VSPRINTF( "%+#27.15Le",    "   +9.89456123000000000e+307",(long double) 9.89456123e+307l );
+    TEST_VSPRINTF( "%+#27.15Le",    "    +9.894561230000000e-307",(long double) 9.89456123e-307l );
+    TEST_VSPRINTF( "%+#27.15Le",    "    +9.894561230000000e+307",(long double) 9.89456123e+307l );
 #else
     TEST_VSPRINTF( "%+#22.18Lf",  " +1.333333333333333333", (long double) 4.0 / 3.0 );
     TEST_VSPRINTF( "%+#22.18Lf",  " +2.222222222222222222", (long double) 20.0 / 9.0 );
@@ -316,36 +319,36 @@ int test_ssprintf()
     TEST_VSPRINTF( "%+#24.14Le",  " +7.89456123000000e-4307", (long double) 7.89456123e-4307l );
     TEST_VSPRINTF( "%+#24.14Le",  " +7.89456123000000e+4307", (long double) 7.89456123e+4307l );
 #endif
-    TEST_VSPRINTF( "%+#23.15Le",  " +7.894561230000000e+08", (long double) 789456123.0l );
-    TEST_VSPRINTF( "%-#23.15Le",  "7.894561230000000e+08  ", (long double) 789456123.0l );
-    TEST_VSPRINTF( "%#23.15Le",   "  7.894561230000000e+08", (long double) 789456123.0l );
-    TEST_VSPRINTF( "%#1.1Lg",     "8.e+08",                  (long double) 789456123.0l );
-    TEST_VSPRINTF( "%I64d",       "-8589934591",             (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
-    TEST_VSPRINTF( "%+8I64d",     "    +100",                (unsigned long long) 100 );
-    TEST_VSPRINTF( "%+.8I64d",    "+00000100",               (unsigned long long) 100 );
-    TEST_VSPRINTF( "%+10.8I64d",  " +00000100",              (unsigned long long) 100 );
-    TEST_VSPRINTF( "%_1I64d",     "",                        (unsigned long long) 100 );
-    TEST_VSPRINTF( "%_1lld",     "",                         (unsigned long long) 100 );
-    TEST_VSPRINTF( "%-1.5I64d",   "-00100",                  (unsigned long long) -100 );
-    TEST_VSPRINTF( "%5I64d",      "  100",                   (unsigned long long) 100 );
-    TEST_VSPRINTF( "%5I64d",      " -100",                   (unsigned long long) -100 );
-    TEST_VSPRINTF( "%-5I64d",     "100  ",                   (unsigned long long) 100 );
-    TEST_VSPRINTF( "%-5I64d",     "-100 ",                   (unsigned long long) -100 );
-    TEST_VSPRINTF( "%-.5I64d",    "00100",                   (unsigned long long) 100 );
-    TEST_VSPRINTF( "%-.5I64d",    "-00100",                  (unsigned long long) -100 );
-    TEST_VSPRINTF( "%-8.5I64d",   "00100   ",                (unsigned long long) 100 );
-    TEST_VSPRINTF( "%-8.5I64d",   "-00100  ",                (unsigned long long) -100 );
-    TEST_VSPRINTF( "%05I64d",     "00100",                   (unsigned long long) 100 );
-    TEST_VSPRINTF( "%05I64d",     "-0100",                   (unsigned long long) -100 );
-    TEST_VSPRINTF( "% I64d",      " 100",                    (unsigned long long) 100 );
-    TEST_VSPRINTF( "% I64d",      "-100",                    (unsigned long long) -100 );
-    TEST_VSPRINTF( "% 5I64d",     "  100",                   (unsigned long long)  100 );
-    TEST_VSPRINTF( "% 5I64d",     " -100",                   (unsigned long long)  -100 );
-    TEST_VSPRINTF( "% .5I64d",    " 00100",                  (unsigned long long) 100 );
-    TEST_VSPRINTF( "% .5I64d",    "-00100",                  (unsigned long long) -100 );
-    TEST_VSPRINTF( "% 8.5I64d",   "   00100",                (unsigned long long) 100 );
-    TEST_VSPRINTF( "% 8.5I64d",   "  -00100",                (unsigned long long) -100 );
-    TEST_VSPRINTF( "%.0I64d",     "",                        (unsigned long long) 0 );
+    TEST_VSPRINTF( "%+#23.15Le",    " +7.894561230000000e+08",   (long double) 789456123.0l );
+    TEST_VSPRINTF( "%-#23.15Le",    "7.894561230000000e+08  ",   (long double) 789456123.0l );
+    TEST_VSPRINTF( "%#23.15Le",     "  7.894561230000000e+08",   (long double) 789456123.0l );
+    TEST_VSPRINTF( "%#1.1Lg",       "8.e+08",                    (long double) 789456123.0l );
+    TEST_VSPRINTF( "%I64d",         "-8589934591",               (unsigned long long) ((unsigned long long)0xffffffff)*0xffffffff );
+    TEST_VSPRINTF( "%+8I64d",       "    +100",                  (unsigned long long) 100 );
+    TEST_VSPRINTF( "%+.8I64d",      "+00000100",                 (unsigned long long) 100 );
+    TEST_VSPRINTF( "%+10.8I64d",    " +00000100",                (unsigned long long) 100 );
+    TEST_VSPRINTF( "%_1I64d",       "",                          (unsigned long long) 100 );
+    TEST_VSPRINTF( "%_1lld",        "",                          (unsigned long long) 100 );
+    TEST_VSPRINTF( "%-1.5I64d",     "-00100",                    (unsigned long long) -100 );
+    TEST_VSPRINTF( "%5I64d",        "  100",                     (unsigned long long) 100 );
+    TEST_VSPRINTF( "%5I64d",        " -100",                     (unsigned long long) -100 );
+    TEST_VSPRINTF( "%-5I64d",       "100  ",                     (unsigned long long) 100 );
+    TEST_VSPRINTF( "%-5I64d",       "-100 ",                     (unsigned long long) -100 );
+    TEST_VSPRINTF( "%-.5I64d",      "00100",                     (unsigned long long) 100 );
+    TEST_VSPRINTF( "%-.5I64d",      "-00100",                    (unsigned long long) -100 );
+    TEST_VSPRINTF( "%-8.5I64d",     "00100   ",                  (unsigned long long) 100 );
+    TEST_VSPRINTF( "%-8.5I64d",     "-00100  ",                  (unsigned long long) -100 );
+    TEST_VSPRINTF( "%05I64d",       "00100",                     (unsigned long long) 100 );
+    TEST_VSPRINTF( "%05I64d",       "-0100",                     (unsigned long long) -100 );
+    TEST_VSPRINTF( "% I64d",        " 100",                      (unsigned long long) 100 );
+    TEST_VSPRINTF( "% I64d",        "-100",                      (unsigned long long) -100 );
+    TEST_VSPRINTF( "% 5I64d",       "  100",                     (unsigned long long)  100 );
+    TEST_VSPRINTF( "% 5I64d",       " -100",                     (unsigned long long)  -100 );
+    TEST_VSPRINTF( "% .5I64d",      " 00100",                    (unsigned long long) 100 );
+    TEST_VSPRINTF( "% .5I64d",      "-00100",                    (unsigned long long) -100 );
+    TEST_VSPRINTF( "% 8.5I64d",     "   00100",                  (unsigned long long) 100 );
+    TEST_VSPRINTF( "% 8.5I64d",     "  -00100",                  (unsigned long long) -100 );
+    TEST_VSPRINTF( "%.0I64d",       "",                          (unsigned long long) 0 );
     TEST_VSPRINTF( "%.0lld",        "",                          (unsigned long long) 0 );
     TEST_VSPRINTF( "%8.0lld",       "        ",                  (unsigned long long) 0 );
     TEST_VSPRINTF( "%08.0lld",      "        ",                  (unsigned long long) 0 );
@@ -371,54 +374,54 @@ int test_ssprintf()
     TEST_VSPRINTF( "%Ihd",          "" , (int) 1 );
     TEST_VSPRINTF( "%I0d",          "" , (int) 1 );
     TEST_VSPRINTF( "%I64D",         "" , (unsigned long long) -1 );
-    TEST_VSPRINTF( "%zx",           "1",   (size_t) 1 );
+    TEST_VSPRINTF( "%zx",           "1",              (size_t) 1 );
     TEST_VSPRINTF( "%zx",           sizeof(size_t) > 4 ? "ffffffffffffffff" : "ffffffff", (size_t) -1 );
     TEST_VSPRINTF( "%z",            "" ,   (size_t) 1 );
-    TEST_VSPRINTF( "%tx",           "1",   (ptrdiff_t) 1 );
+    TEST_VSPRINTF( "%tx",           "1",              (ptrdiff_t) 1 );
     TEST_VSPRINTF( "%tx",           sizeof(size_t) > 4 ? "8000000000000000" : "80000000", (ptrdiff_t) 1 << (sizeof(ptrdiff_t) * 8 - 1));
     TEST_VSPRINTF( "%t",            "" ,   (ptrdiff_t) 1 );
-    TEST_VSPRINTF( "% d",           " 1",  (int) 1 );
-    TEST_VSPRINTF( "%+ d",          "+1",  (int) 1 );
-    TEST_VSPRINTF( "%S",            "wide", (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "% d",           " 1",             (int) 1 );
+    TEST_VSPRINTF( "%+ d",          "+1",             (int) 1 );
+    TEST_VSPRINTF( "%S",            "wide",           (wchar_t *) L"wide" );
     TEST_VSPRINTF( "%S",            "wide \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", (wchar_t *) L"wide \xc4\xd6\xdc\xdf\xe4\xf6\xfc" );
     TEST_VSPRINTF( "%ls",           "wide \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", (wchar_t *) L"wide \xc4\xd6\xdc\xdf\xe4\xf6\xfc" );
     TEST_VSPRINTF( "%l1s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s8 );
     TEST_VSPRINTF( "%l2s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s16 );
     TEST_VSPRINTF( "%l4s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s32 );
-    TEST_VSPRINTF( "%-04c",         "1   ", (int) '1' );
-    TEST_VSPRINTF( "%#012x",        "0x0000000001", (int) 1 );
-    TEST_VSPRINTF( "%#012x",        "000000000000", (int) 0 );
-    TEST_VSPRINTF( "%#04.8x",       "0x00000001",   (int) 1 );
-    TEST_VSPRINTF( "%#04.8x",       "00000000",     (int) 0 );
-    TEST_VSPRINTF( "%#-08.2x",      "0x01    ",     (int) 1 );
-    TEST_VSPRINTF( "%#-08.2x",      "00      ",     (int) 0 );
-    TEST_VSPRINTF( "%#.0x",         "0x1",          (int) 1 );
-    TEST_VSPRINTF( "%#.0x",         "",            (int) 0 );
-    TEST_VSPRINTF( "%#08o",         "00000001",    (int) 1 );
-    TEST_VSPRINTF( "%#o",           "01",          (int) 1 );
-    TEST_VSPRINTF( "%#o",           "0",           (int) 0 );
-    TEST_VSPRINTF( "%04s",          " foo",        (char *) "foo" );
-    TEST_VSPRINTF( "%.1s",          "f",           (char *) "foo" );
-    TEST_VSPRINTF( "%.0s",          "",            (char *) "foo" );
-    TEST_VSPRINTF( "hello",         "hello",        0 );
-    TEST_VSPRINTF( "%ws",           "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%-10ws",        "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%10ws",         "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%#+ -03whlls",  "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%w0s",          "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%w-s",          "",            (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%ls",           "wide",        (wchar_t *) L"wide" );
-    TEST_VSPRINTF( "%Ls",           "",            (wchar_t *) "not wide" );
-    TEST_VSPRINTF( "%6.4c",         "  ____",      (int) '_' );
-    TEST_VSPRINTF( "%-6.4c",         "____  ",     (int) '_' );
-    TEST_VSPRINTF( "%b",            "101010",      (int) 42 );
-    TEST_VSPRINTF( "%#b",           "0b101010",    (int) 42 );
-    TEST_VSPRINTF( "%#B",           "0B101010",    (int) 42 );
-    TEST_VSPRINTF( "%3c",           "  a",         (int) 'a' );
-    TEST_VSPRINTF( "%-3c",          "a  ",         (int) 'a' );
-    TEST_VSPRINTF( "%3d",           "1234",        (int) 1234 );
-    TEST_VSPRINTF( "%3h",           "",             0 );
-    TEST_VSPRINTF( "%k%m%q%r%t%v%y%z", "",          0 );
+    TEST_VSPRINTF( "%-04c",         "1   ",           (int) '1' );
+    TEST_VSPRINTF( "%#012x",        "0x0000000001",   (int) 1 );
+    TEST_VSPRINTF( "%#012x",        "000000000000",   (int) 0 );
+    TEST_VSPRINTF( "%#04.8x",       "0x00000001",     (int) 1 );
+    TEST_VSPRINTF( "%#04.8x",       "00000000",       (int) 0 );
+    TEST_VSPRINTF( "%#-08.2x",      "0x01    ",       (int) 1 );
+    TEST_VSPRINTF( "%#-08.2x",      "00      ",       (int) 0 );
+    TEST_VSPRINTF( "%#.0x",         "0x1",            (int) 1 );
+    TEST_VSPRINTF( "%#.0x",         "",               (int) 0 );
+    TEST_VSPRINTF( "%#08o",         "00000001",       (int) 1 );
+    TEST_VSPRINTF( "%#o",           "01",             (int) 1 );
+    TEST_VSPRINTF( "%#o",           "0",              (int) 0 );
+    TEST_VSPRINTF( "%04s",          " foo",           (char *) "foo" );
+    TEST_VSPRINTF( "%.1s",          "f",              (char *) "foo" );
+    TEST_VSPRINTF( "%.0s",          "",               (char *) "foo" );
+    TEST_VSPRINTF( "hello",         "hello",          0 );
+    TEST_VSPRINTF( "%ws",           "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%-10ws",        "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%10ws",         "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%#+ -03whlls",  "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%w0s",          "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%w-s",          "",               (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%ls",           "wide",           (wchar_t *) L"wide" );
+    TEST_VSPRINTF( "%Ls",           "",               (wchar_t *) "not wide" );
+    TEST_VSPRINTF( "%6.4c",         "  ____",         (int) '_' );
+    TEST_VSPRINTF( "%-6.4c",         "____  ",        (int) '_' );
+    TEST_VSPRINTF( "%b",            "101010",         (int) 42 );
+    TEST_VSPRINTF( "%#b",           "0b101010",       (int) 42 );
+    TEST_VSPRINTF( "%#B",           "0B101010",       (int) 42 );
+    TEST_VSPRINTF( "%3c",           "  a",            (int) 'a' );
+    TEST_VSPRINTF( "%-3c",          "a  ",            (int) 'a' );
+    TEST_VSPRINTF( "%3d",           "1234",           (int) 1234 );
+    TEST_VSPRINTF( "%3h",           "",               0 );
+    TEST_VSPRINTF( "%k%m%q%r%t%v%y%z", "",            0 );
     TEST_VSPRINTF( "%-1d",          "2",              (int) 2 );
     TEST_VSPRINTF( "%2.4f",         "8.6000",         (double) 8.6 );
     TEST_VSPRINTF( "%0f",           "0.600000",       (double) 0.6 );
@@ -556,6 +559,15 @@ int test_ssprintf()
     TEST_VSPRINTF( "%5.2E%.0f",  "  NAN-3",  (double) nan ARG(-3.0));
     TEST_VSPRINTF( "%5.2E%.0f",  " -NAN-3",  (double) nnan ARG(-3.0));
 
+    TEST_VSPRINTF( "%5.2f%.0f",  "  inf3",   (double) inf ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  " -inf3",   (double) ninf ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  "  nan3",   (double) nan ARG(3.0));
+    TEST_VSPRINTF( "%5.2f%.0f",  " -nan3",   (double) nnan ARG(3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  "  INF-3",  (double) inf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  " -INF-3",  (double) ninf ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  "  NAN-3",  (double) nan ARG(-3.0));
+    TEST_VSPRINTF( "%5.2F%.0f",  " -NAN-3",  (double) nnan ARG(-3.0));
+
     TEST_VSPRINTF( "%5.2Le%.0Lf", "  inf3",  (long double) inf ARG((long double) 3.0));
     TEST_VSPRINTF( "%5.2Le%.0Lf", " -inf3",  (long double) ninf ARG((long double) 3.0));
     TEST_VSPRINTF( "%5.2Le%.0Lf", "  nan3",  (long double) nan ARG((long double) 3.0));
@@ -567,6 +579,14 @@ int test_ssprintf()
 
     TEST_VSPRINTF( "%# 01.1g",    " 1.e+01", (double) 9.8);
     TEST_VSPRINTF( "%# 01.1Lg",   " 1.e+01", (long double) 9.8l);
+
+    TEST_VSPRINTF( "%010.3g",  "0000003.33", (double) (10.0/3.0));
+    TEST_VSPRINTF( "%010.3Lg", "0000003.33", (long double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6g",   "   3.33333", (double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6Lg",  "   3.33333", (long double) (10.0/3.0));
+    TEST_VSPRINTF( "%10.6g",   " 0.0333333", (double) (0.1/3.0));
+    TEST_VSPRINTF( "%10.6Lg",  " 0.0333333", (long double) (0.1/3.0));
+
     TEST_VSPRINTF( "%#.1g",       "-4.e+04", (double) -40661.5);
     TEST_VSPRINTF( "%#.1Lg",      "-4.e+04", (long double) -40661.5l);
     TEST_VSPRINTF( "%#g",         "0.00000", (double) 0.0);
@@ -575,6 +595,10 @@ int test_ssprintf()
     TEST_VSPRINTF( "%Lg",         "0",       (long double) 0.0l);
     TEST_VSPRINTF( "%g",          "490000",  (double) 490000.0l);
     TEST_VSPRINTF( "%Lg",         "490000",  (long double) 490000.0l);
+    TEST_VSPRINTF( "%G",          "4.9E+06", (double) 4900000.0l);
+    TEST_VSPRINTF( "%LG",         "4.9E+06", (long double) 4900000.0l);
+    TEST_VSPRINTF( "%.7G",        "4900000", (double) 4900000.0l);
+    TEST_VSPRINTF( "%.7LG",       "4900000", (long double) 4900000.0l);
     TEST_VSPRINTF( "%g",          "4.9e+06", (double) 4900000.0l);
     TEST_VSPRINTF( "%Lg",         "4.9e+06", (long double) 4900000.0l);
     TEST_VSPRINTF( "%.7g",        "4900000", (double) 4900000.0l);
@@ -955,6 +979,20 @@ int test_ssprintf()
     TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V:        Hello", (int)12 ARG((int)5) ARG(&cbdata));
     TEST_VSPRINTF( "%%*.*V: %*.*V", "%*.*V: Hello       ", (int)-12 ARG((int)5) ARG(&cbdata));
 
+    {
+       //char buf[1024];
+       va_list val;
+       va_start(val, pfmt);
+       //ssprintf (buf, "0x%x%@ %d", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       TEST_VSPRINTF("0x%x%@ %d", "0x123 Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       va_end(val);
+       va_start(val, pfmt);
+       TEST_VSPRINTF("0x%x%15@ %d", "0x123   Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       va_end(val);
+       va_start(val, pfmt);
+       TEST_VSPRINTF("0x%x%-15@ %d", "0x123 Hello world!   123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       va_end(val);
+    }
     return (bRet);
 } /* test_ssprintf() */
 
@@ -965,7 +1003,7 @@ int test_ssprintf()
 int main(int argc, char * argv[])
 {
     int iRet = 1;
-    if(!test_ssprintf())
+    if(!test_ssprintf("%*s%c", 12, "Hello world", '!'))
          goto Exit;
 
     iRet = 0;

@@ -985,11 +985,7 @@ int test_ssprintf(const char * pfmt, ...)
        va_start(val, pfmt);
        //ssprintf (buf, "0x%x%@ %d", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
        TEST_VSPRINTF("0x%x%@ %d", "0x123 Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
-       va_end(val);
-       va_start(val, pfmt);
        TEST_VSPRINTF("0x%x%15@ %d", "0x123   Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
-       va_end(val);
-       va_start(val, pfmt);
        TEST_VSPRINTF("0x%x%-15@ %d", "0x123 Hello world!   123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
        va_end(val);
     }

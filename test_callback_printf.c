@@ -983,10 +983,10 @@ int test_ssprintf(const char * pfmt, ...)
        //char buf[1024];
        va_list val;
        va_start(val, pfmt);
-       //ssprintf (buf, "0x%x%@ %d", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
-       TEST_VSPRINTF("0x%x%@ %d", "0x123 Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
-       TEST_VSPRINTF("0x%x%15@ %d", "0x123   Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
-       TEST_VSPRINTF("0x%x%-15@ %d", "0x123 Hello world!   123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       //ssprintf (buf, "%#x%@ %d", (unsigned int) 0x123, pfmt, val, (int) 123);
+       TEST_VSPRINTF("%#x%@ %d", "0x123 Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       TEST_VSPRINTF("%#x%15@ %d", "0x123   Hello world! 123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
+       TEST_VSPRINTF("%#x%-15@ %d", "0x123 Hello world!   123", (unsigned int) 0x123 ARG(pfmt) ARG(val) ARG((int) 123));
        va_end(val);
     }
     return (bRet);

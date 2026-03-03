@@ -21,11 +21,11 @@ I guess that every programmer who really likes C hates the trouble with printf
 like functions and even more the problems and the difficulties if he want to
 use the argument format for own output functions or wants own extensions of
 that format.
-If it comes to me it was always a wish of me to get rid of all this trouble
-and the portability issues that most programmers are struggling with.
-And I did want to add some extra length specifiers for using arguments of type
+If it comes to me it was always wished to get rid of all this trouble and all
+the portability issues that most programmers are struggling with.
+And I did want to add some extra length modifiers for using arguments of type
 int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
-inttypes.h and as well in stdint.h since the C 11 standard.
+inttypes.h and also in stdint.h since the C 11 standard.
 The supported format specifiers are b, B, d, i, o, u, x, X, a, A, e, E, f, F,
 g, G, s, c, p, n and % for a percent character and the Microsoft specific
 specifiers C and S.
@@ -39,11 +39,11 @@ The supported lenght modifiers for the formats s and c are l for wchar_t
 arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.
 For the floating point formats a, A, e, E, f, F, g and G the prefix L for
-long double arguments is supported.
+long double arguments is supported as well.
 Additionally a special prefix for specifying a specific numeric base of integer
 or floating point numbers is supported. It's r0 for base 10, r1 for base 16 and
-r2 ... r9 for the bases 2 til 9. For variable bases r* can be used. In that
-case the base needs to be specified by an additional argument of type int just
+r2 ... r9 for the bases 2 til 9. For other bases r* can be used. In that case
+the base needs to be specified by an additional argument of type int just
 before the integer or floating specifier or it's optional length specifier. The
 highest supported numeric base is 36.
 The floating point exponents of numeric bases higher than 14 are prefixed by a
@@ -65,16 +65,17 @@ formats and also mixed up in the same output if required. However that's all
 still an early state an the function prototypes may still change a bit.
 
 Another common problem is that you need to prepend or append additional
-information like a date or the time to data within a logging function. I did
-add an additional option %@ now that expects a format string and a va_list
-within the arguments to be printed at the position of the %@ within the
-output. A minimum width can be specified for the %@ output as well.
+information like a date or the time or the thread ID to data within a logging
+function. I did add an additional option %@ now that expects a format string
+and a va_list within the arguments to be printed at the position of the %@
+within the output. A minimum width can be specified for the %@ output as well.
+There are some samples of that within the regression tests.
 
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf
-like functions. However that may trigger those warnings in case of the using
-any format enhancements and you may need to silence those warnings by using the
-unchecked function versions which names are prefixed by an underscore '_'.
+like functions. However that may trigger those warnings in case of using any
+printf format enhancements and you may need to silence those warnings by using
+the unchecked function versions which names are prefixed by an underscore '_'.
 
 An interesting internal feature is the fast generic mantisse and exponent
 calculation for the several numeric bases that enables the generic support of

@@ -1342,22 +1342,42 @@ static long double powil (uint8_t base, int32_t iexpo)
 
    if (iexpo)
    {
-      uint32_t    expo = iexpo >= 0 ? iexpo : -iexpo;
-      long double p = base;
+      uint32_t expo = iexpo >= 0 ? iexpo : -iexpo;
+      uint64_t v    = 1;
+      uint64_t p    = base;
 
       if (expo & 1)
-          val = p;
+          v = p;
 
       while (expo >>= 1)
       {
          p *= p;
 
+         if (p > 0xffffffff)
+         {
+            long double fp = p;
+
+            if (expo & 1)
+               val = fp * v;
+            else
+               val = v;
+
+            while(expo >>= 1)
+            {
+               fp *= fp;
+
+               if (expo & 1)
+                  val *= fp;
+            }
+
+            return ((iexpo < 0) ? (long double) 1.0 / val : val);
+         }
+
          if (expo & 1)
-            val *= p;
+            v *= p;
       }
 
-      if(iexpo < 0)
-          val = (1.0 / val);
+      val = (iexpo < 0) ? (long double) 1.0 / v : (long double) v;
    }
 
    return (val);
@@ -1376,21 +1396,41 @@ static double powi (uint8_t base, int32_t iexpo)
    if (iexpo)
    {
       uint32_t expo = iexpo >= 0 ? iexpo : -iexpo;
-      double   p    = base;
+      uint64_t v    = 1;
+      uint64_t p    = base;
 
       if (expo & 1)
-          val = p;
+          v = p;
 
       while (expo >>= 1)
       {
          p *= p;
 
+         if (p > 0xffffffff)
+         {
+            double fp = p;
+
+            if (expo & 1)
+               val = fp * v;
+            else
+               val = v;
+
+            while(expo >>= 1)
+            {
+               fp *= fp;
+
+               if (expo & 1)
+                  val *= fp;
+            }
+
+            return ((iexpo < 0) ? (double) 1.0 / val : val);
+         }
+
          if (expo & 1)
-            val *= p;
+            v *= p;
       }
 
-      if(iexpo < 0)
-          val = (1.0 / val);
+      val = (iexpo < 0) ? (double) 1.0 / v : (double) v;
    }
 
    return (val);

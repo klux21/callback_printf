@@ -1355,12 +1355,12 @@ static long double powil (uint8_t base, int32_t iexpo)
 
          if (p > 0xffffffff)
          {
-            long double fp = p;
+            long double fp = (long double) p;
 
             if (expo & 1)
                val = fp * v;
             else
-               val = v;
+               val = (long double) v;
 
             while(expo >>= 1)
             {
@@ -1408,12 +1408,12 @@ static double powi (uint8_t base, int32_t iexpo)
 
          if (p > 0xffffffff)
          {
-            double fp = p;
+            double fp = (double) p;
 
             if (expo & 1)
                val = fp * v;
             else
-               val = v;
+               val = (double) v;
 
             while(expo >>= 1)
             {

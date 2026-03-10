@@ -3824,7 +3824,7 @@ static void vsnprintf_write_callback(void * pUserData, const char * pSrc, size_t
 
       if(Length > pwd->DstSize)
       {
-         if(!pwd->Err)
+         if(pd && !pwd->Err)
 #ifdef ENOBUFS
             pwd->Err = ENOBUFS; /* buffer size exceeded */
 #else

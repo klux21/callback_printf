@@ -3698,10 +3698,11 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
             if(pe == ps)
             {
                const char * pf2 = va_arg(val, const char *);
+               va_list      va1 = va_arg(val, va_list);
                va_list      va2;
                size_t       width;
 
-               va_copy(va2, va_arg(val, va_list)); /* va_copy() keeps the argument unchanged */
+               va_copy(va2, va1); /* va_copy() keeps the argument unchanged */
 
                if(minimum_width && !left_justified)
                {

@@ -157,30 +157,31 @@ extern const uint8_t CharType[256];   /* array of character type flags */
    destination buffer must not overlap. Source and destination pointer get
    moved behind last decoded character of converted input and output.
    The function returns -1 in case of wrong arguments and -2 in case of
-   (currently ignored!) errors within source data. In success case 0 gets
-   returned.
-   If pDst is NULL then no output happens and pDstSize will be set to the
-   required size of the destination buffer to hold the whole converted input
-   and the source size and source pointer are unchanged.
+   invalid characters within source data which will be treated as one byte
+   ISO-LATIN-1 charactes. In success case 0 gets returned. If pDst is NULL
+   then no output happens and pDstSize will be set to the required size of
+   the destination buffer to hold the whole converted input and the source
+   size and source pointer are unchanged.
 \* ------------------------------------------------------------------------- */
 int iUtf8Decode (void **  pDst,          /* destination buffer */
                  size_t * pDstSize,      /* remaining destination buffer size */
                  void **  pSrc,          /* source buffer */
                  size_t * pSrcSize,      /* remaining source data size */
-                 size_t   DstCharWidth); /* width of destination characters */
+                 size_t   DstCharWidth,  /* width of destination characters */
+                 int      bIncomplete);  /* partial source buffer where the scan must stop before any incomplete UTF-8 sequences at the end */
 
 /* ------------------------------------------------------------------------- *\
    iUtf8Encode encodes unicode characters in UTF8 format. It stops at end of
    decodable source or if end of destination buffer gets reached. Source and
    destination buffer must not overlap. Source and destination pointer get
    moved behind last decoded character of converted input and output.
-   The function returns -1 in case of wrong arguments and -2 in case of
-   (currently without any output ignored!) errors within source data
-   (e.g. if a source value exceeds 32 bit). In success case 0 gets returned.
-   If pDst is NULL then no output happens and pDstSize will be set to the
-   required size of the destination buffer to hold the whole converted input
-   and the source size and source pointer are unchanged.
+   The function returns -1 in case of wrong arguments.
+   It returnes 0 in success case. If pDst is NULL then no output happens and
+   pDstSize will be set to the  required size of the destination buffer to
+   hold the whole converted input and the source size and source pointer are
+   unchanged.
 \* ------------------------------------------------------------------------- */
+
 int iUtf8Encode (void **  pDst,          /* destination buffer */
                  size_t * pDstSize,      /* remaining destination buffer size */
                  void **  pSrc,          /* source buffer */

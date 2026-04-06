@@ -186,38 +186,39 @@ const uint8_t CharType[256] = { 0x10,0x04,0x04,0x04, 0x04,0x04,0x04,0x04,   0x04
    destination buffer must not overlap. Source and destination pointer get
    moved behind last decoded character of converted input and output.
    The function returns -1 in case of wrong arguments and -2 in case of
-   (currently ignored!) errors within source data. In success case 0 gets
-   returned.
-   If pDst is NULL then no output happens and pDstSize will be set to the
-   required size of the destination buffer to hold the whole converted input
-   and the source size and source pointer are unchanged.
+   invalid characters within source data which will be treated as one byte
+   ISO-LATIN-1 charactes. In success case 0 gets returned. If pDst is NULL
+   then no output happens and pDstSize will be set to the required size of
+   the destination buffer to hold the whole converted input and the source
+   size and source pointer are unchanged.
 \* ------------------------------------------------------------------------- */
 
 int iUtf8Decode (void **  pDst,         /* destination buffer */
                  size_t * pDstSize,     /* remaining destination buffer size */
                  void **  pSrc,         /* source buffer */
                  size_t * pSrcSize,     /* remaining source data size */
-                 size_t   DstCharWidth) /* width of destination characters */
+                 size_t   DstCharWidth, /* width of destination characters */
+                 int      bIncomplete)  /* partial source buffer where the scan must stop before any incomplete UTF-8 sequences at the end */
 {
    static uint8_t Utf8length[]={ 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
-                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   /* 80 - 9f */
-                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   /* a0 - bf */
-                                 2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,   2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,   /* c0 - df */
-                                 3,3,3,3,3,3,3,3, 3,3,3,3,3,3,3,3,   4,4,4,4,4,4,4,4, 5,5,5,5,6,6,7,2 }; /* e0 - ff */
+                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* 80 - 9f */
+                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* a0 - bf */
+                                 2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,   2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,  /* c0 - df */
+                                 3,3,3,3,3,3,3,3, 3,3,3,3,3,3,3,3,   4,4,4,4,4,4,4,4, 5,5,5,5,6,6,7,8}; /* e0 - ff */
 
-   int err = 0; /* return value */
-   size_t dz      = 0;
-   size_t sz      = 0;
-   size_t val     = 0x87654321;
-   size_t max_val = 0;
+   int      err     = 0; /* return value */
+   size_t   dz      = 0;
+   size_t   sz      = 0;
+   uint32_t val     = 0x87654321;
+   uint32_t max_val = 0;
    unsigned char * pv    = (unsigned char *) &val;
    unsigned char * ps;
-   size_t l;
+   size_t   l;
 
-   int little_endian     = 0x21 == *pv; /* nonzero in case of little endian */
+   int little_endian = (0x21 == *pv); /* nonzero in case of little endian */
 
    if((pDst && !*pDst) || !pDstSize || (pDst && !*pDstSize) ||
       !pSrc || !*pSrc || !pSrcSize || !*pSrcSize ||
@@ -247,51 +248,62 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
          if(1 == l)
          {
             val = *ps;
-            ps++;
-            sz--;
+            ++ps;
+            --sz;
          }
          else
          {
             if(!l)
-            {/* Invalid character, skip this possibly a broken sequence. */
-               sz--;
-               ps++;
+            { /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
                err = -2;
-               continue;
+               val = *ps++;
+               --sz;
             }
+            else if (sz < l)
+            { /* buffer size is smaller than a valid UTF-8 sequence length */
+               if (bIncomplete && (((sz < 2) || ( !Utf8length[*(ps+1)] &&
+                                   ((sz < 3) || ( !Utf8length[*(ps+2)] &&
+                                   ((sz < 4) || ( !Utf8length[*(ps+3)] &&
+                                   ((sz < 5) || ( !Utf8length[*(ps+4)] &&
+                                   ((sz < 6) || ( !Utf8length[*(ps+5)] &&
+                                   ((sz < 7))))))))))))))
+               { /* unterminated UTF-8 sequence found */
+                  break; 
+               }
 
-            if(sz < l)
-               break; /* buffer size smaller than character size */
-
-            if(0xff == *ps)
-            {/* For now we'll ignore 0xff and any immediately following character */
-               ps += 2;
-               sz -= 2;
-               continue;
+               /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
+               err = -2;
+               val = *ps++;
+               --sz;
             }
-
-            val = *ps++ & ~(0xff << (7-l));
-            sz--;
-
-            while(--l)
+            else if (Utf8length[*(ps + 1)]
+                     || ((l > 2) && Utf8length[*(ps+2)])
+                     || ((l > 3) && Utf8length[*(ps+3)])
+                     || ((l > 4) && Utf8length[*(ps+4)])
+                     || ((l > 5) && Utf8length[*(ps+5)])
+                     || ((l > 6) && Utf8length[*(ps+6)])
+                     || (l > 7))
+            { /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
+               err = -2;
+               val = *ps++;
+               --sz;
+            }
+            else
             {
-               if(Utf8length[*ps])
-                   break; /* ignore invalid encoded characters */
-
-               val <<= 6;
-               val += *ps++ & 0x3f;
+               val = *ps++ & ~(0xff << (7-l));
                sz--;
-            }
 
-            if(l)
-            { /* Let's skip invalid encoded characters and set error flag */
-               err = -2;
-               continue;
+               while(--l)
+               {
+                  val <<= 6;
+                  val += *ps++ & 0x3f;
+                  sz--;
+               }
             }
          }
 
          if(val > max_val)
-         {/* The decoded value exceeds character width. Let's replace it by the max. possible value. */
+         {/* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
             err = -2;
             val = max_val;
          }
@@ -311,46 +323,57 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
          if(1 == l)
          {
             val = *ps;
-            ps++;
-            sz--;
+            ++ps;
+            --sz;
          }
          else
          {
             if(!l)
-            {/* Invalid character, skip this possibly a broken sequence. */
-               sz--;
-               ps++;
+            { /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
                err = -2;
-               continue;
+               val = *ps++;
+               --sz;
             }
+            else if (sz < l)
+            { /* buffer size is smaller than a valid UTF-8 sequence length */
+               if (bIncomplete && (((sz < 2) || ( !Utf8length[*(ps+1)] &&
+                                   ((sz < 3) || ( !Utf8length[*(ps+2)] &&
+                                   ((sz < 4) || ( !Utf8length[*(ps+3)] &&
+                                   ((sz < 5) || ( !Utf8length[*(ps+4)] &&
+                                   ((sz < 6) || ( !Utf8length[*(ps+5)] &&
+                                   ((sz < 7))))))))))))))
+               { /* unterminated UTF-8 sequence found */
+                  break; 
+               }
 
-            if(sz < l)
-               break; /* buffer size smaller than character size */
-
-            if(0xff == *ps)
-            {/* For now we'll ignore 0xff and any immediately following character */
-               ps += 2;
-               sz -= 2;
-               continue;
+               /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
+               err = -2;
+               val = *ps++;
+               --sz;
             }
-
-            val = *ps++ & ~(0xff << (7-l));
-            sz--;
-
-            while(--l)
+            else if (Utf8length[*(ps + 1)]
+                     || ((l > 2) && Utf8length[*(ps+2)])
+                     || ((l > 3) && Utf8length[*(ps+3)])
+                     || ((l > 4) && Utf8length[*(ps+4)])
+                     || ((l > 5) && Utf8length[*(ps+5)])
+                     || ((l > 6) && Utf8length[*(ps+6)])
+                     || (l > 7))
+            { /* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
+               err = -2;
+               val = *ps++;
+               --sz;
+            }
+            else
             {
-               if(Utf8length[*ps])
-                   break; /* ignore invalid encoded characters */
+               val = *ps++ & ~(0xff << (7-l));
+               --sz;
 
-               val <<= 6;
-               val += *ps++ & 0x3f;
-               sz--;
-            }
-
-            if(l)
-            { /* Let's skip invalid encoded characters and set error flag */
-               err = -2;
-               continue;
+               while(--l)
+               {
+                  val <<= 6;
+                  val += *ps++ & 0x3f;
+                  --sz;
+               }
             }
          }
 
@@ -360,35 +383,29 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
             val = max_val;
          }
 
-         if(!pDst)
+         if(little_endian)
          {
-            dz += DstCharWidth;
+            l = 0;
+            while(l < DstCharWidth)
+            {
+               pd[l] = pv[l];
+               l++;
+            }
          }
          else
          {
-            if(little_endian)
+            l = DstCharWidth;
+            while(l)
             {
-               l = 0;
-               while(l < DstCharWidth)
-               {
-                  pd[l] = pv[l];
-                  l++;
-               }
+               *(pd + DstCharWidth - l) = *(pv - l);
+               l--;
             }
-            else
-            {
-               l = DstCharWidth;
-               while(l)
-               {
-                  *(pd + DstCharWidth - l) = *(pv - l);
-                  l--;
-               }
-            }
-
-            pd += DstCharWidth;
-            dz -= DstCharWidth;
          }
+
+         pd += DstCharWidth;
+         dz -= DstCharWidth;
       }
+
       *pDst     = pd;
       *pSrc     = ps;
       *pSrcSize = sz;
@@ -407,12 +424,11 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
    decodable source or if end of destination buffer gets reached. Source and
    destination buffer must not overlap. Source and destination pointer get
    moved behind last decoded character of converted input and output.
-   The function returns -1 in case of wrong arguments and -2 in case of
-   (currently without any output ignored!) errors within source data
-   (e.g. if a source value exceeds 32 bit). In success case 0 gets returned.
-   If pDst is NULL then no output happens and pDstSize will be set to the
-   required size of the destination buffer to hold the whole converted input
-   and the source size and source pointer are unchanged.
+   The function returns -1 in case of wrong arguments.
+   It returnes 0 in success case. If pDst is NULL then no output happens and
+   pDstSize will be set to the  required size of the destination buffer to
+   hold the whole converted input and the source size and source pointer are
+   unchanged.
 \* ------------------------------------------------------------------------- */
 
 int iUtf8Encode (void **  pDst,         /* destination buffer */
@@ -421,15 +437,15 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
                  size_t * pSrcSize,     /* remaining source data size */
                  size_t   SrcCharWidth) /* width of source characters */
 {
-   int err = 0; /* return value */
-   size_t dz   = 0;
-   size_t sz   = 0;
-   size_t val  = 0x87654321;
-   unsigned char * pv = (unsigned char *) &val;
+   int             err = 0; /* return value */
+   size_t          dz  = 0;
+   size_t          sz  = 0;
+   uint32_t        val = 0x87654321;
+   unsigned char * pv  = (unsigned char *) &val;
    unsigned char * ps;
 
    size_t cw   = 0;
-   int little_endian  = 0x21 == *pv;
+   int little_endian  = (0x21 == *pv);
 
    if((pDst && !*pDst) || !pDstSize || (pDst && !*pDstSize) ||
       !pSrc || !*pSrc || !pSrcSize || !*pSrcSize ||
@@ -484,10 +500,6 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
             dz += 6;
          else if(val <= 0xffffffff)
             dz += 7;
-         else
-         { /* We don't handle values that exceed 32 bits */
-            err = -2;
-         }
 
          ps += SrcCharWidth;
          sz -= SrcCharWidth;
@@ -603,10 +615,6 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
             pd[5] = (unsigned char) (((val >> 6)  & 0x3f) + 0x80);
             pd[6] = (unsigned char) ((val & 0x3f)         + 0x80);
             pd += 7;
-         }
-         else
-         { /* We don't handle values that exceed 32 bits */
-            err = -2;
          }
 
          ps += SrcCharWidth;

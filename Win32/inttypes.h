@@ -8,7 +8,7 @@
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
-*  COPYRIGHT:     (c) 2024 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
+*  COPYRIGHT:     (c) 2026 Dipl.-Ing. Klaus Lux (Aachen, Germany)             *
 *                                                                             *
 * --------------------------------------------------------------------------- *
 *                                                                             *
@@ -76,11 +76,39 @@
 #ifndef INTTYPES_H
 #define INTTYPES_H
 
-#ifdef __cplusplus
-extern "C" {
+#ifdef _WIN32
+
+#include <stddef.h>
+
+#if ! defined(_INTPTR_T_DEFINED) && ! defined (intptr_t)
+#define _INTPTR_T_DEFINED
+typedef ptrdiff_t intptr_t;
+#define intptr_t intptr_t
 #endif
 
-#ifdef _WIN32
+#ifndef INTPTR_MAX
+#define INTPTR_MIN (((intptr_t) 1 << (sizeof(intptr_t) * 8 - 1))
+#define INTPTR_MAX (~INTPTR_MIN)
+#endif
+
+#if ! defined(_UINTPTR_T_DEFINED) && ! defined (uintptr_t)
+#define _UINTPTR_T_DEFINED
+typedef size_t uintptr_t;
+#define uintptr_t uintptr_t
+#endif
+
+#ifndef UINTPTR_MAX
+#define UINTPTR_MAX (~(uintptr_t)0)
+#endif
+
+#ifndef PTRDIFF_MAX
+#define PTRDIFF_MIN (((ptrdiff_t) 1 << (sizeof(ptrdiff_t) * 8 - 1))
+#define PTRDIFF_MAX (~PTRDIFF_MIN)
+#endif
+
+#ifndef SIZE_MAX
+#define SIZE_MAX (~(size_t)0)
+#endif
 
 #undef int8_t
 #undef uint8_t
@@ -196,12 +224,9 @@ typedef unsigned __int64 uintmax_t;
 
 #endif
 
-#ifdef __cplusplus
-}/* extern "C" */
-#endif
-
 #endif /* INTTYPES_H */
 
-/* ========================================================================== *\
-   END OF FILE
-\* ========================================================================== */
+/* ========================================================================= *\
+   E N D   O F   F I L E
+\* ========================================================================= */
+

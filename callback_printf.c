@@ -677,8 +677,13 @@ static size_t cbk_print_number(void *            pUserData,      /* user specifi
        }
        else if (prefix_base == 8)
        {
+#if 1
           if(length >= minwidth)
              *pf++ = '0';
+#else
+          *pf++ = '0';
+          *pf++ = uppercase ? 'O' : 'o';
+#endif
        }
        else if (prefix_base == 2)
        {
@@ -777,7 +782,7 @@ static const uint8_t PrintfIntBase[256] = {10,16, 2, 3,  4, 5, 6, 7,   8, 9,10,1
                                          /*    !  "  #   $  %  &  '    (  )  *  +   ,  -  .  /    0  1  2  3   4  5  6  7    8  9  :  ;   <  =  >  ? */
                                            32,33,34,35, 36, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,  10,16, 2, 3,  4, 5, 6, 7,   8, 9, 0, 0,  0, 0, 0, 0,
                                          /* @  A  B  C   D  E  F  G    H  I  J  K   L  M  N  O    P  Q  R  S   T  U  V  W    X  Y  Z  [   \  ]  ^  _ */
-                                            0, 0, 2, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,  16, 0, 0, 0,  0, 0, 0, 0,  16, 0, 0, 0,  0, 0, 0, 0,
+                                            0, 0, 2, 0, 10, 0, 0, 0,   0,10, 0, 0,  0, 0, 0, 8,  16, 0, 0, 0,  0,10, 0, 0,  16, 0, 0, 0,  0, 0, 0, 0,
                                          /* `  a  b  c   d  e  f  g    h  i  j  k   l  m  n  o    p  q  r  s   t  u  v  w    x  y  z  {   |  }  ~    */
                                             0, 0, 2, 0, 10, 0, 0, 0,   0,10, 0, 0,  0, 0, 0, 8,  16, 0, 0, 0,  0,10, 0, 0,  16, 0, 0, 0,  0, 0, 0, 0,
                                             0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,   0, 0, 0, 0,  0, 0, 0, 0,
@@ -808,7 +813,7 @@ static size_t cbk_print_u64(void *            pUserData,      /* user specific c
     size_t zRet = 0;
     const char * padding  = (blank_padding || (precision != ~(size_t) 0)) ? pblanks : pzeros; /* padding characters in front of the output value */
     size_t       minwidth = (precision == ~(size_t)0) ? 1 : precision;                        /* minimum width of value to print */
-    const char * digit    = (format & 0x20) ? lower_digits : upper_digits;                    /* digits to use */
+    const char * digit    = ((format < 37) || (format & 0x20)) ? lower_digits : upper_digits; /* digits to use */
     uint8_t      base     = PrintfIntBase[(unsigned char) format];                            /* numeric base system for the output data */
     char         buf[80];                                                                     /* buffer for temporary output of value */
     char *       pe       = buf + sizeof(buf);
@@ -910,7 +915,7 @@ static size_t cbk_print_u32(void *            pUserData,      /* user specific c
     size_t zRet = 0;
     const char * padding  = (blank_padding || (precision != ~(size_t) 0)) ? pblanks : pzeros; /* padding characters in front of the output value */
     size_t       minwidth = (precision == ~(size_t)0) ? 1 : precision;                        /* minimum width of value to print */
-    const char * digit    = (format & 0x20) ? lower_digits : upper_digits;                    /* digits to use */
+    const char * digit    = ((format < 37) || (format & 0x20)) ? lower_digits : upper_digits; /* digits to use */
     uint8_t      base     = PrintfIntBase[(unsigned char) format];                            /* numeric base system of for the output data */
     char         buf[80];                                                                     /* buffer for temporary output of value */
     char *       pe       = buf + sizeof(buf);
@@ -1941,9 +1946,9 @@ static size_t cbk_print_long_double(void *            pUserData,      /* user sp
          int32_t p = -(iexpo + (int32_t) minwidth);
 
          if(p >= 0)
-            mant += 0.5 * powi(base, p);
+            mant += 0.5 * powil(base, p);
          else
-            mant += 0.5 / powi(base, -p);
+            mant += 0.5 / powil(base, -p);
 
 
          if(mant >= base)

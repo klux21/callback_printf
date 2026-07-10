@@ -1,4 +1,4 @@
-## callback_printf: portable wrappers of sprintf, snprintf, vsprintf and vsnprintf
+## callback_printf: advanced wrappers of sprintf, snprintf, vsprintf and vsnprintf
 The printf family are one of the most important C functions but the lack of the
 portability of the format specifiers especially between Windows and Posix
 systems can be be very annoying. All the required workarounds and adjustments
@@ -30,45 +30,48 @@ If it comes to me it was always wished to get rid of all this trouble and all
 the portability issues that most programmers are struggling with.
 
 And I did want to add some extra length modifiers for using arguments of type
-int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
-inttypes.h and also in stdint.h since the C 11 standard. In C23 there exist a
-first standard enhancement for that now but not all compilers are supporting
+`int8_t`, `int16_t`, `int32_t` and `int64_t` which can be found since Posix 98
+in inttypes.h and also in stdint.h since the C 11 standard. In C 23 there exist
+a first standard enhancement for that now but not all compilers are supporting
 that already.
 
-The supported format specifiers are b, B, d, i, o, u, x, X, a, A, e, E, f, F,
-g, G, s, c, p, n, and % for a percent character, and the Microsoft specific
-specifiers C and S for wide characters.
+The supported format specifiers are `b`, `B`, `d`, `i`, `o`, `u`, `x`, `X`,
+`a`, `A`, `e`, `E`, `f`, `F`, `g`, `G`, `s`, `c`, `p`, `n`, and `%` for a
+percent character, and the Microsoft specific
+specifiers `C` and `S` for wide characters.
 
-The supported size prefixes for the integer formats b, B, d, i, o, u, x and X
-are currently hh, h, l, ll, t, z and j according to the C standard as well as
-the Microsoft specific I, I8, I16, I32 and I64. Additionally some own prefixes
-l1, l2, l4 and l8 are supported which specify the byte width of the provided
-integer arguments. The length modifiers w8, w16, w32 and w64 of the new C 23
-standard are supported now too.
+The supported size prefixes for the integer formats `b`, `B`, `d`, `i`, `o`, `u`,
+ `x`, and `X` are currently `hh`, `h`, `l`, `ll`, `t`, `z`, and `j` according to
+the C standard as well as the Microsoft specific `I`, `I8`, `I16`, `I32`, and `I64`.
+Additionally some own prefixes `l1`, `l2`, `l4` and `l8` are supported which
+specify the byte width of the provided integer arguments. The length modifiers
+`w8`, `w16`, `w32`, and `w64` of the new C 23 standard are supported now too.
 
-The supported lenght modifiers for the formats s and c are l for wchar_t
-arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
-characters and l4 for 4 bytes wide unicode characters.
-For the floating point formats a, A, e, E, f, F, g and G the prefix L for
-long double arguments is supported as well.
-Additionally a special prefix for specifying a specific numeric base of integer
-or floating point numbers is supported. It's r0 for base 10, r1 for base 16 and
-r2 ... r9 for the bases 2 til 9. For other bases r* can be used. In that case
+The supported lenght modifiers for the formats `s` and `c` are `l` for `wchar_t`
+arguments and `l1` for 1 byte ISO Latin 8 strings, `l2` for 2 byte wide Unicode
+characters and `l4` for 4 bytes wide unicode characters.
+For the floating point formats `a`, `A`, `e`, `E`, `f`, `F`, `g`, and `G` the
+prefix `L` for long double arguments is supported as well.
+
+Additionally special prefixes for specifying the specific numeric base of integer
+or floating point numbers is supported. It's `r0` for base 10, `r1` for base 16 and
+`r2` ... `r9` for the bases 2 til 9. For other bases `r*` can be used. In that case
 the base needs to be specified by an additional argument of type int just
 before the integer or floating specifier or it's optional length specifier. The
 highest supported numeric base is 36.
+
 The floating point exponents of numeric bases higher than 14 are prefixed by a
-tilde '~' istead of the letter 'e' which becomes a member of the regular digits
+tilde `~` istead of the letter `e` which is a member of the common regular digits
 of those bases.
 
 Sometimes you need to print the same complex data types quite often e.g. IPv6
 addresses or times. The common way in C would be to write a function that
 writes that to a character buffer and returns a pointer to that buffer but you
 need an variable for a buffer wherever you need to print them. For improving
-things like that callback_printf supports the options %v and %V for variable
-argument types now. %v expects a function pointer and a data pointer as related
+things like that callback_printf supports the options `%v` and `%V` for variable
+argument types now. `%v` expects a function pointer and a data pointer as related
 arguments where the function generates the output for the random data pointer
-and calls the write callback. %V expects a single pointer to a struct that
+and calls the write callback. `%V` expects a single pointer to a struct that
 contains the mentioned function and a pointer pointer as argument and may be a
 member of other structs that need to be written in a special format. That way
 it's possible to print an unlimited number of data types and data in special
@@ -77,16 +80,16 @@ still an early state an the function prototypes may still change a bit.
 
 Another common problem is that you need to prepend or append additional
 information like a date or the time or the thread ID to data within a logging
-function. I did add an additional option %@ now that expects a format string
-and a va_list within the arguments to be printed at the position of the %@
-within the output. A minimum width can be specified for the %@ output as well.
+function. I did add an additional option `%@` now that expects a format string
+and a `va_list` within the arguments to be printed at the position of the `%@`
+within the output. A minimum width can be specified for a `%@` output as well.
 There are some samples of that within the regression tests.
 
 The implementation also uses the great printf parameter validation features of
 the gcc which are a great thing for preventing program crashes within printf
 like functions. However that may trigger those warnings in case of using any
 printf format enhancements and you may need to silence those warnings by using
-the unchecked function versions which names are prefixed by an underscore '_'.
+the unchecked function versions which names are prefixed by an underscore `_`.
 
 An interesting internal feature is the fast generic mantisse and exponent
 calculation for the several numeric bases that enables the generic support of

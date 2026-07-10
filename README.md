@@ -1,40 +1,51 @@
-callback_printf? Why even another sprintf clone?
-
-Because it is one of the most important C functions but the lack of the
+## callback_printf: portable wrappers of sprintf, snprintf, vsprintf and vsnprintf
+The printf family are one of the most important C functions but the lack of the
 portability of the format specifiers especially between Windows and Posix
 systems can be be very annoying. All the required workarounds and adjustments
 cost the programmers a lot of time.
+
+This implementation not only behaves the same on all systems and supports the
+most of recent format specifiers but also ignores the locale settings to prevent
+any kind of random output variations that depends on environment settings.
+
 Who wants to mess around with different prefixes or format strings on every
-new platform? OK - there are a plenty of other sprintf implementations but
-many of them don't really care the performance and the portability or lack
-floating point and especially long double support and they don't convert
-Unicode strings to UTF-8 if dealing with wide characters and don't care much
-about the conformance to the C standard formats.
-This implementation also ignores the locale settings to prevent any kind of
-random output variations that depends on the environment settings.
-You also don't want any internal locks, unnecessary allocations or strange
-implementations which may slow down your code where every microsecond counts.
-callback_printf uses only the stack of the calling thread and neither locks nor
-allocations. It allows you to debug and fix problems very easily if something
-doesn't work as expected.
+new platform? OK - there are a plenty of other sprintf implementations already
+but many of them don't really care about performance and the portability or
+lack floating point and especially long double support.
+
+This implementation also converts wide character (`wchar_t`) Unicode strings
+to UTF-8 for making the printing of those a nobrainer.
+
+It doesn't use any internal locks, unnecessary allocations and other strange
+things which may slow down the code where every microsecond counts.
+callback_printf uses the stack of the calling thread only and neither any locks
+nor allocations. It allows you to debug and fix problems very easily if
+something doesn't work as expected.
+
 I guess that every programmer who really likes C hates the trouble with printf
 like functions and even more the problems and the difficulties if he want to
-use the argument format for own output functions or wants own extensions of
-that format.
+use the argument format for some own output functions or wants own extensions
+of that format.
 If it comes to me it was always wished to get rid of all this trouble and all
 the portability issues that most programmers are struggling with.
+
 And I did want to add some extra length modifiers for using arguments of type
 int8_t, int16_t, int32_t and int64_t which can be found since Posix 98 in
-inttypes.h and also in stdint.h since the C 11 standard.
+inttypes.h and also in stdint.h since the C 11 standard. In C23 there exist a
+first standard enhancement for that now but not all compilers are supporting
+that already.
+
 The supported format specifiers are b, B, d, i, o, u, x, X, a, A, e, E, f, F,
-g, G, s, c, p, n and % for a percent character and the Microsoft specific
-specifiers C and S.
+g, G, s, c, p, n, and % for a percent character, and the Microsoft specific
+specifiers C and S for wide characters.
+
 The supported size prefixes for the integer formats b, B, d, i, o, u, x and X
 are currently hh, h, l, ll, t, z and j according to the C standard as well as
 the Microsoft specific I, I8, I16, I32 and I64. Additionally some own prefixes
 l1, l2, l4 and l8 are supported which specify the byte width of the provided
 integer arguments. The length modifiers w8, w16, w32 and w64 of the new C 23
 standard are supported now too.
+
 The supported lenght modifiers for the formats s and c are l for wchar_t
 arguments and l1 for 1 byte ISO Latin 8 strings, l2 for 2 byte wide Unicode
 characters and l4 for 4 bytes wide unicode characters.
@@ -95,8 +106,3 @@ those it prohibits a usage for weapons and spyware and any secret monitoring of
 other people without their agreement or their health or life being endangered.
 That's fine for most software but usually not for military devices, weapons or
 spyware. It would be great if more projects would adapt this license as well.
-
-
-Kind regards,
-
-Klaus Lux

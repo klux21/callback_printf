@@ -1,5 +1,8 @@
 # Changelog of klux21/callback_printf
 
+## callback_printf_2.2.11 / 2026-07-15
+ - initial support of UTF-16 surrogate pairs
+
 ## callback_printf_2.2.10 / 2026-07-10
  - CHANGELOG.md added
  - initial version of run_tests.sh

@@ -259,6 +259,9 @@ int test_ssprintf(const char * pfmt, ...)
    uint8_t  s8[]  = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
    uint16_t s16[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
    uint32_t s32[] = { 'H','e','l','l','o',' ','w','o','r','l','d','!',' ',0xc4,0xd6,0xdc,0xdf,0xe4,0xf6,0xfc,0};
+// uint16_t hello_smiley[]={'H','e','l','l','o', ' ',(uint16_t)((0x1F600 - 0x10000) >> 10) + 0xd800, (uint16_t)((0x1F600 - 0x10000) & 0x3ff) + 0xdc00,
+//                          ' ','&',' ',(uint16_t)((0x1F609 - 0x10000) >> 10) + 0xd800, (uint16_t)((0x1F609 - 0x10000) & 0x3ff) + 0xdc00,  '!', '\0'};
+   uint16_t hello_smiley[]={'H','e','l','l','o',' ', 0xd83d, 0xde00,' ','&',' ',0xd83d, 0xde09, '!', '\0'};
 
    PRINTF_V_DATA cbdata = { &cbfunc, 12, (void *) "Hello world!"}; /* output data for %v and %V samples */
 
@@ -382,6 +385,9 @@ int test_ssprintf(const char * pfmt, ...)
     TEST_VSPRINTF( "%l1s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s8 );
     TEST_VSPRINTF( "%l2s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s16 );
     TEST_VSPRINTF( "%l4s",          "Hello world! \xc3\x84\xc3\x96\xc3\x9c\xc3\x9f\xc3\xa4\xc3\xb6\xc3\xbc", s32 );
+
+    TEST_VSPRINTF( "%l2s", "Hello \xf0\x9f\x98\x80 & \xf0\x9f\x98\x89!", hello_smiley); /* UTF16 surrogate pair test */
+
     TEST_VSPRINTF( "%-04c",         "1   ",           (int) '1' );
     TEST_VSPRINTF( "%#012x",        "0x0000000001",   (int) 1 );
     TEST_VSPRINTF( "%#012x",        "000000000000",   (int) 0 );

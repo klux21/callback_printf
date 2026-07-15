@@ -200,12 +200,13 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
                  size_t   DstCharWidth, /* width of destination characters */
                  int      bIncomplete)  /* partial source buffer where the scan must stop before any incomplete UTF-8 sequences at the end */
 {
+   /* Utf8length is the length of a UTF-8 sequence according to it's first byte */ 
    static uint8_t Utf8length[]={ 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
                                  1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,   1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
-                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* 80 - 9f */
-                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* a0 - bf */
+                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* 80 - 9f (invalid) */
+                                 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,   0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,  /* a0 - bf (invalid) */
                                  2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,   2,2,2,2,2,2,2,2, 2,2,2,2,2,2,2,2,  /* c0 - df */
                                  3,3,3,3,3,3,3,3, 3,3,3,3,3,3,3,3,   4,4,4,4,4,4,4,4, 5,5,5,5,6,6,7,8}; /* e0 - ff */
 
@@ -304,8 +305,15 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
 
          if(val > max_val)
          {/* treat the invalid encoded UTF-8 character as ISO-LATIN-1 and set error flag */
-            err = -2;
-            val = max_val;
+            if((DstCharWidth == 2) && (val <= 0x10ffff))
+            {/* we have to make that a surrogate pair */
+               dz += 2;
+            }
+            else
+            {
+               err = -2;
+               val = max_val;
+            }
          }
 
          dz += DstCharWidth;
@@ -379,8 +387,33 @@ int iUtf8Decode (void **  pDst,         /* destination buffer */
 
          if(val > max_val)
          {/* The decoded value exceeds character width. Let's replace it by the max. possible value. */
-            err = -2;
-            val = max_val;
+            if((DstCharWidth == 2) && (val <= 0x10ffff))
+            {/* we have to make that value a surrogate pair */
+               uint16_t v2;
+               unsigned char * pv2 = (unsigned char *) &v2;
+
+               if(dz < 4)
+               {
+                  ps -= 4; /* always encoded as a 4 byte UTF-8 sequence */
+                  sz += 4;
+                  break;
+               }
+
+               val -= 0x10000;                         /* encoding rule for values >= 0x10000 */
+               v2  = (uint16_t)((val >> 10) + 0xd800); /* upper 10 bits + 0xdc00 */
+               val = (val & 0x3ff) + 0xdc00;           /* lower 10 bits + 0xd800 */
+
+               pd[0] = pv2[0];
+               pd[1] = pv2[1];
+
+               pd += 2;
+               dz -= 2;
+            }
+            else
+            {
+               err = -2;
+               val = max_val;
+            }
          }
 
          if(little_endian)
@@ -491,7 +524,25 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
          else if(val <= 0x7ff)
             dz += 2;
          else if(val <= 0xffff)
+         {
             dz += 3;
+
+            if((SrcCharWidth == 2) && (val >= 0xd800) && (val < 0xdc00) && (sz >= 4))
+            { /* possibly a surrogate pair ? */
+               uint16_t v2 = 0;
+               unsigned char * pv2  = (unsigned char *) &v2;
+
+               pv2[0] = ps[2];
+               pv2[1] = ps[3];
+
+               if((v2 >= 0xdc00) &&  (v2 < 0xe000))
+               { /* surrogate pair found */
+                  ++dz;
+                  ps += 2;
+                  sz -= 2;
+               }
+            }
+         }
          else if(val <= 0x1fffff)
             dz += 4;
          else if(val <= 0x3ffffff)
@@ -553,14 +604,56 @@ int iUtf8Encode (void **  pDst,         /* destination buffer */
          }
          else if(val <= 0xffff)
          {
-            if (dz < 3)
-               break;
-            dz -= 3;
+            if((SrcCharWidth == 2) && (val >= 0xd800) && (val < 0xdc00) && (sz >= 4))
+            { /* possibly a surrogate pair ? */
+               uint16_t v2 = 0;
+               unsigned char * pv2  = (unsigned char *) &v2;
 
-            pd[0] = (unsigned char) (((val >> 12) & 0xf)  + 0xe0);
-            pd[1] = (unsigned char) (((val >> 6)  & 0x3f) + 0x80);
-            pd[2] = (unsigned char) ((val & 0x3f)         + 0x80);
-            pd += 3;
+               pv2[0] = ps[2];
+               pv2[1] = ps[3];
+
+               if((v2 >= 0xdc00) &&  (v2 < 0xe000))
+               { /* surrogate pair found */
+                  val -= 0xd800;
+                  val <<= 10;
+                  val += (uint32_t) v2 + (0x10000 - 0xdc00);
+
+                  if(dz < 4)
+                     break;
+
+                  dz -= 4;
+                  pd[0] = (unsigned char) (((val >> 18) & 0x7)  + 0xf0);
+                  pd[1] = (unsigned char) (((val >> 12) & 0x3f) + 0x80);
+                  pd[2] = (unsigned char) (((val >> 6)  & 0x3f) + 0x80);
+                  pd[3] = (unsigned char) ((val & 0x3f)         + 0x80);
+                  pd += 4;
+
+                  ps += 2;
+                  sz -= 2;
+               }
+               else
+               { /* keep the invalid char to prevent data loss */
+                  if (dz < 3)
+                     break;
+
+                  dz -= 3;
+                  pd[0] = (unsigned char) (((val >> 12) & 0xf)  + 0xe0);
+                  pd[1] = (unsigned char) (((val >> 6)  & 0x3f) + 0x80);
+                  pd[2] = (unsigned char) ((val & 0x3f)         + 0x80);
+                  pd += 3;
+               }
+            }
+            else
+            {
+               if (dz < 3)
+                  break;
+
+               dz -= 3;
+               pd[0] = (unsigned char) (((val >> 12) & 0xf)  + 0xe0);
+               pd[1] = (unsigned char) (((val >> 6)  & 0x3f) + 0x80);
+               pd[2] = (unsigned char) ((val & 0x3f)         + 0x80);
+               pd += 3;
+            }
          }
          else if(val <= 0x1fffff)
          {

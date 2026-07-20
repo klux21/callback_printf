@@ -2567,13 +2567,21 @@ static size_t cbk_print_char(void *            pUserData,      /* user specific 
          while (length--)
             pCB(pUserData, &c, 1);
 
-      while (minimum_width > 32)
+      if (minimum_width <= 32)
       {
-         pCB(pUserData, pblanks, 32);
-         minimum_width -= 32;
+         pCB(pUserData, pblanks, minimum_width);
       }
+      else
+      {
+         do
+         {
+            pCB(pUserData, pblanks, 32);
+            minimum_width -= 32;
+         } while (minimum_width > 32);
 
-      pCB(pUserData, pblanks, minimum_width);
+         if(minimum_width)
+            pCB(pUserData, pblanks, minimum_width);
+      }
 
       if(!left_justified)
          while (length--)
@@ -2609,20 +2617,26 @@ size_t cbk_print_string(void *            pUserData,      /* user specific conte
    {
       zRet = minimum_width;
 
-      if(length)
-      {
-         minimum_width -= length;
-         if(left_justified)
-            pCB(pUserData, ps, length);
-      }
+      minimum_width -= length;
 
-      while (minimum_width > 32)
-      {
-         pCB(pUserData, pblanks, 32);
-         minimum_width -= 32;
-      }
+      if(left_justified && length)
+         pCB(pUserData, ps, length);
 
-      pCB(pUserData, pblanks, minimum_width);
+      if (minimum_width <= 32)
+      {
+         pCB(pUserData, pblanks, minimum_width);
+      }
+      else
+      {
+         do
+         {
+            pCB(pUserData, pblanks, 32);
+            minimum_width -= 32;
+         } while (minimum_width > 32);
+
+         if(minimum_width)
+            pCB(pUserData, pblanks, minimum_width);
+      }
 
       if(!left_justified && length)
          pCB(pUserData, ps, length);
@@ -2682,13 +2696,21 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
          }
       }
 
-      while (minimum_width > 32)
+      if (minimum_width <= 32)
       {
-         pCB(pUserData, pblanks, 32);
-         minimum_width -= 32;
+         pCB(pUserData, pblanks, minimum_width);
       }
+      else
+      {
+         do
+         {
+            pCB(pUserData, pblanks, 32);
+            minimum_width -= 32;
+         } while (minimum_width > 32);
 
-      pCB(pUserData, pblanks, minimum_width);
+         if(minimum_width)
+            pCB(pUserData, pblanks, minimum_width);
+      }
 
       if(!left_justified && length)
       {
@@ -2714,7 +2736,6 @@ static size_t cbk_print_wstring(void *            pUserData,      /* user specif
    terminate the written output data string.
    See implementation of svsnprintf implementation for a sample of usage.
 \* ------------------------------------------------------------------------- */
-
 
 size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val)
 {
@@ -3885,7 +3906,6 @@ size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFm
    Exit:;
    return (zRet);
 } /* size_t callback_printf(void * pUserData, PRINTF_CALLBACK * pCB, const char * pFmt, va_list val) */
-
 
 
 /* ========================================================================= *\

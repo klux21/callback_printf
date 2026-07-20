@@ -1,5 +1,8 @@
 # Changelog of klux21/callback_printf
 
+## callback_printf_2.2.12 / 2026-07-20
+ - possibly invalid errno in case of 32 byte blank padding corrected
+
 ## callback_printf_2.2.11 / 2026-07-15
  - initial support of UTF-16 surrogate pairs
 
